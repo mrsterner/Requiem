@@ -98,7 +98,7 @@ public class StealSoulGoal extends MorticianSpellGoal {
             double vx = this.mortician.getRandom().nextGaussian() * 0.02;
             double vy = this.mortician.getRandom().nextGaussian() * 0.02;
             double vz = this.mortician.getRandom().nextGaussian() * 0.02;
-            this.mortician.world.addParticle(
+            this.mortician.getWorld().addParticle(
                 ParticleTypes.SMOKE,
                 this.mortician.getParticleX(1.0),
                 this.mortician.getRandomBodyY() + 0.5,

@@ -81,9 +81,9 @@ public class MorticianSpawner implements ServerTickEvents.End {
             }
             RiftRunestoneBlock.findRespawnPosition(RequiemEntities.MORTICIAN, world, obelisk.pos())
                 .ifPresent(spawnPos -> {
-                    MorticianEntity mortician = RequiemEntities.MORTICIAN.m_gdkrszjk(
+                    MorticianEntity mortician = RequiemEntities.MORTICIAN.spawn(
                         world,
-                        new BlockPos(spawnPos),
+                        BlockPos.fromPosition(spawnPos),
                         SpawnReason.STRUCTURE
                     );
                     if (mortician != null) {

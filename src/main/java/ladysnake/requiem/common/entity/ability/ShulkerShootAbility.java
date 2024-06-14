@@ -55,9 +55,9 @@ public class ShulkerShootAbility extends DirectAbilityBase<ShulkerEntity, Living
 
     @Override
     public boolean run(LivingEntity target) {
-        if (!this.owner.world.isClient) {
-            this.owner.world.spawnEntity(new ShulkerBulletEntity(this.owner.world, this.owner, target, this.owner.getAttachedFace().getAxis()));
-            this.owner.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F, (this.owner.world.random.nextFloat() - this.owner.world.random.nextFloat()) * 0.2F + 1.0F);
+        if (!this.owner.getWorld().isClient) {
+            this.owner.getWorld().spawnEntity(new ShulkerBulletEntity(this.owner.getWorld(), this.owner, target, this.owner.getAttachedFace().getAxis()));
+            this.owner.playSound(SoundEvents.ENTITY_SHULKER_SHOOT, 2.0F, (this.owner.getWorld().random.nextFloat() - this.owner.getWorld().random.nextFloat()) * 0.2F + 1.0F);
             this.beginCooldown();
         }
 

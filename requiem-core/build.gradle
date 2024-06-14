@@ -3,12 +3,24 @@ group = rootProject.group
 
 dependencies {
     api project(path: ":requiem-api", configuration: "namedElements")
-    modImplementation libs.playerAbilityLib
-    modImplementation libs.locki
-    modImplementation libs.cca.base
-    modImplementation libs.blabber
-    modImplementation libs.fabricPermissionsApi
-    modImplementation libs.reachEntityAttributes
+    modImplementation(libs.playerAbilityLib) {
+        exclude group: "net.fabricmc"
+    }
+    modImplementation(libs.locki) {
+        exclude group: "net.fabricmc"
+    }
+    modImplementation(libs.cca.base) {
+        exclude group: "net.fabricmc"
+    }
+    modImplementation(libs.blabber) {
+        exclude group: "net.fabricmc"
+    }
+    modImplementation(libs.fabricPermissionsApi) {
+        exclude group: "net.fabricmc"
+    }
+    modImplementation(libs.reachEntityAttributes) {
+        exclude group: "net.fabricmc"
+    }
 }
 
 remapJar.dependsOn(project(":requiem-api").tasks.remapJar)

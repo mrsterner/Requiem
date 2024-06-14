@@ -83,7 +83,7 @@ public final class PlayerBodyTracker implements ServerTickingComponent {
     }
 
     public Optional<GlobalRecord> getAnchor() {
-        return Optional.ofNullable(this.anchorUuid).flatMap(GlobalRecordKeeper.get(this.player.world)::getRecord);
+        return Optional.ofNullable(this.anchorUuid).flatMap(GlobalRecordKeeper.get(this.player.getWorld())::getRecord);
     }
 
     @Override

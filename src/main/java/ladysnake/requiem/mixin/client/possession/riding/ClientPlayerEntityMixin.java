@@ -56,13 +56,13 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
         super(world, profile);
     }
 
-    @Inject(method = "m_kxlksird", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getJumpingMount", at = @At("RETURN"), cancellable = true)
     private void hackJumpingMount(CallbackInfoReturnable<JumpingMount> cir) {
         if (cir.getReturnValue() == null && this.getVehicle() == null) {
             LivingEntity host = PossessionComponent.getHost(this);
             if (host != null) {
                 JumpingMount jumpingMount = JumpingMountEvents.MOUNT_CHECK.invoker().getJumpingMount(host);
-                if (jumpingMount != null && jumpingMount.canJump(this)) {
+                if (jumpingMount != null && jumpingMount.canJump()) {
                     cir.setReturnValue(jumpingMount);
                 }
             }

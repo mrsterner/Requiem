@@ -49,7 +49,6 @@ import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -145,7 +144,7 @@ public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase
     @Override
     public boolean canTarget(Entity target) {
         // Clientside, we only want to scan for targets when ramming is available
-        return (!this.owner.world.isClient || this.owner.isSprinting()) && super.canTarget(target);
+        return (!this.owner.getWorld().isClient || this.owner.isSprinting()) && super.canTarget(target);
     }
 
     @Override
@@ -157,8 +156,8 @@ public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase
     @Override
     protected boolean run(Entity target) {
         if (target instanceof LivingEntity && this.owner.isSprinting()) {
-            if (!this.owner.world.isClient) {
-                ServerWorld world = (ServerWorld) this.owner.world;
+            if (!this.owner.getWorld().isClient) {
+                ServerWorld world = (ServerWorld) this.owner.getWorld();
                 long time = world.getTime();
                 BlockPos startPos = this.owner.getBlockPos();
                 EntityAttributeInstance speedAttribute = Objects.requireNonNull(this.owner.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED));
@@ -183,20 +182,20 @@ public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase
         super.update();
 
         if (this.started) {
-            ServerWorld world = (ServerWorld) this.owner.world;
+            ServerWorld world = (ServerWorld) this.owner.getWorld();
             long time = world.getTime();
 
             if (this.owner.isSprinting() && time - this.ramStartTime < RAM_DURATION) {
                 List<LivingEntity> list = world.getTargets(LivingEntity.class, this.targetPredicate, this.owner, this.owner.getBoundingBox());
                 if (!list.isEmpty()) {
                     LivingEntity livingEntity = list.get(0);
-                    livingEntity.damage(DamageSource.mob(this.owner).setNeutral(), (float)this.owner.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
+                    livingEntity.damage(world.getDamageSources().mobAttackNoAggro(this.owner), (float)this.owner.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
                     int speedAmount = this.owner.hasStatusEffect(StatusEffects.SPEED) ? this.owner.getStatusEffect(StatusEffects.SPEED).getAmplifier() + 1 : 0;
                     int slownessAmount = this.owner.hasStatusEffect(StatusEffects.SLOWNESS) ? this.owner.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() + 1 : 0;
                     float multiplier = 0.25F * (float)(speedAmount - slownessAmount);
                     // arbitrary constant empirically chosen to roughly replicate a natural goat's knockback strength
                     float knockbackSpeed = (float) MathHelper.clamp(owner.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) * 2.4, 0.2F, 3.0F) + multiplier;
-                    float knockbackModifier = livingEntity.blockedByShield(DamageSource.mob(this.owner)) ? 0.5F : 1.0F;
+                    float knockbackModifier = livingEntity.blockedByShield(world.getDamageSources().mobAttack(this.owner)) ? 0.5F : 1.0F;
                     livingEntity.takeKnockback((double)(knockbackModifier * knockbackSpeed) * this.strengthMultiplierFactory.applyAsDouble(this.owner), this.direction.getX(), this.direction.getZ());
                     world.playSoundFromEntity(null, this.owner, this.impactRamSoundFactory.apply(this.owner), SoundCategory.HOSTILE, 1.0F, 1.0F);
                     this.finishRam();
@@ -210,7 +209,7 @@ public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase
     }
 
     private void finishRam() {
-        this.owner.world.sendEntityStatus(this.owner, EntityStatuses.FINISH_RAM);
+        this.owner.getWorld().sendEntityStatus(this.owner, EntityStatuses.FINISH_RAM);
         Objects.requireNonNull(this.owner.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).removeModifier(SPEED_MODIFIER_UUID);
         this.started = false;
     }

@@ -59,7 +59,7 @@ public abstract class TameableEntityMixin extends PossessableMobEntityMixin {
     @Override
     public void setPossessor(@Nullable PlayerEntity possessor) {
         super.setPossessor(possessor);
-        if (!this.world.isClient && possessor != null) {
+        if (!this.getWorld().isClient && possessor != null) {
             this.setSitting(false);
             this.setInSittingPose(false);
         }

@@ -39,6 +39,7 @@ import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.screen.RiftScreenHandler;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -75,12 +76,12 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(GuiGraphics graphics, float delta, int mouseX, int mouseY) {
         // Actually nothing
     }
 
     @Override
-    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+    protected void drawForeground(GuiGraphics graphics, int mouseX, int mouseY) {
         if (this.projectionViewMatrix != null) {
             int obeliskV = 0;
             int sourceObeliskV = 16;
@@ -156,8 +157,7 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
                     v = obeliskV;
                 }
 
-                // actually the parameter names are wrong
-                drawTexture(matrices, x - iconHalfSize, y - iconHalfSize, this.getZOffset(), 0, v, iconSize, iconSize, textureWidth, textureHeight);
+                graphics.drawTexture(RIFT_ICONS, x - iconHalfSize, y - iconHalfSize, 0, v, iconSize, iconSize, textureWidth, textureHeight);
             }
 
             if (!selected.isEmpty()) {
@@ -179,13 +179,13 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
                     lines.add(obelisk.resolveName().copy().formatted(formatting));
                 }
 
-                this.renderTooltip(matrices, lines, centerX, centerY);
+                graphics.drawTooltip(this.textRenderer, lines, centerX, centerY);
             } else {
                 this.overlappingSelections = 1;
             }
         }
 
-        this.textRenderer.draw(matrices, this.title, (float)this.titleX, (float)this.titleY, 0xA0A0A0);
+        graphics.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0xA0A0A0, false);
     }
 
     private int getSelectionIndex() {
@@ -193,9 +193,9 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        this.renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, delta);
     }
 
     private Vector3f worldToScreenSpace(Matrix4f projectionViewMatrix, Vec3d worldPos) {

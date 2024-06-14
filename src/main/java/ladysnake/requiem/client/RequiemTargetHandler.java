@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.block.VagrantTargetableBlock;
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
@@ -43,8 +42,7 @@ import ladysnake.requiem.api.v1.event.minecraft.client.UpdateTargetedEntityCallb
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.core.ability.PlayerAbilityController;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.Identifier;
@@ -114,7 +112,7 @@ public final class RequiemTargetHandler implements UpdateTargetedEntityCallback,
     }
 
     @Override
-    public void onCrosshairRender(MatrixStack matrices, int scaledWidth, int scaledHeight) {
+    public void onCrosshairRender(GuiGraphics graphics, int scaledWidth, int scaledHeight) {
         if (this.client.player != null && RemnantComponent.isVagrant(this.client.player) && this.client.currentScreen == null) {
             PlayerAbilityController abilityController = PlayerAbilityController.get(this.client.player);
             AbilityType renderedType = AbilityType.ATTACK;
@@ -125,24 +123,22 @@ public final class RequiemTargetHandler implements UpdateTargetedEntityCallback,
                 && this.client.crosshairTarget instanceof BlockHitResult bhr) {
                 VagrantTargetableBlock targetable = VagrantTargetableBlock.LOOKUP.find(this.client.world, bhr.getBlockPos(), null);
                 if (targetable != null) {
-                    drawCrosshairIcon(matrices, scaledWidth, scaledHeight, targetable.getTargetedIcon(), targetable.canBeUsedByVagrant(client.player) ? 1 : 0);
+                    drawCrosshairIcon(graphics, scaledWidth, scaledHeight, targetable.getTargetedIcon(), targetable.canBeUsedByVagrant(client.player) ? 1 : 0);
                     return;
                 }
             }
 
             if (f < 1 || abilityController.getTargetedEntity(renderedType) != null) {
-                drawCrosshairIcon(matrices, scaledWidth, scaledHeight, abilityController.getIconTexture(renderedType), f);
+                drawCrosshairIcon(graphics, scaledWidth, scaledHeight, abilityController.getIconTexture(renderedType), f);
             }
         }
     }
 
-    static void drawCrosshairIcon(MatrixStack matrices, int scaledWidth, int scaledHeight, Identifier abilityIcon, float progress) {
+    static void drawCrosshairIcon(GuiGraphics graphics, int scaledWidth, int scaledHeight, Identifier abilityIcon, float progress) {
         int x = (scaledWidth - 32) / 2 + 8;
         int y = (scaledHeight - 16) / 2 + 16;
-        RenderSystem.setShaderTexture(0, abilityIcon);
         int height = (int)(progress * 8.0F);
-        DrawableHelper.drawTexture(matrices, x, y, 16, 8, 0, 0, 16, 8, 16, 16);
-        DrawableHelper.drawTexture(matrices, x, y + 8 - height, 16, height, 0, 16 - height, 16, height, 16, 16);
-        RenderSystem.setShaderTexture(0, DrawableHelper.GUI_ICONS_TEXTURE);
+        graphics.drawTexture(abilityIcon, x, y, 16, 8, 0, 0, 16, 8, 16, 16);
+        graphics.drawTexture(abilityIcon, x, y + 8 - height, 16, height, 0, 16 - height, 16, height, 16, 16);
     }
 }

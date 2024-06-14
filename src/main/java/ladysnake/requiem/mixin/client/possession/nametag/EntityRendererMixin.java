@@ -49,7 +49,7 @@ public abstract class EntityRendererMixin {
     @ModifyVariable(method = "renderLabelIfPresent", at = @At("HEAD"), argsOnly = true)
     private Text swapName(Text original, Entity entity) {
         PlayerEntity possessor = ((ProtoPossessable) entity).getPossessor();
-        if (possessor != null && RequiemSyncedGamerules.get(entity.world).shouldShowPossessorNametag()) {
+        if (possessor != null && RequiemSyncedGamerules.get(entity.getWorld()).shouldShowPossessorNametag()) {
             return possessor.getDisplayName();
         }
         return original;

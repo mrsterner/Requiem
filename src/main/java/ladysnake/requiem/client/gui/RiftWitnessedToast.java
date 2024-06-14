@@ -34,12 +34,10 @@
  */
 package ladysnake.requiem.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import ladysnake.requiem.common.block.RequiemBlocks;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
@@ -58,36 +56,33 @@ public class RiftWitnessedToast implements Toast {
     }
 
     @Override
-    public Visibility draw(MatrixStack matrices, ToastManager manager, long startTime) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        manager.drawTexture(matrices, 0, 0, 0, 0, this.getWidth(), this.getHeight());
+    public Visibility draw(GuiGraphics graphics, ToastManager manager, long startTime) {
+        graphics.drawTexture(TEXTURE, 0, 0, 0, 0, this.getWidth(), this.getHeight());
         List<OrderedText> lines = manager.getGame().textRenderer.wrapLines(this.riftName, 125);
         int headerColor = 0xff88ff;
         switch (lines.size()) {
-            case 0 -> manager.getGame().textRenderer.draw(matrices, RIFT_WITNESSED_TEXT, 30.0F, 11.0F, headerColor | 0xFF000000);
+            case 0 -> graphics.drawText(manager.getGame().textRenderer, RIFT_WITNESSED_TEXT, 30, 11, headerColor | 0xFF000000, false);
             case 1 -> {
-                manager.getGame().textRenderer.draw(matrices, RIFT_WITNESSED_TEXT, 30.0F, 7.0F, headerColor | 0xFF000000);
-                manager.getGame().textRenderer.draw(matrices, lines.get(0), 30.0F, 18.0F, -1);
+                graphics.drawText(manager.getGame().textRenderer, RIFT_WITNESSED_TEXT, 30, 7, headerColor | 0xFF000000, false);
+                graphics.drawText(manager.getGame().textRenderer, lines.get(0), 30, 18, -1, false);
             }
             default -> {
                 if (startTime < 1500L) {
                     int k = MathHelper.floor(MathHelper.clamp((float)(1500L - startTime) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 0x4000000;
-                    manager.getGame().textRenderer.draw(matrices, RIFT_WITNESSED_TEXT, 30.0F, 11.0F, headerColor | k);
+                    graphics.drawText(manager.getGame().textRenderer, RIFT_WITNESSED_TEXT, 30, 11, headerColor | k, false);
                 } else {
                     int k = MathHelper.floor(MathHelper.clamp((float)(startTime - 1500L) / 300.0F, 0.0F, 1.0F) * 252.0F) << 24 | 0x4000000;
                     int y = this.getHeight() / 2 - lines.size() * 9 / 2;
 
                     for(OrderedText orderedText : lines) {
-                        manager.getGame().textRenderer.draw(matrices, orderedText, 30.0F, (float)y, 0xffffff | k);
+                        graphics.drawText(manager.getGame().textRenderer, orderedText, 30, y, 0xffffff | k, false);
                         y += 9;
                     }
                 }
             }
         }
 
-        manager.getGame().getItemRenderer().renderInGui(RIFT_BLOCK, 8, 8);
+        graphics.drawItem(RIFT_BLOCK, 8, 8);
         return startTime >= 5000L ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }
 }

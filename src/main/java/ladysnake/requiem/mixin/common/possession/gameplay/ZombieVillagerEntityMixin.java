@@ -79,7 +79,7 @@ public abstract class ZombieVillagerEntityMixin extends ZombieEntity implements 
 
     @Override
     public MobEntity requiem_cureAsPossessed() {
-        this.finishConversion(((ServerWorld) this.world));
+        this.finishConversion(((ServerWorld) this.getWorld()));
         return CURED_VILLAGER.get();
     }
 }

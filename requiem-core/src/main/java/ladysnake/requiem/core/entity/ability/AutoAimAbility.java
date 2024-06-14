@@ -54,7 +54,7 @@ public class AutoAimAbility<E extends LivingEntity> extends IndirectAbilityBase<
 
     @Override
     public boolean run() {
-        LivingEntity target = this.owner.world.getClosestEntity(
+        LivingEntity target = this.owner.getWorld().getClosestEntity(
             LivingEntity.class,
             TargetPredicate.createAttackable(),
             this.owner,

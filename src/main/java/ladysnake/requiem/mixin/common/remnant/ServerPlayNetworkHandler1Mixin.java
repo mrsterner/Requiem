@@ -36,7 +36,7 @@ package ladysnake.requiem.mixin.common.remnant;
 
 import ladysnake.requiem.api.v1.event.minecraft.AllowUseEntityCallback;
 import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInteractionWithEntityC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
@@ -48,7 +48,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net/minecraft/server/network/ServerPlayNetworkHandler$C_wsexhymd")
-public abstract class ServerPlayNetworkHandler1Mixin implements PlayerInteractEntityC2SPacket.Handler {
+public abstract class ServerPlayNetworkHandler1Mixin implements PlayerInteractionWithEntityC2SPacket.Handler {
     @Shadow(aliases = {"f_bxwhxzqa", "field_28963"})
     public ServerPlayNetworkHandler networkHandler;
 
@@ -59,7 +59,7 @@ public abstract class ServerPlayNetworkHandler1Mixin implements PlayerInteractEn
     @SuppressWarnings({"InvalidInjectorMethodSignature", "UnnecessaryQualifiedMemberReference"})
     @Inject(method = "Lnet/minecraft/server/network/ServerPlayNetworkHandler$C_wsexhymd;processInteract(Lnet/minecraft/util/Hand;Lnet/minecraft/server/network/ServerPlayNetworkHandler$Interaction;)V", at = @At("HEAD"), cancellable = true)
     private void onPlayerInteractEntity(Hand hand, @Coerce Object action, CallbackInfo ci) {
-        ServerWorld world = this.networkHandler.getPlayer().getWorld();
+        ServerWorld world = this.networkHandler.getPlayer().getServerWorld();
 
         if (!AllowUseEntityCallback.EVENT.invoker().allow(this.networkHandler.getPlayer(), world, hand, entity)) {
             ci.cancel();

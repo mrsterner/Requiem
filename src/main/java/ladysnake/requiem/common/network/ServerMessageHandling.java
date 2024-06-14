@@ -46,6 +46,7 @@ import ladysnake.requiem.core.RequiemCoreNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.nbt.NbtOps;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 import static ladysnake.requiem.common.network.RequiemNetworking.*;
@@ -58,7 +59,7 @@ public final class ServerMessageHandling {
             int entityId = buf.readVarInt();
             server.execute(() -> {
                 MobAbilityController abilityController = MobAbilityController.get(player);
-                Entity targetedEntity = player.world.getEntityById(entityId);
+                Entity targetedEntity = player.getWorld().getEntityById(entityId);
 
                 // allow a slightly longer reach in case of lag
                 if (targetedEntity != null && (abilityController.getRange(type) + 3) > targetedEntity.distanceTo(player)) {
@@ -84,11 +85,11 @@ public final class ServerMessageHandling {
         ServerPlayNetworking.registerGlobalReceiver(OPEN_CRAFTING_MENU, (server, player, handler, buf, responseSender) -> server.execute(() -> {
             MobEntity possessed = PossessionComponent.get(player).getHost();
             if (possessed != null && possessed.getType().isIn(RequiemEntityTypeTags.SUPERCRAFTERS)) {
-                player.openHandledScreen(Blocks.CRAFTING_TABLE.getDefaultState().createScreenHandlerFactory(player.world, player.getBlockPos()));
+                player.openHandledScreen(Blocks.CRAFTING_TABLE.getDefaultState().createScreenHandlerFactory(player.getWorld(), player.getBlockPos()));
             }
         }));
         ServerPlayNetworking.registerGlobalReceiver(USE_RIFT, (server, player, handler, buf, responseSender) -> {
-            ObeliskDescriptor target = buf.decode(ObeliskDescriptor.CODEC);
+            ObeliskDescriptor target = buf.decode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC);
 
             server.execute(() -> {
                 if (player.currentScreenHandler instanceof RiftScreenHandler riftScreenHandler) {

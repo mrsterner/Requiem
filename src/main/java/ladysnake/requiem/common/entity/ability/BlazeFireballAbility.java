@@ -56,7 +56,7 @@ public class BlazeFireballAbility extends IndirectAbilityBase<LivingEntity> {
 
     @Override
     public void onCooldownEnd() {
-        if (!this.owner.world.isClient) {
+        if (!this.owner.getWorld().isClient) {
             if (this.owner instanceof BlazeEntity && ((BlazeEntityAccessor) this.owner).requiem$invokeIsFireActive()) {
                 ((BlazeEntityAccessor) this.owner).requiem$invokeSetFireActive(false);
             }
@@ -66,7 +66,7 @@ public class BlazeFireballAbility extends IndirectAbilityBase<LivingEntity> {
 
     @Override
     public boolean run() {
-        if (!this.owner.world.isClient && this.fireballs > 0) {
+        if (!this.owner.getWorld().isClient && this.fireballs > 0) {
             this.playFireballEffects();
             this.spawnFireball();
             this.consumeFireball();
@@ -77,18 +77,18 @@ public class BlazeFireballAbility extends IndirectAbilityBase<LivingEntity> {
     private void spawnFireball() {
         Vec3d rot = this.owner.getRotationVec(1.0f).multiply(10);
         SmallFireballEntity fireball = new SmallFireballEntity(
-                this.owner.world,
+                this.owner.getWorld(),
                 this.owner,
                 rot.x + this.owner.getRandom().nextGaussian() * RANDOM_SKEW_FACTOR,
                 rot.y,
                 rot.z + this.owner.getRandom().nextGaussian() * RANDOM_SKEW_FACTOR
         );
         fireball.setPosition(this.owner.getX(), this.owner.getY() + (double)(this.owner.getHeight() / 2.0F) + 0.5D, this.owner.getZ());
-        this.owner.world.spawnEntity(fireball);
+        this.owner.getWorld().spawnEntity(fireball);
     }
 
     private void playFireballEffects() {
-        this.owner.world.syncWorldEvent(BLAZE_SHOOT_EVENT, this.owner.getBlockPos(), 0);
+        this.owner.getWorld().syncWorldEvent(BLAZE_SHOOT_EVENT, this.owner.getBlockPos(), 0);
         if (this.owner instanceof BlazeEntity) {
             ((BlazeEntityAccessor) this.owner).requiem$invokeSetFireActive(true);
         }

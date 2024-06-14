@@ -64,7 +64,7 @@ public abstract class CrossbowItemMixin extends RangedWeaponItem {
             // - if we tell the client to eat an arrow but the server does not, the server will not update back => desync
             // - if we tell the client to *not* eat an arrow but the server does, the server will update back => everything's fine
             // so we default to telling the client that we are never using arrows and letting the server do the work
-            if (possessed instanceof CrossbowUser && (shooter.getRandom().nextFloat() < 0.5f || shooter.world.isClient)) {
+            if (possessed instanceof CrossbowUser && (shooter.getRandom().nextFloat() < 0.5f || shooter.getWorld().isClient)) {
                 crossbow.getOrCreateNbt().putBoolean(VanillaRequiemPlugin.INFINITY_SHOT_TAG, true);
                 return true;
             }

@@ -46,9 +46,6 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.Packet;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
@@ -93,14 +90,14 @@ public class SoulEntity extends Entity {
     public void tick() {
         super.tick();
 
-        if (!this.world.isClient()) {
+        if (!this.getWorld().isClient()) {
             if (this.maxAge >= 0 && this.age >= this.maxAge) {
                 this.expire();
             }
 
             this.targetChangeCooldown -= this.getPos().squaredDistanceTo(this.prevX, this.prevY, this.prevZ) < 0.0125 ? 10 : 1;
 
-            if ((this.world.getTime() % 20 == 0) && (this.getTarget().map(this.getPos()::squaredDistanceTo).orElse(Double.NaN) < 9 || targetChangeCooldown <= 0)) {
+            if ((this.getWorld().getTime() % 20 == 0) && (this.getTarget().map(this.getPos()::squaredDistanceTo).orElse(Double.NaN) < 9 || targetChangeCooldown <= 0)) {
                 this.updateTarget();
             }
 
@@ -114,7 +111,7 @@ public class SoulEntity extends Entity {
 
             // newVelocity = 0.9 * velocity + 0.1 * targetVector
             Vec3d newVelocity = this.getVelocity().multiply(0.9).add(targetVector.multiply(0.1));
-            if (Objects.equals(new BlockPos(target), this.getBlockPos())) {
+            if (Objects.equals(BlockPos.fromPosition(target), this.getBlockPos())) {
                 newVelocity = newVelocity.multiply(0.8);
             }
             this.setVelocity(newVelocity);
@@ -134,13 +131,13 @@ public class SoulEntity extends Entity {
             this.move(MovementType.SELF, this.getVelocity());
         }
 
-        if (this.world.isClient()) {
+        if (this.getWorld().isClient()) {
             for (int i = 0; i < 10 * this.getSpeedModifier(); i++) {
                 this.spawnTrailParticle();
             }
 
             if (random.nextInt(20) == 0) {
-                this.world.playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.PARTICLE_SOUL_ESCAPE, SoundCategory.AMBIENT, 1.0f, 1.5f, true);
+                this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.PARTICLE_SOUL_ESCAPE, SoundCategory.AMBIENT, 1.0f, 1.5f, true);
             }
         }
     }
@@ -160,15 +157,15 @@ public class SoulEntity extends Entity {
     }
 
     protected void expire() {
-        this.world.sendEntityStatus(this, SOUL_EXPIRED_STATUS);
+        this.getWorld().sendEntityStatus(this, SOUL_EXPIRED_STATUS);
         this.discard();
     }
 
     protected void spawnTrailParticle() {
         if (this.getBlockStateAtPos().isIn(RequiemBlockTags.WANDERING_SOUL_TRAVERSABLE)) {
-            this.world.addParticle(ParticleTypes.SOUL, this.getX() + random.nextGaussian() / 10, this.getY() + random.nextGaussian() / 10, this.getZ() + random.nextGaussian() / 10, random.nextGaussian() / 20, random.nextGaussian() / 20, random.nextGaussian() / 20);
+            this.getWorld().addParticle(ParticleTypes.SOUL, this.getX() + random.nextGaussian() / 10, this.getY() + random.nextGaussian() / 10, this.getZ() + random.nextGaussian() / 10, random.nextGaussian() / 20, random.nextGaussian() / 20, random.nextGaussian() / 20);
         } else {
-            this.world.addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
+            this.getWorld().addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
         }
     }
 
@@ -193,11 +190,11 @@ public class SoulEntity extends Entity {
         switch (status) {
             case SOUL_EXPIRED_STATUS -> {
                 for (int i = 0; i < 25; i++) {
-                    this.world.addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
-                    this.world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.SOUL_SAND.getDefaultState()), this.getX() + random.nextGaussian() / 10, this.getY() + random.nextGaussian() / 10, this.getZ() + random.nextGaussian() / 10, random.nextGaussian() / 20, random.nextGaussian() / 20, random.nextGaussian() / 20);
+                    this.getWorld().addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
+                    this.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.SOUL_SAND.getDefaultState()), this.getX() + random.nextGaussian() / 10, this.getY() + random.nextGaussian() / 10, this.getZ() + random.nextGaussian() / 10, random.nextGaussian() / 20, random.nextGaussian() / 20, random.nextGaussian() / 20);
                 }
-                this.world.playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.PARTICLE_SOUL_ESCAPE, SoundCategory.AMBIENT, 1.0f, 1.5f, true);
-                this.world.playSound(this.getX(), this.getY(), this.getZ(), this.getDisintegrationSound(), SoundCategory.AMBIENT, 1.0f, 1.0f, true);
+                this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.PARTICLE_SOUL_ESCAPE, SoundCategory.AMBIENT, 1.0f, 1.5f, true);
+                this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), this.getDisintegrationSound(), SoundCategory.AMBIENT, 1.0f, 1.0f, true);
             }
             default -> super.handleStatus(status);
         }
@@ -213,8 +210,8 @@ public class SoulEntity extends Entity {
         Vec3d newTarget = this.selectNextTarget();
         this.setTarget(newTarget);
 
-        BlockPos targetPos = new BlockPos(newTarget);
-        if (this.world.getBlockState(targetPos).isFullCube(world, targetPos) && !this.world.getBlockState(targetPos).isIn(RequiemBlockTags.WANDERING_SOUL_TRAVERSABLE)) {
+        BlockPos targetPos = BlockPos.fromPosition(newTarget);
+        if (this.getWorld().getBlockState(targetPos).isFullCube(this.getWorld(), targetPos) && !this.getWorld().getBlockState(targetPos).isIn(RequiemBlockTags.WANDERING_SOUL_TRAVERSABLE)) {
             this.targetChangeCooldown = 0;
             return;
         }
@@ -245,11 +242,6 @@ public class SoulEntity extends Entity {
     @Override
     protected void writeCustomDataToNbt(NbtCompound nbt) {
         nbt.putInt("max_age", this.maxAge);
-    }
-
-    @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
-        return new EntitySpawnS2CPacket(this);
     }
 
 }

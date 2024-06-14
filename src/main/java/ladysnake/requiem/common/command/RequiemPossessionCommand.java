@@ -93,16 +93,16 @@ public final class RequiemPossessionCommand {
             throw new CommandException(Text.translatable("requiem:commands.possession.start.fail", possessed.getDisplayName()));
         }
 
-        Text message;
-        String baseKey = "requiem:commands.possession.start.success";
 
-        if (source.getEntity() == player) {
-            message = Text.translatable(baseKey + ".self", possessed.getDisplayName());
-        } else {
-            message = Text.translatable(baseKey + ".other", player.getDisplayName(), possessed.getDisplayName());
-        }
+        source.sendFeedback(() -> {
+            String baseKey = "requiem:commands.possession.start.success";
 
-        source.sendFeedback(message, true);
+            if (source.getEntity() == player) {
+                return Text.translatable(baseKey + ".self", possessed.getDisplayName());
+            } else {
+                return Text.translatable(baseKey + ".other", player.getDisplayName(), possessed.getDisplayName());
+            }
+        }, true);
         return 1;
     }
 
@@ -125,9 +125,9 @@ public final class RequiemPossessionCommand {
 
     private static void sendStopPossessionFeedback(ServerCommandSource source, ServerPlayerEntity player, Entity formerHost) {
         if (source.getEntity() == player) {
-            source.sendFeedback(Text.translatable("requiem:commands.possession.stop.success.self", formerHost.getDisplayName()), true);
+            source.sendFeedback(() -> Text.translatable("requiem:commands.possession.stop.success.self", formerHost.getDisplayName()), true);
         } else {
-            source.sendFeedback(Text.translatable("requiem:commands.possession.stop.success.other", player.getDisplayName(), formerHost.getDisplayName()), true);
+            source.sendFeedback(() -> Text.translatable("requiem:commands.possession.stop.success.other", player.getDisplayName(), formerHost.getDisplayName()), true);
         }
     }
 }

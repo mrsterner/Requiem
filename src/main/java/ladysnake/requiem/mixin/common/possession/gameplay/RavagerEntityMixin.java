@@ -59,7 +59,7 @@ public abstract class RavagerEntityMixin extends RaiderEntity {
         at = @At(value = "FIELD", target = "Lnet/minecraft/entity/mob/RavagerEntity;horizontalCollision:Z")
     )
     private void disableClientsideGriefing(CallbackInfo ci) {
-        if (this.world.isClient() && this.horizontalCollision) {
+        if (this.getWorld().isClient() && this.horizontalCollision) {
             this.requiem$horizontalCollision = true;
             this.horizontalCollision = false;
         }

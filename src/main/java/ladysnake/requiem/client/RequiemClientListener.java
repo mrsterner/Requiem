@@ -54,8 +54,8 @@ import ladysnake.requiem.core.util.ItemUtil;
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.DrownedEntity;
@@ -108,7 +108,7 @@ public final class RequiemClientListener implements
         // Add custom tooltips to items when the player is possessing certain entities
         ItemTooltipCallback.EVENT.register(this);
         PossessionStateChangeCallback.EVENT.register((possessor, target) -> {
-            if (possessor.world.isClient && target != null) {
+            if (possessor.getWorld().isClient && target != null) {
                 if (target.getType().isIn(RequiemCoreEntityTags.IMMOVABLE)) {
                     this.mc.inGameHud.setOverlayMessage(Text.translatable("requiem:shulker.onboard", mc.options.sneakKey.getKeyName(), FractureKeyBinding.etherealFractureKey.getKeyName()), false);
                 } else if (target.getType().isIn(RequiemCoreEntityTags.FRICTIONLESS_HOSTS)) {
@@ -162,10 +162,10 @@ public final class RequiemClientListener implements
         }
     }
 
-    public void drawEnderCrosshair(MatrixStack matrices, int scaledWidth, int scaledHeight) {
+    public void drawEnderCrosshair(GuiGraphics graphics, int scaledWidth, int scaledHeight) {
         MinecraftClient client = this.mc;
         assert client.player != null;
-        if (RemnantComponent.isVagrant(client.player) && client.targetedEntity instanceof EndermanEntity && client.player.world.getRegistryKey() == World.END) {
+        if (RemnantComponent.isVagrant(client.player) && client.targetedEntity instanceof EndermanEntity && client.player.getWorld().getRegistryKey() == World.END) {
             // TODO probably replace with a proper texture
             RenderSystem.setShaderColor(0.4f, 0.0f, 1.0f, 1.0f);
         }
@@ -179,7 +179,7 @@ public final class RequiemClientListener implements
                 return;
             }
 
-            lines.addAll(PossessionItemOverrideWrapper.buildTooltip(player.world, player, possessed, item));
+            lines.addAll(PossessionItemOverrideWrapper.buildTooltip(player.getWorld(), player, possessed, item));
 
             String key;
             if (possessed.getType().isIn(RequiemEntityTypeTags.ARROW_GENERATORS) && item.getItem() instanceof RangedWeaponItem) {

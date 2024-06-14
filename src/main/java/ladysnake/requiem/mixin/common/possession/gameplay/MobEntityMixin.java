@@ -42,9 +42,7 @@ import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.core.util.DetectionHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemSteerable;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -56,6 +54,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@SuppressWarnings("UnreachableCode")
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntityMixin implements Possessable {
     private @Nullable Float requiem$previousStepHeight;
@@ -70,7 +69,7 @@ public abstract class MobEntityMixin extends LivingEntityMixin implements Posses
     @Override
     protected Vec3d requiem$travelStart(Vec3d movementInput) {
         if (this.requiem$previousStepHeight != null) {
-            this.stepHeight = this.requiem$previousStepHeight;
+            this.setStepHeight(this.requiem$previousStepHeight);
             this.requiem$previousStepHeight = null;
         }
 
@@ -96,9 +95,9 @@ public abstract class MobEntityMixin extends LivingEntityMixin implements Posses
             this.bodyYaw = this.getYaw();
             this.headYaw = this.bodyYaw;
 
-            if (this.stepHeight < 1.0F) {
-                this.requiem$previousStepHeight = this.stepHeight;
-                this.stepHeight = 1.0F;
+            if (this.getStepHeight() < 1.0F) {
+                this.requiem$previousStepHeight = this.getStepHeight();
+                this.setStepHeight(1.0F);
             }
 
             float sidewaysSpeed = livingEntity.sidewaysSpeed * 0.5F;
@@ -107,15 +106,9 @@ public abstract class MobEntityMixin extends LivingEntityMixin implements Posses
                 forwardSpeed *= 0.25F;
             }
 
-            this.requiem$setFlyingSpeed(this.getMovementSpeed() * 0.1F);
             // isLogicalSideForUpdatingMovement but inlined
-            if (passenger instanceof PlayerEntity player && player.isMainPlayer() || !this.world.isClient()) {
-                float speed;
-                if (this instanceof ItemSteerable steerable) {
-                    speed = steerable.getSaddledSpeed();
-                } else {
-                    speed = (float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-                }
+            if (passenger instanceof PlayerEntity player && player.isMainPlayer() || !this.getWorld().isClient()) {
+                float speed = this.getRiddenSpeed(passenger instanceof PlayerEntity ? (PlayerEntity) passenger : getPossessor());
                 this.setMovementSpeed(speed);
                 return new Vec3d(sidewaysSpeed, movementInput.y, forwardSpeed);
             } else if (livingEntity instanceof PlayerEntity) {

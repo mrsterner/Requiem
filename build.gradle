@@ -1,6 +1,7 @@
 // Credits to UpcraftLP for the base build script
 
 plugins {
+    alias(libs.plugins.quilt.loom)
     alias(libs.plugins.chenille)
 }
 
@@ -9,6 +10,7 @@ archivesBaseName = rootProject.name
 
 allprojects {
     apply plugin: 'maven-publish'
+    apply plugin: 'org.quiltmc.loom'
     apply plugin: 'io.github.ladysnake.chenille'
 
     version = project.mod_version
@@ -31,6 +33,7 @@ allprojects {
     }
 
     repositories {
+        mavenLocal()
         chenille.repositories {
             cotton()
             jamieswhiteshirt()
@@ -50,6 +53,7 @@ allprojects {
             repo.content {
                 it.includeGroupByRegex("dev\\.emi.*")
                 it.includeGroup("io.github.ladysnake")
+                it.includeGroup("org.ladysnake")
                 it.includeGroupByRegex("(dev|io\\.github)\\.onyxstudios.*")
                 it.includeGroupByRegex("org.quiltmc.*")
             }
@@ -148,18 +152,24 @@ dependencies {
     // Required dependencies
     api include(project(path: ":requiem-api", configuration: "namedElements")) { transitive = false }
     api include(project(path: ":requiem-core", configuration: "namedElements")) { transitive = false }
-    modImplementation libs.bundles.requiredLibraries
+    modImplementation(libs.bundles.requiredLibraries) {
+        exclude group: "net.fabricmc"
+        exclude group: "net.fabricmc.fabric-api"
+    }
     include libs.bundles.requiredLibraries
 
     // Test dependencies
     testImplementation testLibs.junit
     testImplementation testLibs.mockito
     testmodImplementation testLibs.mockito
-    modLocalImplementation testLibs.elmendorf
+    modLocalImplementation(testLibs.elmendorf) {
+        exclude group: "net.fabricmc"
+        exclude group: "net.fabricmc.fabric-api"
+    }
 
     // Optional dependencies
-    modCompileOnly libs.modmenu
-    modLocalRuntime libs.modmenu
+    modCompileOnly(libs.modmenu) { transitive = false }
+    modLocalRuntime(libs.modmenu) { transitive = false }
     modCompileOnly (libs.bundles.cloth) { transitive = false }
     modLocalRuntime (libs.bundles.cloth) { transitive = false }
     include libs.fiberToCloth
@@ -178,7 +188,10 @@ dependencies {
 //    modLocalRuntime compatLibs.snowmercy
     modCompileOnly (compatLibs.bundles.origins) { transitive = false }
     modLocalRuntime (compatLibs.bundles.origins) { transitive = false }
-    modLocalImplementation (compatLibs.additionalEntityAttributes)
+    modLocalImplementation (compatLibs.additionalEntityAttributes) {
+        exclude group: "net.fabricmc"
+        exclude group: "net.fabricmc.fabric-api"
+    }
 
     modCompileOnly (compatLibs.eldritchMobs) { transitive = false }
 //    modLocalRuntime compatLibs.eldritchMobs
@@ -190,8 +203,14 @@ dependencies {
 //    modLocalRuntime compatLibs.bumblezone
     modCompileOnly (compatLibs.bewitchment) { transitive = false }
 //    modLocalRuntime compatLibs.bundles.bewitchment
-    modLocalImplementation (compatLibs.trinkets)
-    modLocalRuntime compatLibs.collective
+    modLocalImplementation (compatLibs.trinkets) {
+        exclude group: "net.fabricmc"
+        exclude group: "net.fabricmc.fabric-api"
+    }
+    modLocalRuntime (compatLibs.collective) {
+        exclude group: "net.fabricmc"
+        exclude group: "net.fabricmc.fabric-api"
+    }
 }
 
 remapJar.dependsOn(project(":requiem-core").tasks.remapJar)

@@ -61,7 +61,7 @@ public class EvokerVexAbility extends IndirectAbilityBase<EvokerEntity> {
 
     @Override
     public boolean run() {
-        if (this.owner.world.isClient) return true;
+        if (this.owner.getWorld().isClient) return true;
 
         boolean hasTarget = owner.getTarget() != null;
         if (!hasTarget) owner.setTarget(owner); // Need to have some kind of target to cast the spell

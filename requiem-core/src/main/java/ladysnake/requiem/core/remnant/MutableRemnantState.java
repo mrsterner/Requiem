@@ -94,7 +94,7 @@ public abstract class MutableRemnantState implements RemnantState {
 
     private void updatePlayerState(boolean vagrant) {
         SerializableMovementConfig config;
-        boolean serverside = !this.player.world.isClient;
+        boolean serverside = !this.player.getWorld().isClient;
         if (vagrant) {
             config = SerializableMovementConfig.SOUL;
             if (serverside) {
@@ -174,9 +174,8 @@ public abstract class MutableRemnantState implements RemnantState {
 
     protected void copyGlobalPos(ServerPlayerEntity original) {
         ServerPlayerEntity clone = (ServerPlayerEntity) this.player;
-        ServerWorld previousWorld = original.getWorld();
-        clone.setWorld(previousWorld);
-        clone.interactionManager.setWorld(previousWorld);
+        ServerWorld previousWorld = original.getServerWorld();
+        clone.setServerWorld(previousWorld);
         clone.copyPositionAndRotation(original);
     }
 

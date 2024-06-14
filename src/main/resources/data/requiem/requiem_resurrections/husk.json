@@ -2,7 +2,11 @@
   "schema_version": 0,
   "priority": 100,
   "killing_blow": {
-    "name": "inWall"
+    "tags": [
+      {
+        "id": "requiem:is_suffocating"
+      }
+    ]
   },
   "special_conditions": [
     "head_in_sand"

@@ -38,12 +38,13 @@ import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.RegistryKey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
 public record BlockRegistration(String name, @Nullable BlockItemRegistration blockItemRegistration) {
-    public record BlockItemRegistration(ItemGroup group, BiFunction<Block, Item.Settings, BlockItem> blockItemFactory) {
+    public record BlockItemRegistration(RegistryKey<ItemGroup> group, BiFunction<Block, Item.Settings, BlockItem> blockItemFactory) {
 
     }
 }

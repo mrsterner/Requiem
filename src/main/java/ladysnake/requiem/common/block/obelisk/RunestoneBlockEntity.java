@@ -224,7 +224,7 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
                             .forEach(GlobalRecord::invalidate);
                         GlobalRecord record = GlobalRecordKeeper.get(this.world).createRecord();
                         record.put(RequiemRecordTypes.OBELISK_REF, new ObeliskDescriptor(
-                            this.world.getRegistryKey(),
+                            this.getWorld().getRegistryKey(),
                             this.getPos(),
                             this.obeliskCoreWidth,
                             this.obeliskCoreHeight,
@@ -234,7 +234,7 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
                         this.recordUuid = record.getUuid();
                     }
                 },
-                () -> this.world.scheduleBlockTick(this.pos, state.getBlock(), 0)
+                () -> this.getWorld().scheduleBlockTick(this.pos, state.getBlock(), 0)
             );
     }
 
@@ -244,7 +244,7 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
     }
 
     public boolean canBeUsedBy(PlayerEntity player) {
-        if (player.world.getBlockEntity(this.pos) != this) {
+        if (player.getWorld().getBlockEntity(this.pos) != this) {
             return false;
         } else {
             return player.squaredDistanceTo((double) this.pos.getX() + 0.5, (double) this.pos.getY() + 0.5, (double) this.pos.getZ() + 0.5) <= 64.0;
@@ -258,7 +258,7 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
         }
 
         if (this.world != null) {
-            this.world.playSound(null, pos, RequiemSoundEvents.BLOCK_OBELISK_DEACTIVATE, SoundCategory.BLOCKS, 1, 0.3f);
+            this.getWorld().playSound(null, pos, RequiemSoundEvents.BLOCK_OBELISK_DEACTIVATE, SoundCategory.BLOCKS, 1, 0.3f);
         }
     }
 

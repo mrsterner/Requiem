@@ -47,7 +47,7 @@ public abstract class FrogEntityMixin {
     /**
      * Frogs have a very high attack value but aren't actually that good, so we nerf their soul defense
      */
-    @Inject(method = "createFrogAttributes", at = @At("RETURN"))
+    @Inject(method = "createAttributes", at = @At("RETURN"))
     private static void easeFrogPossession(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
         cir.getReturnValue().add(RequiemEntityAttributes.SOUL_DEFENSE, -5);
     }

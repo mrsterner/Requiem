@@ -90,11 +90,11 @@ public class ReleasedSoulEntity extends SoulEntity {
 
     @Override
     public void tick() {
-        if (!this.world.isClient()) {
+        if (!this.getWorld().isClient()) {
             this.setBodyStatus(
                 this.getOwnerRef()
-                    .map(ptr -> ptr.resolve(((ServerWorld) this.world).getServer())
-                        .filter(e -> e.world == this.world)
+                    .map(ptr -> ptr.resolve(((ServerWorld) this.getWorld()).getServer())
+                        .filter(e -> e.getWorld() == this.getWorld())
                         .filter(e -> e.distanceTo(this) < 100)
                         .isPresent() ? BODY_FOUND : BODY_ISEKAI)
                     .orElse(BODY_MISSING)
@@ -118,7 +118,7 @@ public class ReleasedSoulEntity extends SoulEntity {
     ) {
         // Will be retrieved later (see FilledSoulVesselItem#registerCallbacks)
         this.getOwnerRecord().ifPresent(data -> data.put(RequiemRecordTypes.RELEASED_SOUL, Unit.INSTANCE));
-        this.world.sendEntityStatus(this, status);
+        this.getWorld().sendEntityStatus(this, status);
         this.discard();
     }
 
@@ -148,7 +148,7 @@ public class ReleasedSoulEntity extends SoulEntity {
 
     private boolean isCollidingWithOwner() {
         return this.getOwnerRef()
-            .flatMap(ptr -> ptr.resolve(((ServerWorld)this.world).getServer()))
+            .flatMap(ptr -> ptr.resolve(((ServerWorld)this.getWorld()).getServer()))
             .filter(e -> e.getBoundingBox().intersects(this.getBoundingBox()))
             .isPresent();
     }
@@ -159,14 +159,14 @@ public class ReleasedSoulEntity extends SoulEntity {
 
     private Optional<GlobalRecord> getOwnerRecord() {
         return Optional.ofNullable(ownerRecord)
-            .flatMap(GlobalRecordKeeper.get(this.world)::getRecord);
+            .flatMap(GlobalRecordKeeper.get(this.getWorld())::getRecord);
     }
 
     @Override
     protected void spawnTrailParticle() {
         switch (this.getBodyStatus()) {
-            case BODY_ISEKAI -> this.world.addParticle(ParticleTypes.PORTAL, this.getParticleX(0.5D), this.getRandomBodyY() - 0.25D, this.getParticleZ(0.5D), (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
-            case BODY_MISSING -> world.addParticle(ParticleTypes.SMOKE, this.getX() + random.nextDouble() / 5.0D, this.getY() + random.nextDouble() / 3, this.getZ() + random.nextDouble() / 5.0D, 0.0D, 0.05D, 0.0D);
+            case BODY_ISEKAI -> this.getWorld().addParticle(ParticleTypes.PORTAL, this.getParticleX(0.5D), this.getRandomBodyY() - 0.25D, this.getParticleZ(0.5D), (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
+            case BODY_MISSING -> getWorld().addParticle(ParticleTypes.SMOKE, this.getX() + random.nextDouble() / 5.0D, this.getY() + random.nextDouble() / 3, this.getZ() + random.nextDouble() / 5.0D, 0.0D, 0.05D, 0.0D);
             default -> super.spawnTrailParticle();
         }
     }
@@ -197,14 +197,14 @@ public class ReleasedSoulEntity extends SoulEntity {
             case TELEPORT_AWAY_STATUS -> {
                 this.playSound(RequiemSoundEvents.ENTITY_SOUL_TELEPORT, 1, 1);
                 for(double angle = 0.0D; angle < Math.PI * 2; angle += Math.PI / 20.0) {
-                    this.world.addParticle(ParticleTypes.PORTAL, this.getX() + Math.cos(angle) * 5.0D, this.getY() - 0.4D, this.getZ() + Math.sin(angle) * 5.0D, Math.cos(angle) * -5.0D, 0.0D, Math.sin(angle) * -5.0D);
-                    this.world.addParticle(ParticleTypes.PORTAL, this.getX() + Math.cos(angle) * 5.0D, this.getY() - 0.4D, this.getZ() + Math.sin(angle) * 5.0D, Math.cos(angle) * -7.0D, 0.0D, Math.sin(angle) * -7.0D);
+                    this.getWorld().addParticle(ParticleTypes.PORTAL, this.getX() + Math.cos(angle) * 5.0D, this.getY() - 0.4D, this.getZ() + Math.sin(angle) * 5.0D, Math.cos(angle) * -5.0D, 0.0D, Math.sin(angle) * -5.0D);
+                    this.getWorld().addParticle(ParticleTypes.PORTAL, this.getX() + Math.cos(angle) * 5.0D, this.getY() - 0.4D, this.getZ() + Math.sin(angle) * 5.0D, Math.cos(angle) * -7.0D, 0.0D, Math.sin(angle) * -7.0D);
                 }
             }
             case MERGE_WITH_BODY_STATUS -> {
                 this.playSound(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, 1, 1);
                 for (int i = 0; i < 25; i++) {
-                    this.world.addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
+                    this.getWorld().addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
                 }
             }
             default -> super.handleStatus(status);

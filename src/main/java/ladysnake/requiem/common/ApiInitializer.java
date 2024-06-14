@@ -35,7 +35,6 @@
 package ladysnake.requiem.common;
 
 import dev.onyxstudios.cca.api.v3.component.ComponentFactory;
-import io.github.ladysnake.locki.Locki;
 import ladysnake.requiem.api.v1.RequiemApi;
 import ladysnake.requiem.api.v1.RequiemPlugin;
 import ladysnake.requiem.api.v1.entity.ExternalJumpingMount;
@@ -63,6 +62,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.World;
 import org.apiguardian.api.API;
+import org.ladysnake.locki.Locki;
 
 import java.lang.reflect.Field;
 import java.util.function.Consumer;

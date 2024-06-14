@@ -74,7 +74,7 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
-    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
+    @Inject(method = "createAttributes", at = @At("RETURN"))
     private static void addSoulDefenseAttribute(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
         cir.getReturnValue().add(RequiemEntityAttributes.SOUL_DEFENSE);
     }
@@ -106,7 +106,7 @@ public abstract class LivingEntityMixin extends Entity {
      */
     @Inject(method = "consumeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearActiveItem()V"))
     private void dropUsedItemAsSoul(CallbackInfo ci) {
-        if (RemnantComponent.isIncorporeal(this) && !world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
+        if (RemnantComponent.isIncorporeal(this) && !getWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
             this.dropStack(this.getStackInHand(this.getActiveHand()));
             this.setStackInHand(this.getActiveHand(), ItemStack.EMPTY);
         }

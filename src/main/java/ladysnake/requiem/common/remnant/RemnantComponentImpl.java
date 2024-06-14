@@ -153,12 +153,12 @@ public final class RemnantComponentImpl implements RemnantComponent {
 
     @Override
     public boolean canCurePossessed(LivingEntity body) {
-        return !this.player.world.getGameRules().getBoolean(RequiemGamerules.NO_CURE) && this.state.canCurePossessed(body);
+        return !this.player.getWorld().getGameRules().getBoolean(RequiemGamerules.NO_CURE) && this.state.canCurePossessed(body);
     }
 
     @Override
     public void curePossessed(LivingEntity body) {
-        Preconditions.checkState(!this.player.world.isClient);
+        Preconditions.checkState(!this.player.getWorld().isClient);
         if (this.canCurePossessed(body)) {
             this.state.curePossessed(body);
         }

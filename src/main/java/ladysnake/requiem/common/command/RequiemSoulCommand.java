@@ -88,10 +88,10 @@ public final class RequiemSoulCommand {
             if (SoulHolderComponent.isSoulless(living) != soulless) {
                 if (soulless) {
                     SoulHolderComponent.get(living).removeSoul();
-                    source.sendFeedback(Text.translatable("requiem:commands.soul.remove.success", target.getDisplayName()), true);
+                    source.sendFeedback(() -> Text.translatable("requiem:commands.soul.remove.success", target.getDisplayName()), true);
                 } else {
                     SoulHolderComponent.get(living).giveSoulBack();
-                    source.sendFeedback(Text.translatable("requiem:commands.soul.restore.success", target.getDisplayName()), true);
+                    source.sendFeedback(() -> Text.translatable("requiem:commands.soul.restore.success", target.getDisplayName()), true);
                 }
 
                 ++count;
@@ -103,7 +103,7 @@ public final class RequiemSoulCommand {
     private static int querySoul(ServerCommandSource source, Entity target) {
         boolean hasSoul = target instanceof LivingEntity living && !SoulHolderComponent.isSoulless(living);
         String message = "requiem:commands.soul.query." + (hasSoul ? "has_soul" : "no_soul");
-        source.sendFeedback(Text.translatable(message, target.getDisplayName()), true);
+        source.sendFeedback(() -> Text.translatable(message, target.getDisplayName()), true);
         return hasSoul ? 1 : 0;
     }
 }

@@ -1,7 +1,7 @@
 ------------------------------------------------------
-Version 2.0.0-pre.1
+Version 2.0.0-beta.17
 ------------------------------------------------------
-Updated to 1.19.3
+Updated to 1.20.1
 
 **Changes**
 - Possessed bats can now roost under a ceiling

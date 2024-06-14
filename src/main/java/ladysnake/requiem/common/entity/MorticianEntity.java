@@ -97,7 +97,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TimeHelper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.math.int_provider.UniformIntProvider;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.world.Difficulty;
@@ -131,7 +131,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
     public static final int DESPAWN_DELAY = 20 * 30;
 
     public static DefaultAttributeContainer.Builder createMorticianAttributes() {
-        return MobEntity.createMobAttributes().add(RequiemEntityAttributes.SOUL_OFFENSE, 30);
+        return MobEntity.createAttributes().add(RequiemEntityAttributes.SOUL_OFFENSE, 30);
     }
 
     private boolean checkLegacyData;
@@ -186,12 +186,12 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
     @Override
     public void tick() {
         super.tick();
-        if (this.world.isClient && this.isSpellcasting()) {
+        if (this.getWorld().isClient && this.isSpellcasting()) {
             float theta = this.bodyYaw * (float) (Math.PI / 180.0) + MathHelper.cos((float) this.age * 0.6662F) * 0.25F;
             float x = MathHelper.cos(theta);
             float z = MathHelper.sin(theta);
-            this.world.addParticle(RequiemParticleTypes.PENANCE, this.getX() + (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() + (double) z * 0.6, 1, 1, 1);
-            this.world.addParticle(RequiemParticleTypes.PENANCE, this.getX() - (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() - (double) z * 0.6, 1, 1, 1);
+            this.getWorld().addParticle(RequiemParticleTypes.PENANCE, this.getX() + (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() + (double) z * 0.6, 1, 1, 1);
+            this.getWorld().addParticle(RequiemParticleTypes.PENANCE, this.getX() - (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() - (double) z * 0.6, 1, 1, 1);
         }
     }
 
@@ -206,7 +206,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
 
     @Override
     public boolean canTarget(LivingEntity target) {
-        if (this.world.getDifficulty() != Difficulty.PEACEFUL
+        if (this.getWorld().getDifficulty() != Difficulty.PEACEFUL
             && target instanceof ServerPlayerEntity player
             && player.isPartOfGame()
             && player.interactionManager.isSurvivalLike()) {
@@ -318,11 +318,11 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
     @Override
     public void tickMovement() {
         super.tickMovement();
-        if (this.world instanceof ServerWorld sw && this.hasInvalidLinkedObelisk()) {
+        if (this.getWorld() instanceof ServerWorld sw && this.hasInvalidLinkedObelisk()) {
             // Attempt to link to a new obelisk, otherwise despawn
             MorticianSpawner.streamSpawnableObelisks(sw.getServer())
                 .filter(r -> r.get(RequiemRecordTypes.OBELISK_REF)
-                    .filter(obelisk -> obelisk.dimension() == this.world.getRegistryKey())
+                    .filter(obelisk -> obelisk.dimension() == this.getWorld().getRegistryKey())
                     .filter(obelisk -> obelisk.pos().isWithinDistance(this.getBlockPos(), MAX_LINK_DISTANCE))
                     .isPresent())
                 .min(Comparator.comparing(r -> r.get(RequiemRecordTypes.OBELISK_REF).orElseThrow().pos().getSquaredDistance(this.getBlockPos())))
@@ -334,14 +334,14 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
                     () -> {
                         this.setFadingTicks(this.getFadingTicks() + 1);
                         if (this.getFadingTicks() >= DESPAWN_DELAY) {
-                            world.sendEntityStatus(this, EntityStatuses.ADD_PORTAL_PARTICLES);
+                            this.getWorld().sendEntityStatus(this, EntityStatuses.ADD_PORTAL_PARTICLES);
                             this.discard();
                         }
                     }
                 );
 
             if (!this.isRemoved()) {
-                this.tickAngerLogic((ServerWorld) this.world, true);
+                this.tickAngerLogic((ServerWorld) this.getWorld(), true);
             }
         }
     }
@@ -358,7 +358,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
     }
 
     private boolean hasInvalidLinkedObelisk() {
-        return this.linkedObelisk != null && GlobalRecordKeeper.get(this.world).getRecord(this.linkedObelisk).flatMap(r -> r.get(RequiemRecordTypes.RIFT_OBELISK)).isEmpty();
+        return this.linkedObelisk != null && GlobalRecordKeeper.get(this.getWorld()).getRecord(this.linkedObelisk).flatMap(r -> r.get(RequiemRecordTypes.RIFT_OBELISK)).isEmpty();
     }
 
     @Override
@@ -369,13 +369,13 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
                 customer.incrementStat(Stats.TALKED_TO_VILLAGER);
             }
 
-            if (!this.world.isClient && !this.getOffers().isEmpty()) {
+            if (!this.getWorld().isClient && !this.getOffers().isEmpty()) {
                 this.prepareOffersFor(customer);
                 this.setCurrentCustomer(customer);
                 this.sendOffers(customer, this.getDisplayName(), 1);
             }
 
-            return ActionResult.success(this.world.isClient);
+            return ActionResult.success(this.getWorld().isClient);
         } else {
             return super.interactMob(customer, hand);
         }
@@ -409,7 +409,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
 
     public @Nullable ObeliskDescriptor getHome() {
         if (this.linkedObelisk == null) return null;
-        return GlobalRecordKeeper.get(this.world).getRecord(this.linkedObelisk).flatMap(r -> r.get(RequiemRecordTypes.OBELISK_REF)).orElse(null);
+        return GlobalRecordKeeper.get(this.getWorld()).getRecord(this.linkedObelisk).flatMap(r -> r.get(RequiemRecordTypes.OBELISK_REF)).orElse(null);
     }
 
     @Override
@@ -435,7 +435,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
             }
         }
 
-        this.readAngerFromNbt(this.world, nbt);
+        this.readAngerFromNbt(this.getWorld(), nbt);
 
         this.setBreedingAge(Math.max(0, this.getBreedingAge()));
     }
@@ -467,18 +467,18 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
     protected void afterUsing(TradeOffer offer) {
         if (offer instanceof RemnantTradeOffer demonTradeOffer && demonTradeOffer.demonCustomer && this.getCurrentCustomer() instanceof ServerPlayerEntity player) {
             RemnantComponent.get(player).become(RemnantTypes.MORTAL, true);
-            player.world.playSound(null, player.getX(), player.getY(), player.getZ(), RequiemSoundEvents.ITEM_OPUS_USE, player.getSoundCategory(), 1.4F, 0.1F);
+            player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), RequiemSoundEvents.ITEM_OPUS_USE, player.getSoundCategory(), 1.4F, 0.1F);
             RequiemNetworking.sendTo(player, RequiemNetworking.createOpusUsePacket(RemnantTypes.MORTAL, false));
         }
         if (offer.shouldRewardPlayerExperience()) {
             int i = 3 + this.random.nextInt(4);
-            this.world.spawnEntity(new ExperienceOrbEntity(this.world, this.getX(), this.getY() + 0.5D, this.getZ(), i));
+            this.getWorld().spawnEntity(new ExperienceOrbEntity(this.getWorld(), this.getX(), this.getY() + 0.5D, this.getZ(), i));
         }
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        if (!this.world.isClient && this.isDead()) {
+        if (!this.getWorld().isClient && this.isDead()) {
             for (UUID capturedSoul : this.capturedSouls) {
                 FilledSoulVesselItem.releaseSoul(this, capturedSoul);
             }

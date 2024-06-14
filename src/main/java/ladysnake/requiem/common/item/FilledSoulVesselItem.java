@@ -108,11 +108,11 @@ public class FilledSoulVesselItem extends Item {
     }
 
     public static void releaseSoul(LivingEntity user, @Nullable UUID ownerRecord) {
-        ReleasedSoulEntity releasedSoul = new ReleasedSoulEntity(RequiemEntities.RELEASED_SOUL, user.world, ownerRecord);
+        ReleasedSoulEntity releasedSoul = new ReleasedSoulEntity(RequiemEntities.RELEASED_SOUL, user.getWorld(), ownerRecord);
         releasedSoul.setPosition(user.getX(), user.getBodyY(0.8D), user.getZ());
         releasedSoul.setVelocity(user.getRotationVector().normalize().multiply(0.15));
         releasedSoul.setYaw(user.getYaw());
         releasedSoul.setPitch(user.getPitch());
-        user.world.spawnEntity(releasedSoul);
+        user.getWorld().spawnEntity(releasedSoul);
     }
 }

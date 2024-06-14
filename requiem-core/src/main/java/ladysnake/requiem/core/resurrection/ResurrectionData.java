@@ -48,9 +48,11 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
@@ -71,7 +73,7 @@ public record ResurrectionData(
     int priority,
     @Nullable EntityPredicate playerPredicate,
     @Nullable EntityPredicate possessedPredicate,
-    @Nullable ExtendedDamageSourcePredicate damageSourcePredicate,
+    @Nullable DamageSourcePredicate damageSourcePredicate,
     @Nullable ItemPredicate consumable,
     List<BiPredicate<ServerPlayerEntity, DamageSource>> specials,
     EntityType<?> entityType,
@@ -80,12 +82,12 @@ public record ResurrectionData(
     private static final Map<String, BiPredicate<ServerPlayerEntity, DamageSource>> SPECIAL_PREDICATES = Util.make(new HashMap<>(), m -> {
         m.put("head_in_sand", (lazarus, killingBlow) -> {
             float eyeHeight = lazarus.getEyeHeight(lazarus.getPose());
-            return lazarus.world.getBlockState(lazarus.getBlockPos().add(0, eyeHeight, 0)).isIn(BlockTags.SAND);
+            return lazarus.getWorld().getBlockState(lazarus.getBlockPos().add(0, (int) eyeHeight, 0)).isIn(BlockTags.SAND);
         });
     });
 
     public boolean matches(ServerPlayerEntity player, @Nullable LivingEntity possessed, DamageSource killingBlow) {
-        if (killingBlow.isOutOfWorld()) return false;
+        if (killingBlow.isTypeIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return false;
 
         if (damageSourcePredicate != null && !damageSourcePredicate.test(player, killingBlow)) {
             return false;
@@ -163,9 +165,9 @@ public record ResurrectionData(
     @NotNull
     private static ResurrectionData deserializeV0(JsonObject json) {
         int priority = JsonHelper.getInt(json, "priority", 100);
-        @Nullable ExtendedDamageSourcePredicate damagePredicate = ExtendedDamageSourcePredicate.deserialize(json.get("killing_blow"));
-        @Nullable EntityPredicate playerPredicate = json.has("player") ? EntityPredicate.fromJson(json.get("player")) : null;
-        @Nullable EntityPredicate possessedPredicate = json.has("possessed") ? EntityPredicate.fromJson(json.get("possessed")) : null;
+        @Nullable DamageSourcePredicate damagePredicate = DamageSourcePredicate.fromJson(json.get("killing_blow"));
+        @Nullable EntityPredicate playerPredicate = json.has("player") ? EntityPredicate.method_8913(json.get("player")) : null;
+        @Nullable EntityPredicate possessedPredicate = json.has("possessed") ? EntityPredicate.method_8913(json.get("possessed")) : null;
         @Nullable ItemPredicate consumable = json.has("consumable") ? ItemPredicate.fromJson(json.get("consumable")) : null;
 
         if (damagePredicate == null && playerPredicate == null && possessedPredicate == null && consumable == null) {

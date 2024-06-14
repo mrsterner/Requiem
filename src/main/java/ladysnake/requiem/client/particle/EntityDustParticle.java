@@ -111,7 +111,7 @@ public class EntityDustParticle extends BillboardParticle {
 
     private boolean reachedNextStep(Vec3d nextStep) {
         if (nextStep.squaredDistanceTo(this.x, this.y, this.z) < 0.1) {
-            this.exploredBlocks.add(new BlockPos(nextStep));
+            this.exploredBlocks.add(BlockPos.fromPosition(nextStep));
             return true;
         }
         return false;

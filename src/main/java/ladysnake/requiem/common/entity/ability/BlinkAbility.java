@@ -49,11 +49,11 @@ public class BlinkAbility extends IndirectAbilityBase<LivingEntity> {
 
     @Override
     public boolean run() {
-        if (!this.owner.world.isClient) {
+        if (!this.owner.getWorld().isClient) {
             Vec3d blinkPos = RayHelper.findBlinkPos(this.owner, 1F, 32D);
             if (this.owner.teleport(blinkPos.x, blinkPos.y, blinkPos.z, true)) {
-                this.owner.world.playSound(null, this.owner.prevX, this.owner.prevY, this.owner.prevZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.owner.getSoundCategory(), 1.0F, 1.0F);
-                this.owner.world.playSound(null, blinkPos.x, blinkPos.y, blinkPos.z, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.owner.getSoundCategory(), 1.0F, 1.0F);
+                this.owner.getWorld().playSound(null, this.owner.prevX, this.owner.prevY, this.owner.prevZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.owner.getSoundCategory(), 1.0F, 1.0F);
+                this.owner.getWorld().playSound(null, blinkPos.x, blinkPos.y, blinkPos.z, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.owner.getSoundCategory(), 1.0F, 1.0F);
             }
         }
         return true;

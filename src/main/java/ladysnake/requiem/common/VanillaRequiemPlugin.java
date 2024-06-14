@@ -38,8 +38,6 @@ import baritone.api.fakeplayer.AutomatoneFakePlayer;
 import com.mojang.authlib.GameProfile;
 import io.github.ladysnake.impersonate.Impersonate;
 import io.github.ladysnake.impersonate.Impersonator;
-import io.github.ladysnake.locki.DefaultInventoryNodes;
-import io.github.ladysnake.locki.ModdedInventoryNodes;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.RequiemPlugin;
 import ladysnake.requiem.api.v1.entity.CurableEntityComponent;
@@ -100,7 +98,6 @@ import ladysnake.requiem.common.gamerule.RequiemGamerules;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.possession.MobRidingType;
 import ladysnake.requiem.common.remnant.BasePossessionHandlers;
-import ladysnake.requiem.common.remnant.MortalDysmorphiaDamageSource;
 import ladysnake.requiem.common.remnant.PlayerSplitter;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.tag.RequiemBlockTags;
@@ -136,7 +133,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.EntityStatusEffectS2CPacket;
+import net.minecraft.network.packet.s2c.play.EntityStatusEffectUpdateS2CPacket;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -145,6 +142,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.locki.DefaultInventoryNodes;
+import org.ladysnake.locki.ModdedInventoryNodes;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -257,8 +256,9 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
             ((MobResurrectable) player).spawnResurrectionEntity();
 
             // effects do not normally get synced after respawn, so we do it ourselves
+            // TODO check if still necessary
             for (StatusEffectInstance effect : player.getStatusEffects()) {
-                player.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(player.getId(), effect));
+                player.networkHandler.sendPacket(new EntityStatusEffectUpdateS2CPacket(player.getId(), effect));
             }
         }));
         RemnantStateChangeCallback.EVENT.register((player, remnant, cause) -> {
@@ -283,7 +283,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
             if (newType == RemnantTypes.MORTAL) {
                 GameProfile bodyIdentity = Impersonator.get(player).getImpersonatedProfile(PlayerSplitter.BODY_IMPERSONATION);
                 if (bodyIdentity != null) {
-                    player.damage(new MortalDysmorphiaDamageSource(Text.literal(player.getGameProfile().getName()), Text.literal(bodyIdentity.getName())), 100F);
+                    player.damage(player.getDamageSources().requiemSources().mortalDysmorphia(player.getGameProfile(), bodyIdentity), 100F);
                 }
             }
         });
@@ -346,7 +346,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
                 } else {
                     PlayerAbilityController.get(player).usePossessedAbilities(possessed);
 
-                    if (!possessed.world.isClient) {
+                    if (!possessed.getWorld().isClient) {
                         PossessedData.KEY.get(possessed).giftFirstPossessionLoot(player);
                     }
                 }
@@ -362,7 +362,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
             return null;
         });
         PossessionEvents.DETECTION_ATTEMPT.register((sensed, sensor, reason) -> {
-            PossessionDetection cfg = sensed.world.getGameRules().get(RequiemGamerules.POSSESSION_DETECTION).get();
+            PossessionDetection cfg = sensed.getWorld().getGameRules().get(RequiemGamerules.POSSESSION_DETECTION).get();
             return switch (reason) {
                 case BUMP, ATTACKING -> switch (cfg) {
                     case DISABLED -> PossessionEvents.DetectionAttempt.DetectionResult.UNDETECTED;
@@ -379,7 +379,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
 
     private void refreshInventoryLocks(PlayerEntity player, @Nullable MobEntity possessed) {
         InventoryLimiter inventoryLimiter = InventoryLimiter.instance();
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             inventoryLimiter.enable(player);
 
             if (possessed != null) {

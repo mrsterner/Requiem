@@ -39,6 +39,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -51,7 +52,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PossessableEntityMixin implements ProtoPossessable {
 
     @Shadow
-    public World world;
+    private World world;
 
     @Shadow
     public boolean velocityModified;
@@ -64,11 +65,18 @@ public abstract class PossessableEntityMixin implements ProtoPossessable {
         }
     }
 
+    @Inject(method = "isServer", at = @At("HEAD"), cancellable = true)
+    private void canMoveVoluntarily(CallbackInfoReturnable<Boolean> cir) {
+        if (this.isBeingPossessed()) {
+            cir.setReturnValue(false);
+        }
+    }
+
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
         PlayerEntity player = this.getPossessor();
         if (player != null && player.isCreative()) {
-            cir.setReturnValue(!source.isOutOfWorld());
+            cir.setReturnValue(!source.isTypeIn(DamageTypeTags.BYPASSES_INVULNERABILITY));
         }
     }
 

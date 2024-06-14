@@ -17,10 +17,10 @@
  */
 package ladysnake.requiem.api.v1.entity;
 
-import io.github.ladysnake.locki.InventoryLock;
-import io.github.ladysnake.locki.InventoryNode;
 import ladysnake.requiem.api.v1.internal.ApiInternals;
 import net.minecraft.entity.player.PlayerEntity;
+import org.ladysnake.locki.InventoryLock;
+import org.ladysnake.locki.InventoryNode;
 
 public interface InventoryLimiter {
     static InventoryLimiter instance() {

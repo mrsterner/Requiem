@@ -95,7 +95,7 @@ public class ZaWorldFx implements PostWorldRenderCallback, ClientTickEvents.EndT
                 this.ticks = 0;
                 this.prevRadius = this.radius = 0;
                 this.renderingEffect = true;
-                client.player.world.playSound(client.player.getX(), client.player.getY(), client.player.getZ(), RequiemSoundEvents.EFFECT_TIME_STOP, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
+                client.player.getWorld().playSound(client.player.getX(), client.player.getY(), client.player.getZ(), RequiemSoundEvents.EFFECT_TIME_STOP, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
             }
             this.ticks++;
             this.prevRadius = this.radius;

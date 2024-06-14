@@ -37,7 +37,6 @@ package ladysnake.requiem.core.mixin.possession.possessor;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -82,7 +81,7 @@ public abstract class HungerManagerMixin {
     private float damagePossessedEntity(float amount) {
         LivingEntity possessedEntity = PossessionComponent.get(PLAYER_ENTITY_THREAD_LOCAL.get()).getHost();
         if (possessedEntity != null && ((Possessable) possessedEntity).isRegularEater()) {
-            possessedEntity.damage(DamageSource.STARVE, amount);
+            possessedEntity.damage(possessedEntity.getDamageSources().starve(), amount);
         }
         return amount;
     }

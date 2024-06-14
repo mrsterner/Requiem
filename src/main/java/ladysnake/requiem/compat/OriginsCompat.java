@@ -97,7 +97,7 @@ public final class OriginsCompat {
         GAMERULE_CONDITION_ID,
         new SerializableData().add("value", SerializableDataType.list(SerializableDataType.enumValue(StartingRemnantType.class)), Collections.singletonList(StartingRemnantType.CHOOSE)),
         (instance, entity) -> {
-            StartingRemnantType startingRemnantType = RequiemSyncedGamerules.get(entity.world).getStartingRemnantType();
+            StartingRemnantType startingRemnantType = RequiemSyncedGamerules.get(entity.getWorld()).getStartingRemnantType();
             return ((List<?>) instance.get("value")).contains(startingRemnantType);
         }
     );
@@ -138,7 +138,7 @@ public final class OriginsCompat {
         Registry.register(ApoliRegistries.POWER_FACTORY, FACTORY_ID, REMNANT_POWER_FACTORY);
         Registry.register(ApoliRegistries.ENTITY_CONDITION, GAMERULE_CONDITION_ID, GAMERULE_CONDITION_FACTORY);
         RemnantStateChangeCallback.EVENT.register((player, state, cause) -> {
-            if (!player.world.isClient) {
+            if (!player.getWorld().isClient) {
                 boolean transferData = !cause.isCharacterSwitch();
                 if (state.isVagrant()) {
                     ORIGIN_HOLDER_KEY.get(player).storeDataFrom(player, transferData);

@@ -53,13 +53,13 @@ public class LazyEntityPredicate extends LazyDataPredicate<EntityPredicate> {
     }
 
     public boolean test(Entity entity) {
-        if (!entity.world.isClient) {
-            return this.get(entity.world).test((ServerWorld) entity.world, null, entity);
+        if (!entity.getWorld().isClient) {
+            return this.get(entity.getWorld()).test((ServerWorld) entity.getWorld(), null, entity);
         } else {
             // We still need to have some idea of whether this test can succeed clientside
             // Thankfully, most tests will never use the server world, so we can just pass null and pray
             try {
-                return this.get(entity.world).test(null/*Possible NPE*/, null, entity);
+                return this.get(entity.getWorld()).test(null/*Possible NPE*/, null, entity);
             } catch (NullPointerException npe) {
                 // We will have to check this serverside
                 return true;
@@ -69,6 +69,6 @@ public class LazyEntityPredicate extends LazyDataPredicate<EntityPredicate> {
 
     @Override
     protected EntityPredicate deserialize(@Nullable JsonElement json) {
-        return EntityPredicate.fromJson(json);
+        return EntityPredicate.method_8913(json);
     }
 }

@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.mixin.common.inventory;
 
-import io.github.ladysnake.locki.DefaultInventoryNodes;
 import ladysnake.requiem.api.v1.entity.InventoryLimiter;
 import ladysnake.requiem.api.v1.entity.InventoryShape;
 import net.fabricmc.api.EnvType;
@@ -46,6 +45,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.locki.DefaultInventoryNodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

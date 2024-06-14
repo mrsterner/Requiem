@@ -40,8 +40,8 @@ import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
 public class OnRemnantChoiceCriterion extends AbstractCriterion<OnRemnantChoiceCriterion.Conditions> {
@@ -57,7 +57,7 @@ public class OnRemnantChoiceCriterion extends AbstractCriterion<OnRemnantChoiceC
     }
 
     @Override
-    protected Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+    protected Conditions conditionsFromJson(JsonObject json, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
         return new Conditions(this.getId(), playerPredicate, RemnantTypePredicate.deserialize(json.get("remnant_type")));
     }
 
@@ -68,7 +68,7 @@ public class OnRemnantChoiceCriterion extends AbstractCriterion<OnRemnantChoiceC
     public static class Conditions extends AbstractCriterionConditions {
         private final RemnantTypePredicate predicate;
 
-        public Conditions(Identifier id, EntityPredicate.Extended playerPredicate, RemnantTypePredicate predicate) {
+        public Conditions(Identifier id, C_ctsfmifk playerPredicate, RemnantTypePredicate predicate) {
             super(id, playerPredicate);
             this.predicate = predicate;
         }

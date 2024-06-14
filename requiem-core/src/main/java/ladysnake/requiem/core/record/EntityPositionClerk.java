@@ -76,7 +76,7 @@ public final class EntityPositionClerk implements ServerTickingComponent {
     public EntityPositionClerk(RecordType<EntityPointer> pointerType, LivingEntity entity) {
         this.pointerType = pointerType;
         this.entity = entity;
-        this.recordKeeper = GlobalRecordKeeper.get(entity.world);
+        this.recordKeeper = GlobalRecordKeeper.get(entity.getWorld());
     }
 
     public Optional<GlobalRecord> getRecord() {

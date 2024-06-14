@@ -44,6 +44,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.ladysnake.blabber.impl.client.BlabberClient;
 
 public class DebugItem extends Item {
     private int debugMode;
@@ -61,23 +62,23 @@ public class DebugItem extends Item {
             }
         } else {
             switch (debugMode) {
-                case 0:
+                case 0 -> {
                     if (world.isClient) {
                         if (DeathSuspender.get(player).isLifeTransient()) {
-                            RequiemNetworking.sendDialogueActionMessage(0);
-                            RequiemNetworking.sendDialogueActionMessage(1);
-                            RequiemNetworking.sendDialogueActionMessage(0);
+                            BlabberClient.sendDialogueActionMessage(0);
+                            BlabberClient.sendDialogueActionMessage(1);
+                            BlabberClient.sendDialogueActionMessage(0);
                             DeathSuspender.get(player).setLifeTransient(false);
                         } else {
                             DeathSuspender.get(player).setLifeTransient(true);
                         }
                     }
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     if (!world.isClient) {
                         RequiemNetworking.sendBodyCureMessage(player);
                     }
-                    break;
+                }
             }
         }
         return new TypedActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));

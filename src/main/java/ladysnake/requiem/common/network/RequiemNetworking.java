@@ -45,8 +45,9 @@ import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.core.RequiemCoreNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.Packet;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -71,8 +72,6 @@ public final class RequiemNetworking {
     public static final Identifier OBELISK_POWER_UPDATE = Requiem.id("obelisk_power_update");
     public static final Identifier RIFT_WITNESSED = Requiem.id("rift_witnessed");
 
-    // Client -> Server
-    public static final Identifier DIALOGUE_ACTION = Requiem.id("dialogue_action");
     public static final Identifier ETHEREAL_FRACTURE = Requiem.id("ethereal_fracture");
     public static final Identifier OPEN_CRAFTING_MENU = Requiem.id("open_crafting");
     public static final Identifier USE_INDIRECT_ABILITY = Requiem.id("indirect_ability");
@@ -126,15 +125,9 @@ public final class RequiemNetworking {
         return new PacketByteBuf(buffer());
     }
 
-    public static void sendDialogueActionMessage(int choice) {
-        PacketByteBuf buf = new PacketByteBuf(buffer());
-        buf.writeByte(choice);
-        sendToServer(new CustomPayloadC2SPacket(DIALOGUE_ACTION, buf));
-    }
-
     public static void sendRiftUseMessage(ObeliskDescriptor target) {
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.encode(ObeliskDescriptor.CODEC, target);
+        buf.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, target);
         sendToServer(USE_RIFT, buf);
     }
 

@@ -34,8 +34,6 @@
  */
 package ladysnake.requiem.mixin.client.inventory;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.ladysnake.locki.DefaultInventoryNodes;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.entity.InventoryLimiter;
 import ladysnake.requiem.api.v1.entity.InventoryShape;
@@ -44,17 +42,18 @@ import ladysnake.requiem.client.RequiemClient;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
 import ladysnake.requiem.core.inventory.PossessionInventoryScreen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.ladysnake.locki.DefaultInventoryNodes;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -116,7 +115,7 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         this.requiem$player = player;
     }
 
-    @ModifyArg(method = "drawForeground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/text/Text;FFI)I"))
+    @ModifyArg(method = "drawForeground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)I"))
     private Text swapScreenName(Text name) {
         MobEntity possessedEntity = PossessionComponent.getHost(this.requiem$player);
         if (possessedEntity != null) {
@@ -125,18 +124,18 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         return name;
     }
 
-    @Inject(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"))
-    private void scissorEntity(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/entity/LivingEntity;)V"))
+    private void scissorEntity(GuiGraphics graphics, float delta, int mouseX, int mouseY, CallbackInfo ci) {
         InventoryLimiter.instance().getInventoryShape(requiem$player).setupEntityCrop(this.x, this.y);
     }
 
-    @Inject(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V", shift = At.Shift.AFTER))
-    private void disableScissor(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/entity/LivingEntity;)V", shift = At.Shift.AFTER))
+    private void disableScissor(GuiGraphics graphics, float delta, int mouseX, int mouseY, CallbackInfo ci) {
         InventoryLimiter.instance().getInventoryShape(requiem$player).tearDownEntityCrop();
     }
 
     // looks like the target is not getting remapped, so we have to resort to good ol ordinal
-    @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", ordinal = 2/* target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/util/Identifier;)V"*/))
+    @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V"))
     private Identifier swapBackground(Identifier background) {
         return InventoryLimiter.instance().getInventoryShape(requiem$player).swapBackground(background);
     }
@@ -145,43 +144,42 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         method = "drawBackground",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V",
+            target = "Lnet/minecraft/client/gui/GuiGraphics;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V",
             shift = At.Shift.AFTER
         )
     )
-    private void drawSlots(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci) {
+    private void drawSlots(GuiGraphics graphics, float delta, int mouseX, int mouseY, CallbackInfo ci) {
         assert this.client != null;
 
         InventoryShape inventoryShape = InventoryLimiter.instance().getInventoryShape(requiem$player);
         if (inventoryShape.isAltShape()) {
-            RenderSystem.setShaderTexture(0, INVENTORY_SLOTS);
             int x = this.x;
             int y = this.y;
             if (!InventoryLimiter.instance().isLocked(this.requiem$player, DefaultInventoryNodes.ARMOR)) {
-                this.drawTexture(matrices, x + 7, y + 7, 7, 7, 18, 72);
+                graphics.drawTexture(INVENTORY_SLOTS, x + 7, y + 7, 7, 7, 18, 72);
             }
             if (!InventoryLimiter.instance().isLocked(this.requiem$player, DefaultInventoryNodes.HANDS)) {
                 if (inventoryShape == InventoryShape.ALT_SMALL) {
-                    this.drawTexture(matrices, x + 76, y + 61, 76, 61, 18, 18);
+                    graphics.drawTexture(INVENTORY_SLOTS, x + 76, y + 61, 76, 61, 18, 18);
                 } else {
-                    this.drawTexture(matrices, x + 46, y + 61, 46, 61, 48, 18);
+                    graphics.drawTexture(INVENTORY_SLOTS, x + 46, y + 61, 46, 61, 48, 18);
                 }
             }
             if (!InventoryLimiter.instance().isLocked(this.requiem$player, DefaultInventoryNodes.CRAFTING)) {
-                this.drawTexture(matrices, x + 97, y + 17, 97, 17, 75, 36);
+                graphics.drawTexture(INVENTORY_SLOTS, x + 97, y + 17, 97, 17, 75, 36);
             }
             if (!InventoryLimiter.instance().isLocked(this.requiem$player, DefaultInventoryNodes.MAIN_INVENTORY)) {
-                this.drawTexture(matrices, x + 7, y + 83, 7, 83, 162, 76);
+                graphics.drawTexture(INVENTORY_SLOTS, x + 7, y + 83, 7, 83, 162, 76);
             } else if (!InventoryLimiter.instance().isLocked(this.requiem$player, DefaultInventoryNodes.HOTBAR)) {
-                this.drawTexture(matrices, x + 7, y + 141, 7, 141, 162, 18);
+                graphics.drawTexture(INVENTORY_SLOTS, x + 7, y + 141, 7, 141, 162, 18);
             }
         }
     }
 
     @ModifyArg(
         method = "drawBackground",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"),
-        index = 0
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/entity/LivingEntity;)V"),
+        index = 1
     )
     private int shiftPossessedEntityX(int x) {
         return (int) InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityX(x);
@@ -189,8 +187,8 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 
     @ModifyArg(
         method = "drawBackground",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"),
-        index = 1
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/entity/LivingEntity;)V"),
+        index = 2
     )
     private int shiftPossessedEntityY(int y) {
         return (int) InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityY(y);
@@ -198,8 +196,8 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 
     @ModifyArg(
         method = "drawBackground",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"),
-        index = 3
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/entity/LivingEntity;)V"),
+        index = 4
     )
     private float shiftPossessedEntityLookX(float x) {
         return InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityX(x);
@@ -207,8 +205,8 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 
     @ModifyArg(
         method = "drawBackground",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"),
-        index = 4
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/entity/LivingEntity;)V"),
+        index = 5
     )
     private float shiftPossessedEntityLookY(float y) {
         return InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityY(y);

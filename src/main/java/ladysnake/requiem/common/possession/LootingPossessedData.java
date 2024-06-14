@@ -43,6 +43,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
@@ -69,7 +70,7 @@ public class LootingPossessedData extends PossessedDataBase {
     public void clientTick() {
         if (this.wasConvertedUnderPossession()) {
             Entity camera = MinecraftClient.getInstance().getCameraEntity();
-            World world = holder.world;
+            World world = holder.getWorld();
             if (camera != null && RemnantComponent.isIncorporeal(camera)) {
                 if (world.random.nextFloat() > 0.9f) {
                     for (int i = 0; i < world.random.nextInt(3); i++) {
@@ -85,14 +86,16 @@ public class LootingPossessedData extends PossessedDataBase {
 
     protected void dropLoot(PlayerEntity player) {
         Identifier identifier = this.getLootTable();
-        ServerWorld world = (ServerWorld) this.holder.world;
-        LootTable lootTable = world.getServer().getLootManager().getTable(identifier);
-        LootContext.Builder builder = new LootContext.Builder(world)
-            .random(world.random)
-            .parameter(LootContextParameters.THIS_ENTITY, this.holder)
-            .parameter(LootContextParameters.ORIGIN, this.holder.getPos())
-            .luck(player.getLuck());
-        lootTable.generateLoot(builder.build(RequiemLootTables.POSSESSION), player.getInventory()::offerOrDrop);
+        ServerWorld world = (ServerWorld) this.holder.getWorld();
+        LootTable lootTable = world.getServer().getLootManager().getLootTable(identifier);
+        LootContext lootContext = new LootContext.Builder(
+            new LootContextParameterSet.Builder(world)
+                .addOptional(LootContextParameters.THIS_ENTITY, this.holder)
+                .add(LootContextParameters.ORIGIN, this.holder.getPos())
+                .withLuck(player.getLuck())
+                .build(RequiemLootTables.POSSESSION)
+        ).build(null);
+        lootTable.generateLoot(lootContext, player.getInventory()::offerOrDrop);
     }
 
     private Identifier getLootTable() {

@@ -60,7 +60,7 @@ public class ComponentDataHolder<C extends Component> implements Component {
     }
 
     public void storeDataFrom(PlayerEntity player, boolean override) {
-        if (!player.world.isClient && (this.data == null || override)) {
+        if (!player.getWorld().isClient && (this.data == null || override)) {
             writePlayerDataToNbt(player).ifPresent(d -> this.data = d);
         }
     }
@@ -77,7 +77,7 @@ public class ComponentDataHolder<C extends Component> implements Component {
     }
 
     public void restoreDataToPlayer(PlayerEntity player, boolean clear) {
-        if (!player.world.isClient && this.data != null) {
+        if (!player.getWorld().isClient && this.data != null) {
             readPlayerDataFromNbt(player, this.data);
             if (clear) this.data = null;
         }

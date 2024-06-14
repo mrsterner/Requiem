@@ -38,7 +38,7 @@ import java.util.UUID;
  */
 public record EntityPointer(UUID uuid, RegistryKey<World> world, Vec3d pos) {
     public static final Codec<EntityPointer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        UuidUtil.CODEC.fieldOf("uuid").forGetter(EntityPointer::uuid),
+        UuidUtil.INT_STREAM_CODEC.fieldOf("uuid").forGetter(EntityPointer::uuid),
         World.CODEC.fieldOf("world").forGetter(EntityPointer::world),
         RecordCodecBuilder.<Vec3d>create(instance2 -> instance2.group(
             Codec.DOUBLE.fieldOf("x").forGetter(Vec3d::getX),
@@ -48,7 +48,7 @@ public record EntityPointer(UUID uuid, RegistryKey<World> world, Vec3d pos) {
     ).apply(instance, EntityPointer::new));
 
     public EntityPointer(Entity entity) {
-        this(entity.getUuid(), entity.world.getRegistryKey(), entity.getPos());
+        this(entity.getUuid(), entity.getWorld().getRegistryKey(), entity.getPos());
     }
 
     /**

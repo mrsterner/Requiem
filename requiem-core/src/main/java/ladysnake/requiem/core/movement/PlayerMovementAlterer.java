@@ -109,7 +109,7 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
 
     @Override
     public void applyConfig() {
-        if (!this.player.world.isClient) {
+        if (!this.player.getWorld().isClient) {
             if (getActualFlightMode(config, player) == DISABLED) {
                 Pal.revokeAbility(player, VanillaAbilities.ALLOW_FLYING, MOVEMENT_ALTERER_ABILITIES);
             } else {
@@ -122,7 +122,7 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
     }
 
     private void updateSpeedModifier(LivingEntity currentBody, UUID speedModifierUuid, ToDoubleFunction<MovementConfig> property, boolean shouldApplyModifier) {
-        EntityAttributeInstance speedAttribute = currentBody.getAttributes().m_rkfdyugp(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        EntityAttributeInstance speedAttribute = currentBody.getAttributes().createIfAbsent(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         if (speedAttribute != null) {
             speedAttribute.removeModifier(speedModifierUuid);
             if (shouldApplyModifier && config != null && property.applyAsDouble(config) != 1.0) {
@@ -207,7 +207,7 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
             this.ticksAgainstWall++;
         } else if (this.noClipping) {
             this.noClipping = false;    // disable to check whether there really are blocks
-            if (this.player.world.isSpaceEmpty(this.player)) {
+            if (this.player.getWorld().isSpaceEmpty(this.player)) {
                 RequiemCoreNetworking.sendHugWallMessage(false);
             }
             this.noClipping = true;
@@ -247,7 +247,7 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
         if (getActualFlightMode(config, body) == FORCED || this.noClipping) {
             this.player.getAbilities().flying = true;
         }
-        if (this.player.isOnGround() && shouldActuallyFlopOnLand(config, body) && this.player.world.getFluidState(this.player.getBlockPos()).isEmpty()) {
+        if (this.player.isOnGround() && shouldActuallyFlopOnLand(config, body) && this.player.getWorld().getFluidState(this.player.getBlockPos()).isEmpty()) {
             this.player.jump();
         }
         Vec3d velocity = this.player.getVelocity();

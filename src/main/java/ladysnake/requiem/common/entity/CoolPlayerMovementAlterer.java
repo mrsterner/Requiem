@@ -52,7 +52,7 @@ public class CoolPlayerMovementAlterer extends PlayerMovementAlterer {
     protected void playPhaseEffects() {
         for (int i = 0; i < 10; i++) {
             Vec3d intendedMovement = getIntendedMovement(this.player);
-            this.player.world.addParticle(
+            this.player.getWorld().addParticle(
                 RequiemParticleTypes.GHOST,
                 this.player.getParticleX(0.5),
                 this.player.getRandomBodyY(),

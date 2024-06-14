@@ -25,7 +25,6 @@ import ladysnake.requiem.api.v1.internal.ApiInternals;
 import net.minecraft.entity.JumpingMount;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -45,10 +44,10 @@ public interface ExternalJumpingMount extends JumpingMount, Component {
     }
 
     /**
-     * @return {@code true} if the player should be able to initiate long jumps with this mount
+     * @return {@code true} if the rider should be able to initiate long jumps with this mount
      */
     @Override
-    boolean canJump(PlayerEntity playerEntity);
+    boolean canJump();
 
     /**
      * Called when a player releases the jump key clientside

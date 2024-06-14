@@ -96,7 +96,7 @@ public final class DetectionHelper {
     public static void inciteMobAndAllies(MobEntity host, MobEntity hostile) {
         inciteMob(host, hostile);
 
-        List<HostileEntity> sawExchange = hostile.world.getEntitiesByClass(HostileEntity.class, Box.from(hostile.getPos()).expand(ALERT_RANGE), witness -> isValidEnemy(witness) && witness.isInWalkTargetRange(host.getBlockPos()) && witness.canSee(host));
+        List<HostileEntity> sawExchange = hostile.getWorld().getEntitiesByClass(HostileEntity.class, Box.from(hostile.getPos()).expand(ALERT_RANGE), witness -> isValidEnemy(witness) && witness.isInWalkTargetRange(host.getBlockPos()) && witness.canSee(host));
 
         for (HostileEntity witness : sawExchange) {
             inciteMob(host, witness);

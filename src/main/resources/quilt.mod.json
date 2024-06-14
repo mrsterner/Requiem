@@ -98,5 +98,12 @@
     "mixins.requiem.client.json",
     "mixins.requiem.common.json",
     "mixins.requiem.compat.json"
-  ]
+  ],
+  "quilt_loom": {
+    "injected_interfaces": {
+      "net/minecraft/class_8109": [
+        "ladysnake/requiem/common/damage/DamageSourcesExt"
+      ]
+    }
+  }
 }

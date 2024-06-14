@@ -46,7 +46,6 @@ import ladysnake.requiem.api.v1.remnant.StickyStatusEffect;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectType;
@@ -114,7 +113,7 @@ public class PenanceStatusEffect extends StatusEffect implements StickyStatusEff
                 if (remnant.getRemnantType().isDemon()) {
                     return new Result(true, remnant.splitPlayer(true).map(PlayerSplitResult::soul).orElse(null));
                 } else {
-                    player.damage(DamageSource.MAGIC, (amplifier + 1) * 4);
+                    player.damage(player.getDamageSources().magic(), (amplifier + 1) * 4);
                     PenanceComponent.KEY.get(player).resetPenanceTime();
                 }
             }

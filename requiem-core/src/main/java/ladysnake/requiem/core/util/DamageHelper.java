@@ -41,8 +41,6 @@ import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.EntityDamageSource;
-import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,10 +76,8 @@ public final class DamageHelper {
 
     @Nullable
     public static DamageSource createProxiedDamage(DamageSource source, Entity newAttacker) {
-        if (source instanceof ProjectileDamageSource) {
-            return new ProjectileDamageSource(source.getName(), source.getSource(), newAttacker);
-        } else if (source instanceof EntityDamageSource) {
-            return new EntityDamageSource(source.getName(), newAttacker);
+        if (source.getAttacker() != null) {
+            return newAttacker.getDamageSources().create(source.getTypeHolder().getKey().orElseThrow(), source.getSource(), source.getAttacker());
         }
         return null;
     }

@@ -35,7 +35,6 @@
 package ladysnake.requiem.common.dialogue;
 
 import com.mojang.serialization.Codec;
-import io.github.ladysnake.blabber.DialogueAction;
 import ladysnake.requiem.api.v1.remnant.DeathSuspender;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
@@ -43,6 +42,7 @@ import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.ladysnake.blabber.DialogueAction;
 
 public record RemnantChoiceDialogueAction(RemnantType chosenType) implements DialogueAction {
     public static final Codec<RemnantChoiceDialogueAction> CODEC = RequiemRegistries.REMNANT_STATES.getCodec().xmap(RemnantChoiceDialogueAction::new, RemnantChoiceDialogueAction::chosenType);
@@ -53,7 +53,7 @@ public record RemnantChoiceDialogueAction(RemnantType chosenType) implements Dia
         remnantComponent.become(chosenType, true);
 
         if (chosenType != currentType) {
-            player.world.playSound(null, player.getX(), player.getY(), player.getZ(), RequiemSoundEvents.EFFECT_BECOME_REMNANT, player.getSoundCategory(), 1.4F, 0.1F);
+            player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), RequiemSoundEvents.EFFECT_BECOME_REMNANT, player.getSoundCategory(), 1.4F, 0.1F);
             RequiemNetworking.sendTo(player, RequiemNetworking.createOpusUsePacket(chosenType, false));
         }
     }

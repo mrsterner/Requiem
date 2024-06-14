@@ -29,7 +29,7 @@ public record RecordPointer(UUID uuid) {
     public RecordPointer(GlobalRecord record) {
         this(record.getUuid());
     }
-    public static final Codec<RecordPointer> CODEC = UuidUtil.CODEC.xmap(RecordPointer::new, RecordPointer::uuid);
+    public static final Codec<RecordPointer> CODEC = UuidUtil.INT_STREAM_CODEC.xmap(RecordPointer::new, RecordPointer::uuid);
 
     public Optional<GlobalRecord> resolve(MinecraftServer server) {
         return GlobalRecordKeeper.get(server).getRecord(this.uuid());

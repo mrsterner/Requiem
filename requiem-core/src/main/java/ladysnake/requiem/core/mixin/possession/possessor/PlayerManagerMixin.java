@@ -77,7 +77,7 @@ public abstract class PlayerManagerMixin {
     ) {
         if (serializedPlayer != null && serializedPlayer.contains(POSSESSED_ROOT_TAG, NbtType.COMPOUND)) {
             RemnantComponent.KEY.sync(player);
-            ServerWorld world = player.getWorld();
+            ServerWorld world = player.getServerWorld();
             NbtCompound serializedPossessedInfo = serializedPlayer.getCompound(POSSESSED_ROOT_TAG);
             Entity possessedEntityMount = EntityType.loadEntityWithPassengers(
                     serializedPossessedInfo.getCompound(POSSESSED_ENTITY_TAG),

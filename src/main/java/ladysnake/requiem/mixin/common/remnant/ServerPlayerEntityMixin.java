@@ -67,9 +67,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Re
     @Shadow
     public abstract PlayerAdvancementTracker getAdvancementTracker();
 
-    @Override
     @Shadow
-    public abstract ServerWorld getWorld();
+    public abstract ServerWorld getServerWorld();
 
     @Inject(method = "playerTick", at = @At("HEAD"), cancellable = true)
     private void stopTicking(CallbackInfo ci) {
@@ -81,12 +80,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Re
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
     private void suspendDeath(DamageSource killingBlow, CallbackInfo ci) {
         Identifier advancementId = Requiem.id("adventure/the_choice");
-        Advancement theChoice = this.getWorld().getServer().getAdvancementLoader().get(advancementId);
+        Advancement theChoice = this.getServerWorld().getServer().getAdvancementLoader().get(advancementId);
         AdvancementProgress progress = this.getAdvancementTracker().getProgress(theChoice);
         if (progress == null) {
             Requiem.LOGGER.error("Advancement '{}' is missing", advancementId);
-        } else if (!progress.isDone() && !world.getProperties().isHardcore()) {
-            RemnantType startingRemnantType = world.getGameRules().get(RequiemGamerules.STARTING_SOUL_MODE).get().getRemnantType();
+        } else if (!progress.isDone() && !getWorld().getProperties().isHardcore()) {
+            RemnantType startingRemnantType = getWorld().getGameRules().get(RequiemGamerules.STARTING_SOUL_MODE).get().getRemnantType();
             if (startingRemnantType == null) {
                 DeathSuspender.get(this).suspendDeath(killingBlow);
                 ci.cancel();
@@ -101,7 +100,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Re
      */
     @Inject(method = "onDeath", at = @At(value = "FIELD", target = "Lnet/minecraft/world/GameRules;SHOW_DEATH_MESSAGES:Lnet/minecraft/world/GameRules$Key;"))
     private void revokeLifeRights(DamageSource source, CallbackInfo ci) {
-        if (world.getProperties().isHardcore()) {
+        if (getWorld().getProperties().isHardcore()) {
             RemnantComponent.get(this).become(RemnantTypes.MORTAL);
         }
     }

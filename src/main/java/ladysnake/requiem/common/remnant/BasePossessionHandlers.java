@@ -59,7 +59,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameStateUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -78,11 +78,11 @@ public final class BasePossessionHandlers {
             }
         });
         PossessionEvents.INVENTORY_TRANSFER_CHECK.register(
-            (possessor, host) -> possessor.world.getGameRules().get(RequiemGamerules.POSSESSION_KEEP_INVENTORY).get().shouldTransfer(host.isAlive()) ? TriState.TRUE : TriState.DEFAULT
+            (possessor, host) -> possessor.getWorld().getGameRules().get(RequiemGamerules.POSSESSION_KEEP_INVENTORY).get().shouldTransfer(host.isAlive()) ? TriState.TRUE : TriState.DEFAULT
         );
         PossessionEvents.HOST_DEATH.register((player, host, deathCause) -> {
-            if (player.world.getProperties().isHardcore()) {
-                player.damage(AttritionStatusEffect.ATTRITION_HARDCORE_DEATH, Float.MAX_VALUE);
+            if (player.getWorld().getProperties().isHardcore()) {
+                player.damage(player.getDamageSources().requiemSources().attritionHardcoreDeath(), Float.MAX_VALUE);
             } else {
                 AttritionStatusEffect.apply(player);
             }
@@ -121,22 +121,22 @@ public final class BasePossessionHandlers {
     public static void performEndermanSoulAction(MobEntity target, PlayerEntity possessor) {
         Entity tpDest;
         // Maybe consider making the dimensional teleportation work in any dimension other than the overworld ?
-        if (possessor.world.getRegistryKey() != World.END/* == DimensionType.OVERWORLD*/) {
+        if (possessor.getWorld().getRegistryKey() != World.END/* == DimensionType.OVERWORLD*/) {
             // Retry a few times
             for (int i = 0; i < 20; i++) {
                 if (((EndermanEntityAccessor) target).requiem$invokeTeleportRandomly()) {
-                    possessor.world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, target.getSoundCategory(), 1.0F, 1.0F);
+                    possessor.getWorld().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, target.getSoundCategory(), 1.0F, 1.0F);
                     break;
                 }
             }
             tpDest = target;
         } else {
-            possessor.world.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, target.getSoundCategory(), 1.0F, 1.0F);
+            possessor.getWorld().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, target.getSoundCategory(), 1.0F, 1.0F);
             // Set the variable in advance to avoid game credits
             ((ServerPlayerEntity) possessor).notInAnyWorld = true;
             ServerWorld destination = ((ServerPlayerEntity) possessor).server.getWorld(World.OVERWORLD);
             possessor.moveToWorld(destination);
-            ((ServerPlayerEntity) possessor).networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.GAME_WON, 0.0F));
+            ((ServerPlayerEntity) possessor).networkHandler.sendPacket(new GameStateUpdateS2CPacket(GameStateUpdateS2CPacket.GAME_WON, 0.0F));
             tpDest = target.moveToWorld(destination);
         }
         if (tpDest != null) {

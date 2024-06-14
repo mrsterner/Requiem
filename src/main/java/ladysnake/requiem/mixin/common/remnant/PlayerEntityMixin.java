@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.mixin.common.remnant;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import ladysnake.requiem.api.v1.RequiemPlayer;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
@@ -48,13 +49,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -66,7 +65,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
     @Shadow @Final private PlayerAbilities abilities;
     private static final EntityDimensions REQUIEM$SOUL_SNEAKING_SIZE = EntityDimensions.changing(0.6f, 0.6f);
 
-    @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
+    @Inject(method = "createAttributes", at = @At("RETURN"))
     private static void addSoulOffenseAttribute(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
         cir.getReturnValue().add(RequiemEntityAttributes.SOUL_OFFENSE);
     }
@@ -87,23 +86,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
         }
     }
 
-    @Inject(method = "travel",
-        slice = @Slice(
-            from = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerEntity;flyingSpeed:F", ordinal = 0),
-            to = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setFlag(IZ)V")
-        ),
-        at = @At(
-            value = "FIELD",
-            opcode = Opcodes.PUTFIELD,
-            target = "Lnet/minecraft/entity/player/PlayerEntity;flyingSpeed:F",
-            ordinal = 0,
-            shift = At.Shift.AFTER
-        )
-    )
-    private void slowGhosts(Vec3d movementInput, CallbackInfo ci) {
+    @ModifyReturnValue(method = "getAirSpeed", at = @At("RETURN"))
+    private float slowGhosts(float airSpeed) {
         if (MovementAlterer.KEY.get(this).isNoClipping()) {
-            this.flyingSpeed *= 0.1;
+            return airSpeed * 0.1f;
         }
+        return airSpeed;
     }
 
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getRotationVector()Lnet/minecraft/util/math/Vec3d;"))
@@ -111,7 +99,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
         double yMotion = this.getRotationVector().y;
         double modifier = yMotion < -0.2D ? 0.085D : 0.06D;
         // If the motion change would not be applied, apply it ourselves
-        if (yMotion > 0.0D && !this.jumping && this.world.getBlockState(new BlockPos(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty() && RemnantComponent.KEY.get(this).isIncorporeal()) {
+        if (yMotion > 0.0D && !this.jumping && this.getWorld().getBlockState(BlockPos.create(
+            this.getX(),
+            this.getY() + 1.0D - 0.1D,
+            this.getZ()
+        )).getFluidState().isEmpty() && RemnantComponent.KEY.get(this).isIncorporeal()) {
             Vec3d velocity = this.getVelocity();
             this.setVelocity(velocity.add(0.0D, (yMotion - velocity.y) * modifier, 0.0D));
         }

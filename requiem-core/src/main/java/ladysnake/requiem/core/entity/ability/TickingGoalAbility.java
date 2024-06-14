@@ -54,7 +54,7 @@ public class TickingGoalAbility<O extends MobEntity, T extends LivingEntity> ext
 
     @Override
     public boolean run(T entity) {
-        if (this.owner.world.isClient) return true;
+        if (this.owner.getWorld().isClient) return true;
 
         owner.setTarget(entity);
         if (goal.canStart()) {

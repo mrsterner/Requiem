@@ -61,8 +61,8 @@ public class GhastFireballAbility extends IndirectAbilityBase<LivingEntity> {
 
     @Override
     public boolean run() {
-        if (!this.owner.world.isClient) {
-            this.owner.world.syncWorldEvent(null, 1016, this.owner.getBlockPos(), 0);
+        if (!this.owner.getWorld().isClient) {
+            this.owner.getWorld().syncWorldEvent(null, 1016, this.owner.getBlockPos(), 0);
             this.setShooting(true);
             this.spawnFireball();
             this.beginCooldown();
@@ -74,12 +74,12 @@ public class GhastFireballAbility extends IndirectAbilityBase<LivingEntity> {
         Vec3d scaledRot = this.owner.getRotationVec(1.0F);
         Vec3d rot = this.owner.getRotationVec(1.0f).multiply(10);
         int explosionPower = this.owner instanceof GhastEntity ? ((GhastEntity) this.owner).getFireballStrength() : 1;
-        FireballEntity fireball = new FireballEntity(this.owner.world, this.owner, rot.x, rot.y, rot.z, explosionPower);
+        FireballEntity fireball = new FireballEntity(this.owner.getWorld(), this.owner, rot.x, rot.y, rot.z, explosionPower);
         fireball.setPosition(
             this.owner.getX() + scaledRot.x * 4.0D,
             this.owner.getY() + (double) (this.owner.getHeight() / 2.0F) + 0.5D,
             this.owner.getZ() + scaledRot.z * 4.0D
         );
-        this.owner.world.spawnEntity(fireball);
+        this.owner.getWorld().spawnEntity(fireball);
     }
 }

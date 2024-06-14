@@ -58,18 +58,20 @@ import ladysnake.requiem.common.entity.RequiemEntities;
 import ladysnake.requiem.common.entity.effect.RequiemStatusEffects;
 import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.screen.RequiemScreenHandlers;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
+import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.particle.PortalParticle;
 import net.minecraft.client.particle.SoulParticle;
 import net.minecraft.client.particle.SpellParticle;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.texture.Sprite;
@@ -152,25 +154,28 @@ public final class RequiemClient {
     }
 
     private void registerBlockModels() {
-        ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) ->
-            RequiemBlocks.streamRunestones().map(Map.Entry::getValue).map(RunestoneBlockEntityRenderer::createRuneIdentifier).forEach(out));
-        ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (modelId, context) -> {
-            if (modelId.getNamespace().equals(Requiem.MOD_ID)) {
-                if (modelId.getPath().startsWith("tachylite_rune/")) {
-                    String effect = modelId.getPath().substring(modelId.getPath().lastIndexOf('/') + 1);
-                    String sideRuneSpriteId = ifExistsOrElse(resourceManager, "block/%s_rune_side".formatted(effect), "block/%s_rune".formatted(effect));
-                    String topRuneSpriteId = ifExistsOrElse(resourceManager, "block/%s_rune_top".formatted(effect), "block/neutral_rune");
-                    return new SimpleUnbakedModel(mb -> {
-                        Sprite sideRuneSprite = mb.getSprite(sideRuneSpriteId);
-                        Sprite topRuneSprite = mb.getSprite(topRuneSpriteId);
-                        mb.box(mb.finder().emissive(0, true).disableAo(0, true).disableDiffuse(0, true).blendMode(0, BlendMode.CUTOUT).find(),
-                            -1, d -> d.getAxis() == Direction.Axis.Y ? topRuneSprite : sideRuneSprite,
-                            -0.0001f, -0.0001f, -0.0001f, 1.0001f, 1.0001f, 1.0001f);
-                        return new SimpleBakedModel(mb.builder.build(), ModelHelper.MODEL_TRANSFORM_BLOCK, sideRuneSprite, null);
-                    });
+        ModelLoadingPlugin.register(pluginContext -> {
+            pluginContext.addModels(RequiemBlocks.streamRunestones().map(Map.Entry::getValue).map(RunestoneBlockEntityRenderer::createRuneIdentifier).toList());
+            pluginContext.resolveModel().register(context -> {
+                Identifier modelId = context.id();
+                ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+                if (modelId.getNamespace().equals(Requiem.MOD_ID)) {
+                    if (modelId.getPath().startsWith("tachylite_rune/")) {
+                        String effect = modelId.getPath().substring(modelId.getPath().lastIndexOf('/') + 1);
+                        String sideRuneSpriteId = ifExistsOrElse(resourceManager, "block/%s_rune_side".formatted(effect), "block/%s_rune".formatted(effect));
+                        String topRuneSpriteId = ifExistsOrElse(resourceManager, "block/%s_rune_top".formatted(effect), "block/neutral_rune");
+                        return new SimpleUnbakedModel(mb -> {
+                            Sprite sideRuneSprite = mb.getSprite(sideRuneSpriteId);
+                            Sprite topRuneSprite = mb.getSprite(topRuneSpriteId);
+                            mb.box(mb.finder().emissive(true).ambientOcclusion(TriState.FALSE).disableDiffuse(true).blendMode(BlendMode.CUTOUT).find(),
+                                -1, d -> d.getAxis() == Direction.Axis.Y ? topRuneSprite : sideRuneSprite,
+                                -0.0001f, -0.0001f, -0.0001f, 1.0001f, 1.0001f, 1.0001f);
+                            return new SimpleBakedModel(mb.builder.build(), ModelHelper.MODEL_TRANSFORM_BLOCK, sideRuneSprite, null);
+                        });
+                    }
                 }
-            }
-            return null;
+                return null;
+            });
         });
     }
 
@@ -203,7 +208,7 @@ public final class RequiemClient {
     }
 
     private void registerBlockEntityRenderers() {
-        BlockEntityRendererRegistry.register(RequiemBlockEntities.RUNIC_OBSIDIAN, RunestoneBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(RequiemBlockEntities.RUNIC_OBSIDIAN, RunestoneBlockEntityRenderer::new);
     }
 
     private void registerEntityRenderers() {

@@ -40,10 +40,12 @@ import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,12 +59,12 @@ public class TransformedPossessedCriterion extends AbstractCriterion<Transformed
     }
 
     @Override
-    protected Conditions conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+    protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
         return new Conditions(
             this.id,
             playerPredicate,
-            EntityPredicate.Extended.getInJson(obj, "before", predicateDeserializer),
-            EntityPredicate.Extended.getInJson(obj, "after", predicateDeserializer),
+            C_ctsfmifk.method_27807("before", predicateDeserializer, obj, LootContextTypes.ENTITY),
+            C_ctsfmifk.method_27807("after", predicateDeserializer, obj, LootContextTypes.ENTITY),
             Optional.ofNullable(obj.get("cure")).map(JsonElement::getAsBoolean).orElse(null)
         );
     }
@@ -78,11 +80,11 @@ public class TransformedPossessedCriterion extends AbstractCriterion<Transformed
 
 
     public static class Conditions extends AbstractCriterionConditions {
-        private final EntityPredicate.Extended before;
-        private final EntityPredicate.Extended after;
+        private final C_ctsfmifk before;
+        private final C_ctsfmifk after;
         private final @Nullable Boolean cure;
 
-        public Conditions(Identifier id, EntityPredicate.Extended player, EntityPredicate.Extended before, EntityPredicate.Extended after, @Nullable Boolean cure) {
+        public Conditions(Identifier id, C_ctsfmifk player, C_ctsfmifk before, C_ctsfmifk after, @Nullable Boolean cure) {
             super(id, player);
             this.before = before;
             this.after = after;
@@ -92,14 +94,14 @@ public class TransformedPossessedCriterion extends AbstractCriterion<Transformed
         public boolean test(ServerPlayerEntity player, LivingEntity before, LivingEntity after, boolean cure) {
             LootContext beforeCtx = EntityPredicate.createAdvancementEntityLootContext(player, before);
             LootContext afterCtx = EntityPredicate.createAdvancementEntityLootContext(player, after);
-            return this.before.test(beforeCtx) && this.after.test(afterCtx) && (this.cure == null || this.cure == cure);
+            return this.before.method_27806(beforeCtx) && this.after.method_27806(afterCtx) && (this.cure == null || this.cure == cure);
         }
 
         @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
             JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add("before", this.before.toJson(predicateSerializer));
-            jsonObject.add("after", this.after.toJson(predicateSerializer));
+            jsonObject.add("before", this.before.method_27804(predicateSerializer));
+            jsonObject.add("after", this.after.method_27804(predicateSerializer));
             jsonObject.addProperty("cure", this.cure);  // Takes nullable values too
             return jsonObject;
         }

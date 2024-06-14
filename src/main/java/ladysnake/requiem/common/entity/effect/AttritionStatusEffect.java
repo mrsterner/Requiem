@@ -42,7 +42,6 @@ import ladysnake.requiem.api.v1.remnant.StickyStatusEffect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectType;
@@ -51,16 +50,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import javax.annotation.Nonnegative;
 
 public class AttritionStatusEffect extends StatusEffect implements StickyStatusEffect {
-    public static final DamageSource ATTRITION_HARDCORE_DEATH = new DamageSource("requiem.attrition.hardcore") {{
-        // We need this dirty anonymous initializer because everything is protected
-        this.setBypassesArmor();
-        this.setOutOfWorld();
-    }};
     public static final int MAX_LEVEL = 3;
     public static final int DEFAULT_DURATION = 300;
 
     public static void apply(PlayerEntity target) {
-        apply(target, target.world.getProperties().isHardcore() ? 2 : 1);
+        apply(target, target.getWorld().getProperties().isHardcore() ? 2 : 1);
     }
 
     public static void apply(LivingEntity target, @Nonnegative int amount) {
@@ -76,8 +70,8 @@ public class AttritionStatusEffect extends StatusEffect implements StickyStatusE
         int duration = Math.max(attrition == null ? 0 : attrition.getDuration(), minDuration);
         addAttrition(target, amplifier, duration);
 
-        if (expectedAmplifier > MAX_LEVEL && (!(target instanceof PlayerEntity) || target.world.getProperties().isHardcore())) {
-            target.damage(ATTRITION_HARDCORE_DEATH, Float.MAX_VALUE);
+        if (expectedAmplifier > MAX_LEVEL && (!(target instanceof PlayerEntity) || target.getWorld().getProperties().isHardcore())) {
+            target.damage(target.getDamageSources().requiemSources().attritionHardcoreDeath(), Float.MAX_VALUE);
         }
     }
 

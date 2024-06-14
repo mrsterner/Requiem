@@ -51,7 +51,6 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -79,10 +78,10 @@ public abstract class LivingEntityMixin extends Entity implements Possessable {
     public abstract double getAttributeValue(EntityAttribute attribute);
 
     @Shadow
-    public abstract void updateLimbs(LivingEntity livingEntity, boolean bl);
+    public abstract float getStepHeight();
 
-    @Accessor("flyingSpeed")
-    protected abstract void requiem$setFlyingSpeed(float speed);
+    @Shadow
+    protected abstract float getRiddenSpeed(PlayerEntity player);
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -114,7 +113,7 @@ public abstract class LivingEntityMixin extends Entity implements Possessable {
     @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V", shift = At.Shift.AFTER))
     private void onDeath(DamageSource deathCause, CallbackInfo ci) {
         if (!this.isBeingPossessed() && this.requiem$previousPossessorUuid != null) {
-            PlayerEntity previousPossessor = this.world.getPlayerByUuid(this.requiem$previousPossessorUuid);
+            PlayerEntity previousPossessor = this.getWorld().getPlayerByUuid(this.requiem$previousPossessorUuid);
 
             if (previousPossessor != null) {
                 RequiemCriteria.DEATH_AFTER_POSSESSION.handle((ServerPlayerEntity) previousPossessor, this, deathCause);

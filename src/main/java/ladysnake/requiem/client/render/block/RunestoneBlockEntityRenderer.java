@@ -41,7 +41,6 @@ import ladysnake.requiem.common.block.obelisk.InertRunestoneBlock;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlockEntity;
 import ladysnake.satin.api.managed.ManagedCoreShader;
 import ladysnake.satin.api.managed.ShaderEffectManager;
-import net.fabricmc.fabric.api.client.model.BakedModelManagerHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.OverlayTexture;
@@ -92,7 +91,7 @@ public class RunestoneBlockEntityRenderer implements BlockEntityRenderer<Runesto
             .getModelRenderer()
             .render(
                 runestone.getWorld(),
-                BakedModelManagerHelper.getModel(this.blockRenderManager.getModels().getModelManager(), this.runeModelIds.get(blockState.getBlock())),
+                this.blockRenderManager.getModels().getModelManager().getModel(this.runeModelIds.get(blockState.getBlock())),
                 blockState,
                 pos,
                 matrices,

@@ -66,7 +66,7 @@ public class EvokerFangAbility extends DirectAbilityBase<EvokerEntity, LivingEnt
 
     @Override
     public boolean run(LivingEntity entity) {
-        if (this.owner.world.isClient) return true;
+        if (this.owner.getWorld().isClient) return true;
 
         // We are not resetting the target afterwards, as the vexes need it
         this.owner.setTarget(entity);
@@ -104,7 +104,7 @@ public class EvokerFangAbility extends DirectAbilityBase<EvokerEntity, LivingEnt
 
     @Override
     public void onCooldownEnd() {
-        if (!this.owner.world.isClient) {
+        if (!this.owner.getWorld().isClient) {
             this.owner.setSpell(SpellcastingIllagerAccess.SPELL_NONE);
         }
     }

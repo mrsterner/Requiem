@@ -64,7 +64,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.EntityAttributesS2CPacket;
+import net.minecraft.network.packet.s2c.play.EntityAttributesUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -86,7 +86,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
     }
 
     private boolean isReadyForPossession() {
-        return player.world.isClient || (!player.isSpectator() && RemnantComponent.get(this.player).isIncorporeal());
+        return player.getWorld().isClient || (!player.isSpectator() && RemnantComponent.get(this.player).isIncorporeal());
     }
 
     /**
@@ -118,7 +118,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
     private void startPossessing0(MobEntity host, Possessable possessable) {
         possessable.setPossessor(null);
         // Transfer inventory and mount
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             if (host.getType().isIn(RequiemCoreEntityTags.INVENTORY_CARRIERS)) {
                 PossessedData.KEY.get(host).moveItems(player.getInventory(), false);
             }
@@ -151,7 +151,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
         // Update some attributes
         this.player.copyPositionAndRotation(host);
         this.player.calculateDimensions(); // update size
-        MovementAlterer.get(this.player).setConfig(MovementRegistry.get(this.player.world).getEntityMovementConfig(host.getType()));
+        MovementAlterer.get(this.player).setConfig(MovementRegistry.get(this.player.getWorld()).getEntityMovementConfig(host.getType()));
 
         // Make the mob react a bit
         host.playAmbientSound();
@@ -221,7 +221,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
             ((LivingEntityAccessor) player).requiem$invokeDropInventory();
         }
         player.clearStatusEffects();
-        if (player.world.getProperties().isHardcore()) {
+        if (player.getWorld().getProperties().isHardcore()) {
             AttritionFocus.KEY.get(possessed).applyAttrition(player);
         }
         PossessionEvents.DISSOCIATION_CLEANUP.invoker().cleanUpAfterDissociation(player, possessed);
@@ -235,7 +235,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
     @Override
     public void applySyncPacket(PacketByteBuf buf) {
         int possessedId = buf.readInt();
-        Entity entity = player.world.getEntityById(possessedId);
+        Entity entity = player.getWorld().getEntityById(possessedId);
 
         if (entity instanceof MobEntity) {
             this.startPossessing((MobEntity) entity);
@@ -268,8 +268,8 @@ public final class PossessionComponentImpl implements PossessionComponent {
             RequiemCore.LOGGER.debug("{}: this player's possessed entity has disappeared", this.player);
             this.resetState();
             // Attempt to find an equivalent entity using the UUID
-            if (this.player.world instanceof ServerWorld) {
-                Entity host = ((ServerWorld) this.player.world).getEntity(possessedUuid);
+            if (this.player.getWorld() instanceof ServerWorld serverWorld) {
+                Entity host = serverWorld.getEntity(possessedUuid);
                 if (host instanceof MobEntity && host instanceof Possessable) {
                     this.startPossessing((MobEntity) host);
                 }
@@ -286,7 +286,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
         this.player.setAir(this.player.getMaxAir());
         PossessionComponent.KEY.sync(this.player);
         PossessionStateChangeCallback.EVENT.invoker().onPossessionStateChange(this.player, null);
-        RequiemCoreNetworking.sendToAllTrackingIncluding(player, new EntityAttributesS2CPacket(player.getId(), player.getAttributes().getAttributesToSend()));
+        RequiemCoreNetworking.sendToAllTrackingIncluding(player, new EntityAttributesUpdateS2CPacket(player.getId(), player.getAttributes().getAttributesToSend()));
     }
 
     /**
@@ -308,12 +308,12 @@ public final class PossessionComponentImpl implements PossessionComponent {
 
     @Override
     public void startCuring() {
-        if (!this.player.world.isClient) {
+        if (!this.player.getWorld().isClient) {
             RandomGenerator rand = this.player.getRandom();
             this.conversionTimer = rand.nextInt(1201) + 2400;  // a bit shorter than villager
             this.player.removeStatusEffect(StatusEffects.WEAKNESS);
             this.player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, conversionTimer, 0));
-            this.player.world.playSound(null, this.player.getX() + 0.5D, this.player.getY() + 0.5D, this.player.getZ() + 0.5D, SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE, this.player.getSoundCategory(), 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F);
+            this.player.getWorld().playSound(null, this.player.getX() + 0.5D, this.player.getY() + 0.5D, this.player.getZ() + 0.5D, SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE, this.player.getSoundCategory(), 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F);
         }
     }
 

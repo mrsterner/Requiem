@@ -7,7 +7,11 @@
     }
   },
   "killing_blow": {
-    "name": "lava"
+    "tags": [
+      {
+        "id": "requiem:is_lava"
+      }
+    ]
   },
   "entity": {
     "type": "minecraft:wither_skeleton"

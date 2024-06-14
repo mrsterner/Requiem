@@ -59,10 +59,10 @@ public class FrogCatchAbility extends DirectAbilityBase<FrogEntity, Entity> {
     protected boolean run(Entity target) {
         FrogEntity frog = this.owner;
 
-        if (frog.world.isClient) return true;
+        if (frog.getWorld().isClient) return true;
         // Taken from CatchAndEatTask#update
         frog.setTargetEntity(target);
-        frog.world.playSoundFromEntity(null, frog, SoundEvents.ENTITY_FROG_TONGUE, SoundCategory.NEUTRAL, 2.0F, 1.0F);
+        frog.getWorld().playSoundFromEntity(null, frog, SoundEvents.ENTITY_FROG_TONGUE, SoundCategory.NEUTRAL, 2.0F, 1.0F);
         frog.setPose(EntityPose.USING_TONGUE);
         target.setVelocity(target.getPos().relativize(frog.getPos()).normalize().multiply(0.75));
         this.eatAnimationTicks = 0;
@@ -73,7 +73,7 @@ public class FrogCatchAbility extends DirectAbilityBase<FrogEntity, Entity> {
     public void update() {
         super.update();
 
-        if (!this.owner.world.isClient) {
+        if (!this.owner.getWorld().isClient) {
             Optional<Entity> target = this.owner.getTargetEntity();
 
             if (target.isPresent()) {
@@ -94,7 +94,7 @@ public class FrogCatchAbility extends DirectAbilityBase<FrogEntity, Entity> {
      * tweaked to allow hitting other entities without being OP
      */
     private void eatTargetEntity(FrogEntity frog, Entity entity) {
-        frog.world.playSoundFromEntity(null, frog, SoundEvents.ENTITY_FROG_EAT, SoundCategory.NEUTRAL, 2.0F, 1.0F);
+        frog.getWorld().playSoundFromEntity(null, frog, SoundEvents.ENTITY_FROG_EAT, SoundCategory.NEUTRAL, 2.0F, 1.0F);
 
         if (entity.isAlive()) {
             EntityAttributeInstance attackDamage = Objects.requireNonNull(frog.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE));

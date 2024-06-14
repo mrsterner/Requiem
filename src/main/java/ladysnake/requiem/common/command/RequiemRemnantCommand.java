@@ -79,7 +79,7 @@ public final class RequiemRemnantCommand {
 
     private static int queryRemnant(ServerCommandSource source, ServerPlayerEntity player) {
         RemnantType remnantState = RemnantComponent.get(player).getRemnantType();
-        source.sendFeedback(Text.translatable("requiem:commands.query.success." + (source.getEntity() == player ? "self" : "other"), remnantState.getName(), player.getDisplayName()), true);
+        source.sendFeedback(() -> Text.translatable("requiem:commands.query.success." + (source.getEntity() == player ? "self" : "other"), remnantState.getName(), player.getDisplayName()), true);
         return remnantState.isDemon() ? 1 : 0;
     }
 
@@ -97,13 +97,13 @@ public final class RequiemRemnantCommand {
 
     private static void sendSetRemnantFeedback(ServerCommandSource source, ServerPlayerEntity player, RemnantType type) {
         if (source.getEntity() == player) {
-            source.sendFeedback(Text.translatable("requiem:commands.remnant.set.success.self", type.getName()), true);
+            source.sendFeedback(() -> Text.translatable("requiem:commands.remnant.set.success.self", type.getName()), true);
         } else {
             if (source.getWorld().getGameRules().getBoolean(GameRules.SEND_COMMAND_FEEDBACK)) {
                 player.sendSystemMessage(Text.translatable("requiem:commands.remnant.set.target", type.getName()));
             }
 
-            source.sendFeedback(Text.translatable("requiem:commands.remnant.set.success.other", player.getDisplayName(), type.getName()), true);
+            source.sendFeedback(() -> Text.translatable("requiem:commands.remnant.set.success.other", player.getDisplayName(), type.getName()), true);
         }
     }
 }

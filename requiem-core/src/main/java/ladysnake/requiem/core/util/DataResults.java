@@ -51,7 +51,7 @@ public final class DataResults {
         try {
             return DataResult.success(action.call());
         } catch (Throwable t) {
-            return DataResult.error(t.toString());
+            return DataResult.error(t::toString);
         }
     }
 }

@@ -39,10 +39,12 @@ import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
 public class OnPossessionCriterion extends AbstractCriterion<OnPossessionCriterion.Conditions> {
@@ -63,26 +65,26 @@ public class OnPossessionCriterion extends AbstractCriterion<OnPossessionCriteri
     }
 
     @Override
-    protected Conditions conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        return new Conditions(this.id, playerPredicate, EntityPredicate.Extended.getInJson(obj, "entity", predicateDeserializer));
+    protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+        return new Conditions(this.id, playerPredicate, C_ctsfmifk.method_27807("entity", predicateDeserializer, obj, LootContextTypes.ENTITY));
     }
 
     public static class Conditions extends AbstractCriterionConditions {
-        private final EntityPredicate.Extended predicate;
+        private final C_ctsfmifk predicate;
 
-        public Conditions(Identifier id, EntityPredicate.Extended playerPredicate, EntityPredicate.Extended predicate) {
+        public Conditions(Identifier id, C_ctsfmifk playerPredicate, C_ctsfmifk predicate) {
             super(id, playerPredicate);
             this.predicate = predicate;
         }
 
         public boolean test(LootContext ctx) {
-            return this.predicate.test(ctx);
+            return this.predicate.method_27806(ctx);
         }
 
         @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
             JsonObject json = super.toJson(predicateSerializer);
-            json.add("entity", this.predicate.toJson(predicateSerializer));
+            json.add("entity", this.predicate.method_27804(predicateSerializer));
             return json;
         }
     }

@@ -93,13 +93,13 @@ public abstract class PossessorServerPlayerEntityMixin extends PlayerEntity impl
         if (this.requiem_possessedEntityTag != null) {
             Entity formerPossessed = EntityType.loadEntityWithPassengers(
                 this.requiem_possessedEntityTag,
-                world,
+                getWorld(),
                 Function.identity()
             );
 
             if (formerPossessed instanceof MobEntity host) {
                 host.copyPositionAndRotation(this);
-                if (world.spawnEntity(host)) {
+                if (getWorld().spawnEntity(host)) {
                     if (PossessionComponent.get(this).startPossessing(host)) {
                         PossessionEvents.POST_RESURRECTION.invoker().onResurrected(((ServerPlayerEntity) (Object) this), host);
                     }
@@ -121,11 +121,11 @@ public abstract class PossessorServerPlayerEntityMixin extends PlayerEntity impl
 
     @Inject(method = "moveToWorld", at = @At(value = "HEAD", shift = At.Shift.AFTER))
     // Let cancelling mixins do their job
-    private void changePossessedDimension(ServerWorld dim, CallbackInfoReturnable<Entity> info) {
+    private void changePossessedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> info) {
         prepareDimensionChange();
     }
 
-    @Inject(method = "teleport", at = @At(value = "HEAD", shift = At.Shift.AFTER))
+    @Inject(method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", at = @At(value = "HEAD", shift = At.Shift.AFTER))
     // Let cancelling mixins do their job
     private void changePossessedDimension(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
         prepareDimensionChange();
@@ -145,7 +145,7 @@ public abstract class PossessorServerPlayerEntityMixin extends PlayerEntity impl
         spawnResurrectionEntity();
     }
 
-    @Inject(method = "teleport", at = @At(value = "RETURN"))
+    @Inject(method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", at = @At(value = "RETURN"))
     private void onTeleportDone(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
         spawnResurrectionEntity();
     }

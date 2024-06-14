@@ -82,7 +82,7 @@ public final class ResurrectionDataLoader implements SimpleResourceReloader<List
     public MobEntity getNextBody(ServerPlayerEntity player, @Nullable LivingEntity possessed, DamageSource killingBlow) {
         for (ResurrectionData resurrectionDatum : resurrectionData) {
             if (resurrectionDatum.matches(player, possessed, killingBlow)) {
-                Entity nextBody = resurrectionDatum.createEntity(player.world);
+                Entity nextBody = resurrectionDatum.createEntity(player.getWorld());
                 if (nextBody instanceof MobEntity) {
                     nextBody.copyPositionAndRotation(player);
                     return (MobEntity) nextBody;

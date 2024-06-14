@@ -37,8 +37,8 @@ package ladysnake.requiem.core;
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -76,7 +76,7 @@ public final class RequiemCoreNetworking {
     }
 
     public static void sendToAllTrackingIncluding(Entity tracked, Packet<?> message) {
-        if (tracked.world instanceof ServerWorld) {
+        if (tracked.getWorld() instanceof ServerWorld) {
             for (ServerPlayerEntity player : PlayerLookup.tracking(tracked)) {
                 player.networkHandler.sendPacket(message);
             }

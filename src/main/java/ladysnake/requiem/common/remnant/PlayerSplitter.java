@@ -51,12 +51,12 @@ import ladysnake.requiem.common.entity.RequiemEntities;
 import ladysnake.requiem.core.RequiemCore;
 import ladysnake.requiem.core.record.EntityPositionClerk;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MovementFlag;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -87,7 +87,7 @@ public final class PlayerSplitter {
         soul.networkHandler.requestTeleport(shell.getX(), shell.getY(), shell.getZ(), shell.getYaw(), shell.getPitch());
         soul.addExperience(experience);
         transferSoulboundItems(shell, soul);
-        soul.world.spawnEntity(shell);
+        soul.getWorld().spawnEntity(shell);
         if (mount != null) shell.startRiding(mount);
         PlayerBodyTracker.get(soul).setAnchor(EntityPositionClerk.get(shell).getOrCreateRecord());
         PlayerShellEvents.PLAYER_SPLIT.invoker().onPlayerSplit(whole, soul, shell);
@@ -106,7 +106,7 @@ public final class PlayerSplitter {
     }
 
     public static PlayerShellEntity createShell(ServerPlayerEntity whole) {
-        PlayerShellEntity shell = new PlayerShellEntity(RequiemEntities.PLAYER_SHELL, whole.getWorld());
+        PlayerShellEntity shell = new PlayerShellEntity(RequiemEntities.PLAYER_SHELL, whole.getServerWorld());
         shell.changeGameMode(whole.interactionManager.getGameMode());  // use same gamemode for deserialization
         shell.storePlayerData(whole, computeCopyNbt(whole));
         shell.headYaw = whole.headYaw;
@@ -132,14 +132,14 @@ public final class PlayerSplitter {
         mergeInventories(shell, soul);
         soul.getInventory().dropAll();  // ensure modded inventories do not get voided, hopefully
         // Note: the teleport request must be before deserialization, as it only encodes the required relative movement
-        soul.networkHandler.requestTeleport(shell.getX(), shell.getY(), shell.getZ(), shell.getYaw(), shell.getPitch(), EnumSet.allOf(PlayerPositionLookS2CPacket.Flag.class));
+        soul.networkHandler.requestTeleport(shell.getX(), shell.getY(), shell.getZ(), shell.getYaw(), shell.getPitch(), EnumSet.allOf(MovementFlag.class));
         // override common data that may have been altered during this shell's existence
         performNbtCopy(computeCopyNbt(shell), soul);
         soul.addExperience(shell.totalExperience);
         EntityPositionClerk.transferRecord(shell, soul);
         PlayerShellEvents.DATA_TRANSFER.invoker().transferData(shell, soul, true);
 
-        soul.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(soul.getId(), soul.getDataTracker().m_inhpjhpj()));
+        soul.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(soul.getId(), soul.getDataTracker().serializeData()));
 
         shell.remove(Entity.RemovalReason.DISCARDED);
         if (mount != null) soul.startRiding(mount);
@@ -172,7 +172,7 @@ public final class PlayerSplitter {
 
     public static ServerPlayerEntity performRespawn(ServerPlayerEntity player) {
         //Setup location for dummy
-        GameRules.BooleanRule keepInventory = player.world.getGameRules().get(GameRules.KEEP_INVENTORY);
+        GameRules.BooleanRule keepInventory = player.getWorld().getGameRules().get(GameRules.KEEP_INVENTORY);
         boolean keepInv = keepInventory.get();
         RegistryKey<World> dimension = player.getSpawnPointDimension();
         BlockPos blockPos = player.getSpawnPointPosition();

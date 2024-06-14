@@ -72,7 +72,7 @@ public final class RayHelper {
         Vec3d startPoint = entity.getCameraPosVec(tickDeltaTime);
         Vec3d lookVec = entity.getRotationVec(tickDeltaTime);
         Vec3d endPoint = startPoint.add(lookVec.x * range, lookVec.y * range, lookVec.z * range);
-        return raycast(entity.world, entity, startPoint, endPoint, shapeType, fluidHandling);
+        return raycast(entity.getWorld(), entity, startPoint, endPoint, shapeType, fluidHandling);
     }
 
     /**
@@ -98,7 +98,7 @@ public final class RayHelper {
      * @return the position targeted by <code>entity</code>
      */
     public static Vec3d findBlinkPos(Entity entity, float deltaTime, double range) {
-        World world = entity.world;
+        World world = entity.getWorld();
         HitResult trace = raycastEntity(entity, range, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.SOURCE_ONLY, deltaTime);
         boolean secondPass;
         if (trace.getType() == HitResult.Type.MISS) {
@@ -118,9 +118,9 @@ public final class RayHelper {
                     Vec3d toTarget = pos.subtract(entityPos);
                     if (pos.y - (int) pos.y >= 0.5D) {
                         BlockPos testPos = switch (result.getSide()) {
-                            case EAST -> new BlockPos(pos.x - 1, pos.y + 1, pos.z);
-                            case WEST, NORTH -> new BlockPos(pos.x, pos.y + 1, pos.z);
-                            case SOUTH -> new BlockPos(pos.x, pos.y + 1, pos.z - 1);
+                            case EAST -> BlockPos.create(pos.x - 1, pos.y + 1, pos.z);
+                            case WEST, NORTH -> BlockPos.create(pos.x, pos.y + 1, pos.z);
+                            case SOUTH -> BlockPos.create(pos.x, pos.y + 1, pos.z - 1);
                             default -> //should never happen, but better safe than sorry
                                 throw new RaytraceException("hit result had wrong value: " + result.getSide());
                         };
@@ -177,7 +177,7 @@ public final class RayHelper {
     // TODO 1.17 the above method is not client only anymore, so replace this method with that
     @Nullable
     public static EntityHitResult raycast(Entity watcher, Vec3d startPoint, Vec3d endPoint, Box box, Predicate<Entity> predicate, double range) {
-        World world = watcher.world;
+        World world = watcher.getWorld();
         double r = range;
         Entity target = null;
         Vec3d pos = null;

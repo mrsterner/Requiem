@@ -86,7 +86,7 @@ public class DummyJumpingMount implements ExternalJumpingMount, TransientCompone
     }
 
     @Override
-    public boolean canJump(PlayerEntity playerEntity) {
+    public boolean canJump() {
         return true;
     }
 
@@ -97,7 +97,7 @@ public class DummyJumpingMount implements ExternalJumpingMount, TransientCompone
 
     @Override
     public void stopJumping() {
-        this.mob.world.playSoundFromEntity(null, this.mob, this.stepSound, SoundCategory.NEUTRAL, 2.0F, 1.0F);
+        this.mob.getWorld().playSoundFromEntity(null, this.mob, this.stepSound, SoundCategory.NEUTRAL, 2.0F, 1.0F);
         this.mob.setPose(EntityPose.STANDING);
     }
 
@@ -137,7 +137,7 @@ public class DummyJumpingMount implements ExternalJumpingMount, TransientCompone
     }
 
     protected void finishClientJump(PlayerEntity possessor) {
-        Preconditions.checkState(this.mob.world.isClient, "endJump should only be called clientside");
+        Preconditions.checkState(this.mob.getWorld().isClient, "endJump should only be called clientside");
 
         this.jumpStrength = 0.0F;
         this.inAir = false;

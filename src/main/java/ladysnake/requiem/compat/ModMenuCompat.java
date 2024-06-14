@@ -102,14 +102,14 @@ public final class ModMenuCompat implements ModMenuApi {
 
         private String getLocalizedGameRuleUrl() {
             //noinspection SwitchStatementWithTooFewBranches
-            switch (MinecraftClient.getInstance().getLanguageManager().getLanguage().getCode().substring(0, 2)) {
+            switch (MinecraftClient.getInstance().getLanguageManager().getLanguage().substring(0, 2)) {
                 case "pt": return "https://minecraft-pt.gamepedia.com/Regra_de_jogo";
                 default: return "https://minecraft.gamepedia.com/Game_rule";
             }
         }
 
         private String getLocalizedDataPackUrl() {
-            switch (MinecraftClient.getInstance().getLanguageManager().getLanguage().getCode().substring(0, 2)) {
+            switch (MinecraftClient.getInstance().getLanguageManager().getLanguage().substring(0, 2)) {
                 case "fr": return "https://minecraft-fr.gamepedia.com/Pack_de_donn%C3%A9es";
                 case "de": return "https://minecraft-de.gamepedia.com/Datenpaket";
                 case "ja": return "https://minecraft-ja.gamepedia.com/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%91%E3%83%83%E3%82%AF";

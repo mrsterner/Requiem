@@ -75,7 +75,7 @@ public abstract class EntityPredicateMixin {
     }
 
     // ANY return is actually an early return in the bytecode
-    @Inject(method = "fromJson", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "method_8913", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void fromJson(JsonElement json, CallbackInfoReturnable<EntityPredicate> cir, JsonObject entityData) {
         //noinspection ConstantConditions
         EntityPredicateMixin ret = (EntityPredicateMixin) (Object) cir.getReturnValue();

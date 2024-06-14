@@ -147,13 +147,8 @@ public class CommonRecordKeeper implements GlobalRecordKeeper {
     }
 
     private DataResult<RecordType<?>> tryParseRecordType(String key) {
-        // Pre-2.0.0-beta.14 backward compatibility
-        if (key.equals("requiem:body_ref") || key.equals("requiem:soul_owner_ref") || key.equals("requiem:mortician_ref")) {
-            key = "requiem:entity_ref";
-        }
-
         RecordType<?> type = RecordType.REGISTRY.get(Identifier.tryParse(key));
-        if (type == null) return DataResult.error("Unknown record type %s".formatted(key));
+        if (type == null) return DataResult.error(() -> "Unknown record type %s".formatted(key));
         return DataResult.success(type);
     }
 

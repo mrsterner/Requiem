@@ -130,7 +130,7 @@ public class PlayerShellEntity extends FakeServerPlayerEntity {
     }
 
     public static DefaultAttributeContainer.Builder createPlayerShellAttributes() {
-        return PlayerEntity.createPlayerAttributes();
+        return PlayerEntity.createAttributes();
     }
 
     public ShellPathfindingProcess getPathfindingProcess() {
@@ -175,9 +175,9 @@ public class PlayerShellEntity extends FakeServerPlayerEntity {
     protected void tickNewAi() {
         super.tickNewAi();
         if (this.shouldTickBrain()) {
-            this.world.getProfiler().push("requiem:playerShellBrain");
-            this.getBrain().tick(this.getWorld(), this);
-            this.world.getProfiler().pop();
+            this.getWorld().getProfiler().push("requiem:playerShellBrain");
+            this.getBrain().tick(this.getServerWorld(), this);
+            this.getWorld().getProfiler().pop();
             PlayerShellBrain.refreshActivities(this);
             DebugInfoSender.sendBrainDebugData(this);   // TODO 1.17 check if we can debug this mess
         }
@@ -202,7 +202,7 @@ public class PlayerShellEntity extends FakeServerPlayerEntity {
     public ActionResult interactAt(PlayerEntity player, Vec3d vec, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() != Items.NAME_TAG) {
-            if (!this.world.isClient && !player.isSpectator()) {
+            if (!this.getWorld().isClient && !player.isSpectator()) {
                 EquipmentSlot slot = MobEntity.getPreferredEquipmentSlot(stack);
                 if (stack.isEmpty()) {
                     EquipmentSlot clickedSlot = this.getClickedSlot(vec);

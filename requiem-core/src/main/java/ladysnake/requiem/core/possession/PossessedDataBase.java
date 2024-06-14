@@ -48,7 +48,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
+import net.minecraft.network.packet.s2c.play.SelectedSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +90,7 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
 
     @Override
     public void moveItems(PlayerInventory inventory, boolean fromPlayerToThis) {
-        if (inventory.player.world.isClient) return;
+        if (inventory.player.getWorld().isClient) return;
 
         if (fromPlayerToThis) {
             this.dropItems();
@@ -110,7 +110,7 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
                 }
                 this.inventory = null;
                 inventory.selectedSlot = this.selectedSlot;
-                ((ServerPlayerEntity) inventory.player).networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(inventory.selectedSlot));
+                ((ServerPlayerEntity) inventory.player).networkHandler.sendPacket(new SelectedSlotUpdateS2CPacket(inventory.selectedSlot));
             }
         }
     }

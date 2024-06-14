@@ -62,7 +62,7 @@ public class ServerPlayNetworkHandlerMixin {
                     if (jumpingMount != null) {
                         if (packet.getMode() == ClientCommandC2SPacket.Mode.START_RIDING_JUMP) {
                             int i = packet.getMountJumpHeight();
-                            if (jumpingMount.canJump(this.player) && i > 0) {
+                            if (jumpingMount.canJump() && i > 0) {
                                 jumpingMount.startJumping(i);
                             }
                         } else {

@@ -63,7 +63,7 @@ public class EvokerWololoAbility extends DirectAbilityBase<EvokerEntity, Entity>
 
     @Override
     public boolean run(Entity target) {
-        if (this.owner.world.isClient) return true;
+        if (this.owner.getWorld().isClient) return true;
 
         this.wololoGoal.target = target;
 

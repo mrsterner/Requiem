@@ -101,7 +101,7 @@ public abstract class AbilityBase<E extends LivingEntity> implements MobAbility<
     public void update() {
         int cooldown = this.getCooldown();
 
-        if (cooldown > 0 && !this.owner.world.isClient) {
+        if (cooldown > 0 && !this.owner.getWorld().isClient) {
             this.setCooldown(cooldown - 1);
         }
     }

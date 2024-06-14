@@ -42,9 +42,9 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
 public class UsedRequiemTotemCriterion extends AbstractCriterion<UsedRequiemTotemCriterion.Conditions> {
@@ -60,7 +60,7 @@ public class UsedRequiemTotemCriterion extends AbstractCriterion<UsedRequiemTote
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject jsonObject, EntityPredicate.Extended extended, AdvancementEntityPredicateDeserializer advancementEntityPredicateDeserializer) {
+    public Conditions conditionsFromJson(JsonObject jsonObject, C_ctsfmifk extended, AdvancementEntityPredicateDeserializer advancementEntityPredicateDeserializer) {
         ItemPredicate itemPredicate = ItemPredicate.fromJson(jsonObject.get("item"));
         return new Conditions(this.id, extended, itemPredicate);
     }
@@ -72,13 +72,13 @@ public class UsedRequiemTotemCriterion extends AbstractCriterion<UsedRequiemTote
     public static class Conditions extends AbstractCriterionConditions {
         private final ItemPredicate item;
 
-        public Conditions(Identifier id, EntityPredicate.Extended player, ItemPredicate item) {
+        public Conditions(Identifier id, C_ctsfmifk player, ItemPredicate item) {
             super(id, player);
             this.item = item;
         }
 
         public static UsedTotemCriterion.Conditions create(ItemConvertible item) {
-            return new UsedTotemCriterion.Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.Builder.create().items(item).build());
+            return new UsedTotemCriterion.Conditions(C_ctsfmifk.field_24388, ItemPredicate.Builder.create().items(item).build());
         }
 
         public boolean matches(ItemStack stack) {

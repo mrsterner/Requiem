@@ -34,15 +34,15 @@
  */
 package ladysnake.requiem.core.inventory;
 
-import io.github.ladysnake.locki.DefaultInventoryNodes;
-import io.github.ladysnake.locki.InventoryKeeper;
-import io.github.ladysnake.locki.InventoryLock;
-import io.github.ladysnake.locki.InventoryNode;
-import io.github.ladysnake.locki.impl.PlayerInventoryKeeper;
 import ladysnake.requiem.api.v1.entity.InventoryLimiter;
 import ladysnake.requiem.api.v1.entity.InventoryShape;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.entity.player.PlayerEntity;
+import org.ladysnake.locki.DefaultInventoryNodes;
+import org.ladysnake.locki.InventoryKeeper;
+import org.ladysnake.locki.InventoryLock;
+import org.ladysnake.locki.InventoryNode;
+import org.ladysnake.locki.impl.PlayerInventoryKeeper;
 
 public final class PlayerInventoryLimiter implements InventoryLimiter {
     public static final int MAINHAND_SLOT = 0;
@@ -60,28 +60,28 @@ public final class PlayerInventoryLimiter implements InventoryLimiter {
 
     @Override
     public void enable(PlayerEntity player) {
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             lock.lockInventory(player);
         }
     }
 
     @Override
     public void disable(PlayerEntity player) {
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             lock.unlockInventory(player);
         }
     }
 
     @Override
     public void lock(PlayerEntity player, InventoryNode part) {
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             lock.lock(player, part);
         }
     }
 
     @Override
     public void unlock(PlayerEntity player, InventoryNode part) {
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             lock.unlock(player, part);
         }
     }

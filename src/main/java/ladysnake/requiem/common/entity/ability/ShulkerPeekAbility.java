@@ -45,7 +45,7 @@ public class ShulkerPeekAbility extends IndirectAbilityBase<ShulkerEntity> {
 
     @Override
     public boolean run() {
-        if (!this.owner.world.isClient) {
+        if (!this.owner.getWorld().isClient) {
             if (((ShulkerEntityAccessor) this.owner).requiem$getPeekAmount() > 0) {
                 ((ShulkerEntityAccessor) this.owner).requiem$setPeekAmount(0);
             } else {

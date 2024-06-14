@@ -38,10 +38,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import ladysnake.requiem.api.v1.entity.InventoryLimiter;
 import ladysnake.requiem.api.v1.entity.InventoryShape;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -77,7 +77,7 @@ public class PossessionInventoryScreen extends AbstractInventoryScreen<PlayerScr
             this.client.setScreen(new CreativeInventoryScreen(
                 this.client.player,
                 this.client.player.networkHandler.getEnabledFlags(),
-                this.client.options.m_hfsamqbt().get()
+                this.client.options.getOperatorItemsTab().get()
             ));
             return true;
         } else if (InventoryLimiter.instance().getInventoryShape(this.player) != InventoryShape.ALT_LARGE) {
@@ -88,31 +88,31 @@ public class PossessionInventoryScreen extends AbstractInventoryScreen<PlayerScr
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        this.renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, delta);
     }
 
     @Override
-    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+    protected void drawForeground(GuiGraphics graphics, int mouseX, int mouseY) {
         MobEntity possessedEntity = PossessionComponent.getHost(this.player);
         Text title = possessedEntity != null ? possessedEntity.getName() : this.title;
-        this.textRenderer.draw(matrices, title, this.titleX, this.titleY, 0x404040);
+        graphics.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0x404040, false);
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(GuiGraphics graphics, float delta, int mouseX, int mouseY) {
         assert this.client != null;
         assert this.client.player != null;
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         InventoryShape shape = InventoryLimiter.instance().getInventoryShape(this.player);
-        RenderSystem.setShaderTexture(0, shape.swapBackground(BACKGROUND_TEXTURE));
         int x = this.x;
         int y = this.y;
-        this.drawTexture(matrices, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
+        graphics.drawTexture(shape.swapBackground(BACKGROUND_TEXTURE), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
         shape.setupEntityCrop(this.x, this.y);
         InventoryScreen.drawEntity(
+            graphics,
             (int) shape.shiftEntityX(x + 51),
             (int) shape.shiftEntityY(y + 75),
             30,

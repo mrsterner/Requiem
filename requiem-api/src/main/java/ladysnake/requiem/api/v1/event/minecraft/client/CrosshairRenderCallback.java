@@ -18,17 +18,17 @@
 package ladysnake.requiem.api.v1.event.minecraft.client;
 
 import ladysnake.requiem.api.v1.event.IdentifyingEvent;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 @FunctionalInterface
 public interface CrosshairRenderCallback {
 
-    void onCrosshairRender(MatrixStack matrices, int scaledWidth, int scaledHeight);
+    void onCrosshairRender(GuiGraphics graphics, int scaledWidth, int scaledHeight);
 
     IdentifyingEvent<CrosshairRenderCallback> EVENT = new IdentifyingEvent<>(CrosshairRenderCallback.class,
-            (listeners) -> (MatrixStack matrices, int scaledWidth, int scaledHeight) -> {
+            (listeners) -> (GuiGraphics graphics, int scaledWidth, int scaledHeight) -> {
                 for (CrosshairRenderCallback handler : listeners) {
-                    handler.onCrosshairRender(matrices, scaledWidth, scaledHeight);
+                    handler.onCrosshairRender(graphics, scaledWidth, scaledHeight);
                 }
             });
 

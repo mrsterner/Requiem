@@ -57,7 +57,7 @@ public class DemonRemnantState extends MutableRemnantState {
 
     @Override
     protected void regenerateBody(LivingEntity body) {
-        Preconditions.checkState(!this.player.world.isClient);
+        Preconditions.checkState(!this.player.getWorld().isClient);
         RequiemNetworking.sendBodyCureMessage(player);
         RemnantComponent.get(player).setVagrant(false);
         RequiemCriteria.TRANSFORMED_POSSESSED_ENTITY.handle((ServerPlayerEntity) player, body, player, true);
@@ -65,7 +65,7 @@ public class DemonRemnantState extends MutableRemnantState {
         player.removeStatusEffect(RequiemStatusEffects.ATTRITION);
         player.setHealth(body.getHealth());
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200, 0));
-        player.world.syncWorldEvent(null, WorldEvents.ZOMBIE_VILLAGER_CURED, player.getBlockPos(), 0);
+        player.getWorld().syncWorldEvent(null, WorldEvents.ZOMBIE_VILLAGER_CURED, player.getBlockPos(), 0);
     }
 
     @Override

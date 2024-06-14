@@ -91,10 +91,10 @@ public class ClientMessageHandler {
                 Entity entity = handler.getWorld().getEntityById(entityId);
                 if (entity != null) {
                     for(int i = 0; i < 40; ++i) {
-                        double vx = entity.world.random.nextGaussian() * 0.05D;
-                        double vy = entity.world.random.nextGaussian() * 0.05D;
-                        double vz = entity.world.random.nextGaussian() * 0.05D;
-                        entity.world.addParticle(RequiemParticleTypes.CURE, entity.getParticleX(0.5D), entity.getRandomBodyY(), entity.getParticleZ(0.5D), vx, vy, vz);
+                        double vx = entity.getWorld().random.nextGaussian() * 0.05D;
+                        double vy = entity.getWorld().random.nextGaussian() * 0.05D;
+                        double vz = entity.getWorld().random.nextGaussian() * 0.05D;
+                        entity.getWorld().addParticle(RequiemParticleTypes.CURE, entity.getParticleX(0.5D), entity.getRandomBodyY(), entity.getParticleZ(0.5D), vx, vy, vz);
                     }
                 }
             });
@@ -128,7 +128,7 @@ public class ClientMessageHandler {
         ClientPlayNetworking.registerGlobalReceiver(ETHEREAL_ANIMATION, (client, handler, buf, responseSender) -> client.execute(() -> {
             MinecraftClient mc = this.mc;
             assert mc.player != null;
-            mc.player.world.playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), RequiemSoundEvents.EFFECT_DISSOCIATE, SoundCategory.PLAYERS, 2, 0.6f);
+            mc.player.getWorld().playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), RequiemSoundEvents.EFFECT_DISSOCIATE, SoundCategory.PLAYERS, 2, 0.6f);
             this.rc.fxRenderer().beginEtherealAnimation();
         }));
         ClientPlayNetworking.registerGlobalReceiver(OPUS_USE, (client, handler, buf, responseSender) -> {

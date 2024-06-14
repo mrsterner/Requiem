@@ -36,35 +36,18 @@ package ladysnake.requiem.core.util.serde;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.ProjectileDamageSource;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-
-import static net.minecraft.entity.damage.DamageSource.*;
 
 public final class DamageSourceSerialization {
-    public static final Map<String, BiFunction<@Nullable Entity, @Nullable Entity, DamageSource>> DAMAGE_FACTORIES = new HashMap<>();
-
-    static {
-        // God I wish we had a registry for this
-        for (DamageSource damage : new DamageSource[]{IN_FIRE, LIGHTNING_BOLT, ON_FIRE, LAVA, HOT_FLOOR, IN_WALL,
-                CRAMMING, DROWN, STARVE, CACTUS, FALL, FLY_INTO_WALL, OUT_OF_WORLD, GENERIC, MAGIC, WITHER, DRAGON_BREATH, DRYOUT, SWEET_BERRY_BUSH}) {
-            DAMAGE_FACTORIES.put(damage.name, (e1, e2) -> damage);
-        }
-        for (String name : new String[] {"mob", "arrow", "trident", "fireball", "thrown", "indirectMagic", "fireworks"}) {
-            DAMAGE_FACTORIES.put(name, (e1, e2) -> new ProjectileDamageSource(name, e1, e2));
-        }
-    }
-
     public static NbtCompound toTag(DamageSource damage) {
         NbtCompound tag = new NbtCompound();
-        tag.putString("name", damage.name);
+        tag.putString("id", damage.getTypeHolder().getKey().orElseThrow().getValue().toString());
         if (damage.getSource() != null) {
             tag.putUuid("sourceUuid", damage.getSource().getUuid());
         }
@@ -74,18 +57,16 @@ public final class DamageSourceSerialization {
         return tag;
     }
 
-    public static DamageSource fromTag(NbtCompound tag, @Nullable ServerWorld world) {
-        String name = tag.getString("name");
+    public static DamageSource fromTag(NbtCompound tag, ServerWorld world) {
+        String id = tag.getString("id");
         final Entity source;
         final Entity attacker;
-        if (world != null) {
-            // If the tag does not have those keys, the result should be null
-            source = world.getEntity(tag.getUuid("sourceUuid"));
-            attacker = world.getEntity(tag.getUuid("attackerUuid"));
-        } else {
-            source = null;
-            attacker = null;
-        }
-        return Optional.ofNullable(DAMAGE_FACTORIES.get(name)).map(factory -> factory.apply(source, attacker)).orElse(GENERIC);
+        source = tag.containsUuid("sourceUuid") ? world.getEntity(tag.getUuid("sourceUuid")) : null;
+        attacker = tag.containsUuid("attackerUuid") ? world.getEntity(tag.getUuid("attackerUuid")) : null;
+        return Optional.ofNullable(Identifier.tryParse(id)).map(i ->
+            RegistryKey.of(RegistryKeys.DAMAGE_TYPE, i)
+        ).map(key ->
+            world.getDamageSources().create(key, source, attacker)
+        ).orElse(world.getDamageSources().generic());
     }
 }

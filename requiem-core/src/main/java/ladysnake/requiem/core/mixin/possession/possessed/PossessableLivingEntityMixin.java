@@ -49,6 +49,7 @@ import ladysnake.requiem.core.resurrection.ResurrectionDataLoader;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LimbData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.ai.brain.Brain;
@@ -65,6 +66,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -99,8 +101,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
     @Shadow public abstract float getAbsorptionAmount();
 
     @Shadow public float headYaw;
-    @Shadow public float limbAngle;
-    @Shadow public float limbDistance;
+    @Shadow @Final public LimbData limbData;
 
     @Shadow
     public float bodyYaw;
@@ -155,7 +156,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
         // we need a cast here to trick the compiler
         // clever Idea assumes possessedEntity cannot be this because of the wrong class, which is wrong because Mixin
         //noinspection ConstantConditions
-        if ((this.possessor != null && PossessionComponent.get(this.possessor).getHost() == (Entity) this) && !this.world.isClient) {
+        if ((this.possessor != null && PossessionComponent.get(this.possessor).getHost() == (Entity) this) && !this.getWorld().isClient) {
             throw new IllegalStateException("Players must stop possessing an entity before it can change possessor!");
         }
 
@@ -171,7 +172,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
 
         this.possessor = possessor;
 
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient) {
             EntityAiToggle.get((LivingEntity) (Object) this).toggleAi(RequiemCore.POSSESSION_MECHANISM_ID, this.possessor != null, false);
         }
 
@@ -199,22 +200,15 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
         Entity overrides
     * * * * * * * * * * */
 
-    @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;canMoveVoluntarily()Z", ordinal = 1))
+    @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isServer()Z", ordinal = 1))
     private void requiem$mobTick(CallbackInfo ci) {
-        if (this.isBeingPossessed() && !world.isClient) {
+        if (this.isBeingPossessed() && !this.getWorld().isClient) {
             this.requiem$mobTick();
         }
     }
 
     protected void requiem$mobTick() {
         // NO-OP
-    }
-
-    @Inject(method = "canMoveVoluntarily", at = @At("HEAD"), cancellable = true)
-    private void canMoveVoluntarily(CallbackInfoReturnable<Boolean> cir) {
-        if (this.isBeingPossessed()) {
-            cir.setReturnValue(false);
-        }
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -232,14 +226,14 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
         PlayerEntity player = this.getPossessor();
         if (player != null) {
             // Make possessed monsters despawn gracefully
-            if (!this.world.isClient) {
-                if (this instanceof Monster && this.world.getDifficulty() == Difficulty.PEACEFUL) {
+            if (!this.getWorld().isClient) {
+                if (this instanceof Monster && this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
                     player.sendMessage(Text.translatable("requiem.message.peaceful_despawn"), true);
                 }
                 // Absorption only exists on the server for non-player entities
                 player.setAbsorptionAmount(this.getAbsorptionAmount());
             }
-            this.onGround = player.isOnGround();
+            this.setOnGround(player.isOnGround());
             this.setSneaking(player.isSneaking());
         }
     }
@@ -260,9 +254,9 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
                 this.setVelocity(player.getVelocity());
                 this.move(MovementType.SELF, this.getVelocity());
                 this.setPosition(player.getX(), player.getY(), player.getZ());
-                // update limb movement
-                this.limbAngle = player.limbAngle;
-                this.limbDistance = player.limbDistance;
+                // TODO update limb movement
+//                this.limbData.limbAngle = player.limbData.getLimbAngle(0);
+//                this.limbData.setLimbDistance(player.limbData.getLimbDistance());
                 this.horizontalCollision = player.horizontalCollision;
                 this.verticalCollision = player.verticalCollision;
             }
@@ -287,7 +281,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
             possessor.setAttacker(this.getAttacker());
 
             if (possessor.isAlive() && secondLife != null) {    // player didn't get killed by attrition
-                possessor.world.spawnEntity(secondLife);
+                possessor.getWorld().spawnEntity(secondLife);
                 possessionComponent.stopPossessing(false);
                 if (possessionComponent.startPossessing(secondLife)) {
                     PossessionEvents.POST_RESURRECTION.invoker().onResurrected(possessor, secondLife);
@@ -383,9 +377,9 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
     @Inject(method = "damageShield", at = @At("HEAD"), cancellable = true)
     private void damageShield(float damage, CallbackInfo ci) {
         PlayerEntity possessor = this.getPossessor();
-        if (possessor != null && !this.world.isClient) {
+        if (possessor != null && !this.getWorld().isClient) {
             ((LivingEntityAccessor)possessor).requiem$invokeDamageShield(damage);
-            this.world.sendEntityStatus(possessor, (byte)29);
+            this.getWorld().sendEntityStatus(possessor, (byte)29);
             ci.cancel();
         }
     }

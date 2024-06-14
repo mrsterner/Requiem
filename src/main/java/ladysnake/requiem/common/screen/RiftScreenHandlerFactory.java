@@ -39,6 +39,7 @@ import ladysnake.requiem.api.v1.remnant.RiftTracker;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -57,8 +58,8 @@ public final class RiftScreenHandlerFactory implements ExtendedScreenHandlerFact
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.encode(ObeliskDescriptor.CODEC, this.source);
-        buf.writeCollection(player.getComponent(RiftTracker.KEY).fetchKnownObelisks(), (b, o) -> b.encode(ObeliskDescriptor.CODEC, o));
+        buf.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, this.source);
+        buf.writeCollection(player.getComponent(RiftTracker.KEY).fetchKnownObelisks(), (b, o) -> b.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, o));
     }
 
     @Override

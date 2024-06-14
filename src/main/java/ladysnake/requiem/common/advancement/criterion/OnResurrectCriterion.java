@@ -42,6 +42,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
 import javax.annotation.Nullable;
@@ -63,14 +64,14 @@ public class OnResurrectCriterion extends AbstractCriterion<Conditions> {
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer ctx) {
-        return new Conditions(this.getId(), playerPredicate, EntityPredicate.fromJson(json.get("body")));
+    public Conditions conditionsFromJson(JsonObject json, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer ctx) {
+        return new Conditions(this.getId(), playerPredicate, EntityPredicate.method_8913(json.get("body")));
     }
 
     static class Conditions extends AbstractCriterionConditions {
         private final EntityPredicate entity;
 
-        public Conditions(Identifier id, EntityPredicate.Extended playerPredicate, EntityPredicate entity) {
+        public Conditions(Identifier id, C_ctsfmifk playerPredicate, EntityPredicate entity) {
             super(id, playerPredicate);
             this.entity = entity;
         }

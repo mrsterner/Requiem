@@ -55,7 +55,7 @@ public class StatusEffectReapplicatorImpl implements StatusEffectReapplicator {
 
     @Override
     public void onStatusEffectRemoved(StatusEffectInstance effect) {
-        if (!this.holder.world.isClient && StickyStatusEffect.shouldStick(effect, this.holder)) {
+        if (!this.holder.getWorld().isClient && StickyStatusEffect.shouldStick(effect, this.holder)) {
             reappliedEffects.add(new StatusEffectInstance(effect));
         }
     }

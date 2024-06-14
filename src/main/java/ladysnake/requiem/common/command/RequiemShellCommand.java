@@ -114,7 +114,7 @@ public final class RequiemShellCommand {
     private static void createShell(Vec3d position, ServerPlayerEntity player) {
         PlayerShellEntity shell = PlayerSplitter.createShell(player);
         shell.setPosition(position.x, position.y, position.z);
-        player.world.spawnEntity(shell);
+        player.getWorld().spawnEntity(shell);
     }
 
     private static void split(ServerPlayerEntity player) {

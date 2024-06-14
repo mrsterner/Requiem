@@ -87,24 +87,24 @@ public class ObeliskSoulEntity extends SoulEntity {
     public void tick() {
         this.noClip = this.isPhasing() || this.age >= this.maxAge;
 
-        if (!world.isClient) {
+        if (!getWorld().isClient) {
             if (this.targetPos != null && this.isTargetStale(targetPos)) {
                 this.setMaxAge(60);
                 this.targetPos = null;
             }
             if (isActivatedRunestone(this.getBlockStateAtPos())) {
-                this.world.sendEntityStatus(this, SOUL_EXPIRED_STATUS);
+                this.getWorld().sendEntityStatus(this, SOUL_EXPIRED_STATUS);
                 this.discard();
             }
         }
         super.tick();
-        if (!this.world.isClient()) {
+        if (!this.getWorld().isClient()) {
             if (this.prevX == this.getX() && this.prevY == this.getY() && this.prevZ == this.getZ()) {
                 this.ticksAgainstWall++;
                 if (this.ticksAgainstWall > PlayerMovementAlterer.TICKS_BEFORE_PHASING) {
                     this.setPhasing(true);
                 }
-            } else if (this.world.isSpaceEmpty(this)) {
+            } else if (this.getWorld().isSpaceEmpty(this)) {
                 this.setPhasing(false);
                 this.ticksAgainstWall = 0;
             }
@@ -123,7 +123,7 @@ public class ObeliskSoulEntity extends SoulEntity {
         float redEvolution = -0.05f * (1f - this.getConversionProgress());
         float greenEvolution = -0.06f * this.getConversionProgress();
         float blueEvolution = 0.0f;
-        this.world.addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, redEvolution, greenEvolution, blueEvolution), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
+        this.getWorld().addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, redEvolution, greenEvolution, blueEvolution), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
     }
 
     public float getConversionProgress() {
@@ -180,8 +180,8 @@ public class ObeliskSoulEntity extends SoulEntity {
     }
 
     private boolean isTargetStale(BlockPos targetPos) {
-        if (world.isChunkLoaded(targetPos)) {
-            return !isActivatedRunestone(world.getBlockState(targetPos));
+        if (getWorld().isChunkLoaded(targetPos)) {
+            return !isActivatedRunestone(getWorld().getBlockState(targetPos));
         }
         return true;
     }

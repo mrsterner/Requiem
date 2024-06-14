@@ -52,7 +52,7 @@ public class RangedAttackAbility<T extends MobEntity & RangedAttackMob> extends 
 
     @Override
     public boolean run(LivingEntity target) {
-        if (!this.owner.world.isClient) {
+        if (!this.owner.getWorld().isClient) {
             this.owner.attack(target, 1f);
             this.beginCooldown();
         }

@@ -49,8 +49,8 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public final class RequiemItems {
     public static final IchorVesselItem ICHOR_VESSEL_RECLAMATION = makeIchorVessel(RequiemStatusEffects.RECLAMATION);
     public static final int ICHOR_DEFAULT_DURATION = 20 * 60 * 10;
 
-    private static final Map<Identifier, List<ItemConvertible>> itemsByGroup = new LinkedHashMap<>();
+    private static final Map<RegistryKey<ItemGroup>, List<ItemConvertible>> itemsByGroup = new LinkedHashMap<>();
 
     private static IchorVesselItem makeIchorVessel(StatusEffect statusEffect) {
         IchorVesselItem item = new IchorVesselItem(new Item.Settings().maxCount(1), new StatusEffectInstance(statusEffect, ICHOR_DEFAULT_DURATION, 0, false, false, true));
@@ -87,16 +87,16 @@ public final class RequiemItems {
     public static void init() {
         registerItem(DEBUG_ITEM, "debug_item");
         registerItem(TOTEM_OF_SKELETONIZATION, "totem_of_skeletonization", ItemGroups.COMBAT);
-        registerItem(PURE_SOUL_VESSEL, "pure_soul_vessel", ItemGroups.TOOLS);
-        registerItem(EMPTY_SOUL_VESSEL, "empty_soul_vessel", ItemGroups.TOOLS);
-        registerItem(CREATIVE_SOUL_VESSEL, "creative_soul_vessel", ItemGroups.TOOLS);
-        registerItem(FILLED_SOUL_VESSEL, "filled_soul_vessel", ItemGroups.TOOLS);
-        registerItem(SHATTERED_SOUL_VESSEL, "shattered_soul_vessel", ItemGroups.TOOLS);
-        registerItem(SEALED_REMNANT_VESSEL, "sealed_remnant_vessel", ItemGroups.TOOLS);
-        registerItem(ICHOR_VESSEL_ATTRITION, "ichor_vessel_attrition", ItemGroups.TOOLS);
-        registerItem(ICHOR_VESSEL_EMANCIPATION, "ichor_vessel_emancipation", ItemGroups.TOOLS);
-        registerItem(ICHOR_VESSEL_PENANCE, "ichor_vessel_penance", ItemGroups.TOOLS);
-        registerItem(ICHOR_VESSEL_RECLAMATION, "ichor_vessel_reclamation", ItemGroups.TOOLS);
+        registerItem(PURE_SOUL_VESSEL, "pure_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(EMPTY_SOUL_VESSEL, "empty_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(CREATIVE_SOUL_VESSEL, "creative_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(FILLED_SOUL_VESSEL, "filled_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(SHATTERED_SOUL_VESSEL, "shattered_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(SEALED_REMNANT_VESSEL, "sealed_remnant_vessel", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(ICHOR_VESSEL_ATTRITION, "ichor_vessel_attrition", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(ICHOR_VESSEL_EMANCIPATION, "ichor_vessel_emancipation", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(ICHOR_VESSEL_PENANCE, "ichor_vessel_penance", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(ICHOR_VESSEL_RECLAMATION, "ichor_vessel_reclamation", ItemGroups.TOOLS_AND_UTILITIES);
         registerItem(MORTICIAN_SPAWN_EGG, "mortician_spawn_egg", ItemGroups.SPAWN_EGGS);
 
         itemsByGroup.forEach((group, items) -> {
@@ -112,11 +112,11 @@ public final class RequiemItems {
         FILLED_SOUL_VESSEL.registerCallbacks();
     }
 
-    public static <T extends Item> void registerItem(T item, String name, ItemGroup... itemGroups) {
+    public static <T extends Item> void registerItem(T item, String name, RegistryKey<ItemGroup>... itemGroups) {
         Registry.register(Registries.ITEM, Requiem.id(name), item);
 
-        for (ItemGroup itemGroup : itemGroups) {
-            itemsByGroup.computeIfAbsent(itemGroup.getId(), g -> new ArrayList<>()).add(item);
+        for (RegistryKey<ItemGroup> itemGroup : itemGroups) {
+            itemsByGroup.computeIfAbsent(itemGroup, g -> new ArrayList<>()).add(item);
         }
     }
 }

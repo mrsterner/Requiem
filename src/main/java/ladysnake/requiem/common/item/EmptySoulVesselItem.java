@@ -53,7 +53,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -203,7 +202,7 @@ public class EmptySoulVesselItem extends Item {
             result.getOrCreateSubNbt(FilledSoulVesselItem.SOUL_FRAGMENT_NBT).putUuid("uuid", recordUuid);
             switch (captureType.get()) {
                 case NORMAL -> SoulHolderComponent.get(target).removeSoul();
-                case AGGREGATE -> target.damage(DamageSource.MAGIC, SOUL_AGGREGATE_STEALING_DAMAGE);
+                case AGGREGATE -> target.damage(world.getDamageSources().magic(), SOUL_AGGREGATE_STEALING_DAMAGE);
             }
             remnant.getItemCooldownManager().set(RequiemItems.FILLED_SOUL_VESSEL, POST_CAPTURE_COOLDOWN);
         } else {
@@ -241,7 +240,7 @@ public class EmptySoulVesselItem extends Item {
     }
 
     public static void playSoulCaptureEffects(LivingEntity user, Entity target) {
-        if (!(user.world instanceof ServerWorld world)) throw new IllegalStateException("Must be called serverside");
+        if (!(user.getWorld() instanceof ServerWorld world)) throw new IllegalStateException("Must be called serverside");
         if (world.getRandom().nextFloat() < 0.75f) {
             world.spawnParticles(
                 new RequiemEntityParticleEffect(RequiemParticleTypes.ENTITY_DUST, target.getId(), user.getId()),
@@ -296,8 +295,8 @@ public class EmptySoulVesselItem extends Item {
     }
 
     private static double getAttributeBaseValue(LivingEntity entity, EntityAttribute attribute) {
-        if (!entity.getAttributes().m_vonjnjfn(attribute)) return 0;
-        return entity.m_xpojueyp(attribute);
+        if (!entity.getAttributes().hasAttribute(attribute)) return 0;
+        return entity.getAttributes().getBaseValue(attribute);
     }
 
     @Override

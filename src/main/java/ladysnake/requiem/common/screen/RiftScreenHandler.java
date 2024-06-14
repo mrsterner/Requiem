@@ -84,7 +84,7 @@ public class RiftScreenHandler extends ScreenHandler {
 
     public void useRift(ServerPlayerEntity player, ObeliskDescriptor target) {
         if (this.obelisks.contains(target) && !this.source.equals(target)) {
-            RiftRunestoneBlock.findRespawnPosition(player.getType(), player.world, target.pos()).ifPresent(respawnPosition -> {
+            RiftRunestoneBlock.findRespawnPosition(player.getType(), player.getWorld(), target.pos()).ifPresent(respawnPosition -> {
                 Vec3d towardsObelisk = target.center().subtract(respawnPosition).normalize();
                 float yaw = (float) MathHelper.wrapDegrees(MathHelper.atan2(towardsObelisk.z, towardsObelisk.x) * 180.0F / (float)Math.PI - 90.0);
                 player.teleport(respawnPosition.x, respawnPosition.y, respawnPosition.z, true);

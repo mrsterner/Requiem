@@ -36,6 +36,7 @@ package ladysnake.requiem.mixin.common.remnant;
 
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import net.minecraft.block.AbstractPressurePlateBlock;
+import net.minecraft.block.BlockSetType;
 import net.minecraft.block.WeightedPressurePlateBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -46,11 +47,11 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(WeightedPressurePlateBlock.class)
 public abstract class WeightedPressurePlateBlockMixin extends AbstractPressurePlateBlock {
-    protected WeightedPressurePlateBlockMixin(Settings settings) {
-        super(settings);
+    protected WeightedPressurePlateBlockMixin(Settings settings, BlockSetType blockSetType) {
+        super(settings, blockSetType);
     }
 
-    @ModifyVariable(method = "getRedstoneOutput(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)I", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/Math;min(II)I"))
+    @ModifyVariable(method = "calculateRedstoneOutput", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/Math;min(II)I"))
     private int removeVagrantPlayersFromCount(int base, World world, BlockPos pos) {
         for (PlayerEntity player : world.getNonSpectatingEntities(PlayerEntity.class, BOX.offset(pos))) {
             if (RemnantComponent.isVagrant(player)) {

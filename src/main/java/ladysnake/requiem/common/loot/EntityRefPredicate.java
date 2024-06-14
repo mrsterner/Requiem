@@ -98,7 +98,7 @@ public record EntityRefPredicate(DistancePredicate distance, LocationPredicate l
             JsonObject jsonObject = JsonHelper.asObject(json, "entity_ref");
             DistancePredicate distance = DistancePredicate.fromJson(jsonObject.get("distance"));
             LocationPredicate location = LocationPredicate.fromJson(jsonObject.get("location"));
-            EntityPredicate entity = EntityPredicate.fromJson(jsonObject.get("entity"));
+            EntityPredicate entity = EntityPredicate.method_8913(jsonObject.get("entity"));
             return new EntityRefPredicate(distance, location, entity);
         }
     }

@@ -36,12 +36,12 @@ package ladysnake.requiem.mixin.client.inventory;
 
 import ladysnake.requiem.Requiem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
-import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screen.recipe.book.RecipeBookResults;
+import net.minecraft.client.gui.screen.recipe.book.RecipeBookWidget;
+import net.minecraft.client.gui.screen.recipe.book.RecipeGroupButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -54,7 +54,7 @@ import java.util.List;
 @Mixin(RecipeBookWidget.class)
 public abstract class RecipeBookWidgetMixin {
     @Shadow
-    public abstract void render(MatrixStack matrices, int mouseX, int mouseY, float delta);
+    public abstract void render(GuiGraphics graphics, int mouseX, int mouseY, float delta);
 
     @Shadow
     protected MinecraftClient client;
@@ -71,11 +71,11 @@ public abstract class RecipeBookWidgetMixin {
     private static final ThreadLocal<Boolean> REQUIEM$REENTRANT = ThreadLocal.withInitial(() -> false);
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void requiem$tryDebugNpe(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void requiem$tryDebugNpe(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (!REQUIEM$REENTRANT.get()) {
             REQUIEM$REENTRANT.set(true);
             try {
-                this.render(matrices, mouseX, mouseY, delta);
+                this.render(graphics, mouseX, mouseY, delta);
                 ci.cancel();
             } catch (Exception e) {
                 Requiem.LOGGER.error("Caught exception while rendering recipe book widget", e);

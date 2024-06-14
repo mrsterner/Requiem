@@ -40,11 +40,13 @@ import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.predicate.DamagePredicate;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
 public class PossessedHitEntityCriterion extends AbstractCriterion<PossessedHitEntityCriterion.Conditions> {
@@ -55,13 +57,13 @@ public class PossessedHitEntityCriterion extends AbstractCriterion<PossessedHitE
     }
 
     @Override
-    protected Conditions conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+    protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
         return new Conditions(
             this.id,
             playerPredicate,
             DamagePredicate.fromJson(obj.get("damage")),
-            EntityPredicate.Extended.getInJson(obj, "possessed", predicateDeserializer),
-            EntityPredicate.Extended.getInJson(obj, "entity", predicateDeserializer)
+            C_ctsfmifk.method_27807("possessed", predicateDeserializer, obj, LootContextTypes.ENTITY),
+            C_ctsfmifk.method_27807("entity", predicateDeserializer, obj, LootContextTypes.ENTITY)
         );
     }
 
@@ -77,10 +79,10 @@ public class PossessedHitEntityCriterion extends AbstractCriterion<PossessedHitE
 
     public static class Conditions extends AbstractCriterionConditions {
         private final DamagePredicate damage;
-        private final EntityPredicate.Extended possessed;
-        private final EntityPredicate.Extended entity;
+        private final C_ctsfmifk possessed;
+        private final C_ctsfmifk entity;
 
-        public Conditions(Identifier id, EntityPredicate.Extended player, DamagePredicate damage, EntityPredicate.Extended possessed, EntityPredicate.Extended entity) {
+        public Conditions(Identifier id, C_ctsfmifk player, DamagePredicate damage, C_ctsfmifk possessed, C_ctsfmifk entity) {
             super(id, player);
             this.damage = damage;
             this.possessed = possessed;
@@ -91,7 +93,7 @@ public class PossessedHitEntityCriterion extends AbstractCriterion<PossessedHitE
             if (this.damage.test(player, source, dealt, taken, blocked)) {
                 LootContext possessedCtx = EntityPredicate.createAdvancementEntityLootContext(player, possessed);
                 LootContext targetCtx = EntityPredicate.createAdvancementEntityLootContext(player, target);
-                return this.possessed.test(possessedCtx) && this.entity.test(targetCtx);
+                return this.possessed.method_27806(possessedCtx) && this.entity.method_27806(targetCtx);
             }
             return false;
         }
@@ -100,8 +102,8 @@ public class PossessedHitEntityCriterion extends AbstractCriterion<PossessedHitE
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
             JsonObject jsonObject = super.toJson(predicateSerializer);
             jsonObject.add("damage", this.damage.toJson());
-            jsonObject.add("possessed", this.possessed.toJson(predicateSerializer));
-            jsonObject.add("entity", this.entity.toJson(predicateSerializer));
+            jsonObject.add("possessed", this.possessed.method_27804(predicateSerializer));
+            jsonObject.add("entity", this.entity.method_27804(predicateSerializer));
             return jsonObject;
         }
     }

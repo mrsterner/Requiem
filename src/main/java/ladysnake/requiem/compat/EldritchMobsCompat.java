@@ -53,7 +53,7 @@ public final class EldritchMobsCompat implements PossessionStartCallback {
     public Result onPossessionAttempted(MobEntity target, PlayerEntity possessor, boolean simulate) {
         MobRank rank = EldritchMobsMod.getRank(target.asComponentProvider());
         if (rank != MobRank.UNDECIDED && rank != MobRank.NONE) {
-            if (!possessor.world.isClient) possessor.sendMessage(Text.translatable("requiem:possess.incompatible_body"), true);
+            if (!possessor.getWorld().isClient) possessor.sendMessage(Text.translatable("requiem:possess.incompatible_body"), true);
             return Result.DENY;
         }
         return Result.PASS;

@@ -128,7 +128,7 @@ public record OldPossessionItemOverride(
         }
 
         public boolean test(PlayerEntity player, MobEntity possessed, ItemStack stack) {
-            if (!this.usedItem.test(possessed.world, stack)) {
+            if (!this.usedItem.test(possessed.getWorld(), stack)) {
                 return false;
             }
             if (!this.possessed.test(possessed)) {

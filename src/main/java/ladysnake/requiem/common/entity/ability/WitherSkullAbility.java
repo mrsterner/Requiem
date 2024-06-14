@@ -87,17 +87,17 @@ public class WitherSkullAbility extends AbilityBase<WitherEntity> {
 
     protected WitherSkullEntity summonSkullWithTarget(double x, double y, double z, double dirX, double dirY, double dirZ) {
         if (!owner.isSilent()) {
-            owner.world.syncWorldEvent(null, 1024, owner.getBlockPos(), 0);
+            owner.getWorld().syncWorldEvent(null, 1024, owner.getBlockPos(), 0);
         }
         WitherSkullEntity witherSkullEntity = new WitherSkullEntity(
-            this.owner.world,
+            this.owner.getWorld(),
             this.owner,
             dirX, dirY, dirZ
         );
         witherSkullEntity.setOwner(owner);
 
         witherSkullEntity.setPos(x, y, z);
-        owner.world.spawnEntity(witherSkullEntity);
+        owner.getWorld().spawnEntity(witherSkullEntity);
         return witherSkullEntity;
     }
 

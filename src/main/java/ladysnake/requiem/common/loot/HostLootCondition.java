@@ -103,7 +103,7 @@ public class HostLootCondition implements LootCondition {
             return new HostLootCondition(
                 checkedEntity,
                 JsonHelper.deserialize(jsonObject, "entity", ctx, LootContext.EntityTarget.class),
-                EntityPredicate.fromJson(jsonObject.get("predicate"))
+                EntityPredicate.method_8913(jsonObject.get("predicate"))
             );
         }
     }

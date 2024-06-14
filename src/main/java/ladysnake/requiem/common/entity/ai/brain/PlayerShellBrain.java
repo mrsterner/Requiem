@@ -52,7 +52,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.unmapped.C_lygsomtd;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.math.int_provider.UniformIntProvider;
 
 import java.util.Optional;
 
@@ -76,7 +76,7 @@ public final class PlayerShellBrain {
         brain.setTaskList(Activity.IDLE, 10, ImmutableList.of(
             new PlayerGoHomeTask(MemoryModuleType.HOME, 1f, 10, 5000),  // TODO fix the attempt thing
             new LivingUpdateAttackTargetTask<>(PlayerShellBrain::canFight, PlayerShellBrain::getPriorityAttackTarget),
-            C_lygsomtd.m_ouvkkubu(8.0F, UniformIntProvider.create(30, 60))
+            C_lygsomtd.method_47067(8.0F, UniformIntProvider.create(30, 60))
         ));
     }
 

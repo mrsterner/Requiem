@@ -86,9 +86,9 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
     @Override
     protected void requiem$mobTick() {
         // for some reason minecraft uses "mob tick" instead of "mobTick", so we do the same
-        this.world.getProfiler().push("mob tick");
+        this.getWorld().getProfiler().push("mob tick");
         this.mobTick();
-        this.world.getProfiler().pop();
+        this.getWorld().getProfiler().pop();
     }
 
     @Inject(method = "setAttacking", at = @At("RETURN"))
@@ -135,7 +135,7 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
     @Inject(method = "equipStack", at = @At("HEAD"), cancellable = true)
     private void setEquippedStack(EquipmentSlot slot, ItemStack item, CallbackInfo ci) {
         PlayerEntity possessor = this.getPossessor();
-        if (possessor != null && !world.isClient) {
+        if (possessor != null && !getWorld().isClient) {
             possessor.equipStack(slot, item);
             ci.cancel();
         }
@@ -166,7 +166,7 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
         // reminder that in most cases the entity is unleashed and the player is not possessing anything
         if (holdingEntity != null && holdingEntity == PossessionComponent.getHost(player)) {
             this.detachLeash(true, !player.getAbilities().creativeMode);
-            cir.setReturnValue(ActionResult.success(this.world.isClient));
+            cir.setReturnValue(ActionResult.success(this.getWorld().isClient));
         }
     }
 

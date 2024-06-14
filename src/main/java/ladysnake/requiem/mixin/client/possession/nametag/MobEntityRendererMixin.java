@@ -56,7 +56,7 @@ public abstract class MobEntityRendererMixin<T extends MobEntity, M extends Enti
     @Inject(method = "hasLabel", at = @At("HEAD"), cancellable = true)
     private void forceDisplay(T entity, CallbackInfoReturnable<Boolean> cir) {
         PlayerEntity possessor = ((Possessable) entity).getPossessor();
-        if (possessor != null && RequiemSyncedGamerules.get(entity.world).shouldShowPossessorNametag() && super.hasLabel(entity)) {
+        if (possessor != null && RequiemSyncedGamerules.get(entity.getWorld()).shouldShowPossessorNametag() && super.hasLabel(entity)) {
             cir.setReturnValue(true);
         }
     }

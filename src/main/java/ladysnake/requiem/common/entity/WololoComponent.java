@@ -59,7 +59,7 @@ public class WololoComponent implements AutoSyncedComponent {
     }
 
     public static WololoComponent create(LivingEntity entity) {
-        return entity.world.isClient ? new ClientWololoComponent(entity) : new WololoComponent(entity);
+        return entity.getWorld().isClient ? new ClientWololoComponent(entity) : new WololoComponent(entity);
     }
 
     private final LivingEntity entity;

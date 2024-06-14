@@ -79,7 +79,7 @@ public class ReclamationStatusEffect extends StatusEffect implements StickyStatu
 
     @Override
     public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-        if (!entity.world.isClient()) {
+        if (!entity.getWorld().isClient()) {
             playersToHeal.put(entity, amplifier + 1);
         }
     }

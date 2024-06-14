@@ -42,8 +42,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PufferfishEntity.class)
 public abstract class PufferfishEntityMixin {
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PufferfishEntity;canMoveVoluntarily()Z"), require = 0)
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PufferfishEntity;isServer()Z"), require = 0)
     private boolean allowInflating(PufferfishEntity pufferfishEntity) {
-        return pufferfishEntity.canMoveVoluntarily() || ((Possessable) pufferfishEntity).isBeingPossessed();
+        return pufferfishEntity.isServer() || ((Possessable) pufferfishEntity).isBeingPossessed();
     }
 }

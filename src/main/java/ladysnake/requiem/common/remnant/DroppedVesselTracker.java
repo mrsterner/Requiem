@@ -105,7 +105,7 @@ public class DroppedVesselTracker implements Component {
     }
 
     private void mergeWithVessel(ServerPlayerEntity player, Entity body) {
-        player.teleport((ServerWorld) body.world, body.getX(), body.getY(), body.getZ(), body.getYaw(), body.getPitch());
+        player.teleport((ServerWorld) body.getWorld(), body.getX(), body.getY(), body.getZ(), body.getYaw(), body.getPitch());
 
         if (body instanceof PlayerShellEntity shell) {
             RemnantComponent.get(player).merge(shell);
@@ -115,7 +115,7 @@ public class DroppedVesselTracker implements Component {
     }
 
     public Optional<GlobalRecord> getAnchor() {
-        return Optional.ofNullable(this.anchorUuid).flatMap(GlobalRecordKeeper.get(this.player.world)::getRecord);
+        return Optional.ofNullable(this.anchorUuid).flatMap(GlobalRecordKeeper.get(this.player.getWorld())::getRecord);
     }
 
     @Override

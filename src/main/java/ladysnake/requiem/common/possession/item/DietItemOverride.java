@@ -81,7 +81,7 @@ public class DietItemOverride implements PossessionItemOverride, InstancedItemOv
 
     @Override
     public Optional<InstancedItemOverride> test(PlayerEntity player, MobEntity possessed, ItemStack stack) {
-        if (this.food.get(possessed.world).test(stack)) {
+        if (this.food.get(possessed.getWorld()).test(stack)) {
             return Optional.of(this);
         } else if (stack.isFood()) {
             return Optional.of(OverrideFailure.get(true));

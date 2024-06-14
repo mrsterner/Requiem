@@ -69,7 +69,7 @@ public final class SkeletonBoneComponent implements Component {
             this.owner.heal(4.0f);
             this.owner.playAmbientSound();
 
-            if (this.shouldBeReplaced() && !this.owner.world.isClient) {
+            if (this.shouldBeReplaced() && !this.owner.getWorld().isClient) {
                 this.replaceSkeleton();
             }
 
@@ -98,7 +98,7 @@ public final class SkeletonBoneComponent implements Component {
 
     private boolean shouldBeReplaced() {
         if (this.owner.getType().isIn(RequiemEntityTypeTags.REPLACEABLE_SKELETONS)) {
-            return switch (this.owner.world.getDifficulty()) {
+            return switch (this.owner.getWorld().getDifficulty()) {
                 case PEACEFUL -> false; // what is this skeleton doing in peaceful anyway....?
                 case EASY -> this.replacedBones > 8;
                 case NORMAL -> this.replacedBones > 4;

@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.core.remnant;
 
-import io.github.ladysnake.blabber.Blabber;
 import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
@@ -46,7 +45,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import org.ladysnake.blabber.Blabber;
 
 import javax.annotation.Nullable;
 
@@ -95,7 +94,7 @@ public final class RevivingDeathSuspender implements DeathSuspender {
         this.player.setHealth(0f);
         this.setLifeTransient(false);
         DeathSuspender.KEY.sync(this.player);
-        this.player.onDeath(this.deathCause != null ? deathCause : DamageSource.GENERIC);
+        this.player.onDeath(this.deathCause != null ? deathCause : this.player.getDamageSources().generic());
     }
 
     @Override
@@ -128,8 +127,8 @@ public final class RevivingDeathSuspender implements DeathSuspender {
     @Override
     public void readFromNbt(NbtCompound tag) {
         this.setLifeTransient(tag.getBoolean("lifeTransient"));
-        if (tag.contains("deathCause") && this.player.world.isClient) {
-            this.deathCause = DamageSourceSerialization.fromTag(tag.getCompound("deathCause"), (ServerWorld)this.player.world);
+        if (tag.contains("deathCause") && this.player instanceof ServerPlayerEntity serverPlayer) {
+            this.deathCause = DamageSourceSerialization.fromTag(tag.getCompound("deathCause"), serverPlayer.getServerWorld());
         }
     }
 }

@@ -60,7 +60,7 @@ public class MeleeAbility extends DirectAbilityBase<MobEntity, Entity> {
             return false;
         }
 
-        if (this.owner.world.isClient) return true;
+        if (this.owner.getWorld().isClient) return true;
 
         boolean success = owner.tryAttack(target);
 

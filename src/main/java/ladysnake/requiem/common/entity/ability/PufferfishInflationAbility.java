@@ -48,7 +48,7 @@ public class PufferfishInflationAbility extends IndirectAbilityBase<PufferfishEn
 
     @Override
     protected boolean run() {
-        if (!this.owner.world.isClient) {
+        if (!this.owner.getWorld().isClient) {
             PufferfishEntityAccessor pufferfish = (PufferfishEntityAccessor) this.owner;
             if (pufferfish.getInflateTicks() == 0) {
                 pufferfish.setInflateTicks(1);
