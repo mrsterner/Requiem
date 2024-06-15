@@ -183,7 +183,8 @@ dependencies {
     modCompileOnly (compatLibs.trinkets) { transitive = false }
 //    modLocalRuntime compatLibs.trinkets
     modCompileOnly (compatLibs.pehkui) { transitive = false }
-//    modLocalRuntime compatLibs.pehkui
+//    modApi (compatLibs.pehkui) { transitive = false }
+
     modCompileOnly (compatLibs.snowmercy) { transitive = false }
 //    modLocalRuntime compatLibs.snowmercy
     modCompileOnly (compatLibs.bundles.origins) { transitive = false }
@@ -202,7 +203,8 @@ dependencies {
     modCompileOnly (compatLibs.bumblezone) { transitive = false }
 //    modLocalRuntime compatLibs.bumblezone
     modCompileOnly (compatLibs.bewitchment) { transitive = false }
-//    modLocalRuntime compatLibs.bundles.bewitchment
+    modLocalRuntime (compatLibs.bundles.bewitchment) { transitive = false }
+//    modApi("com.github.Virtuoel:Pehkui:${compatLibs.pehkui}")
     modLocalImplementation (compatLibs.trinkets) {
         exclude group: "net.fabricmc"
         exclude group: "net.fabricmc.fabric-api"

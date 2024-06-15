@@ -195,5 +195,21 @@
     "flightMode": "FORCED",
     "phasesThroughWalls": true,
     "required": false
+  },
+  "bewitchment:owl": {
+    "fallSpeedModifier": 0.9,
+    "flightMode": "ENABLED",
+    "swimMode": "DISABLED",
+    "inertia": 0.5,
+    "gravity":0.03,
+    "required": false
+  },
+  "bewitchment:raven": {
+    "fallSpeedModifier": 0.8,
+    "flightMode": "ENABLED",
+    "swimMode": "DISABLED",
+    "inertia": 0.4,
+    "gravity":0.02,
+    "required": false
   }
 }
