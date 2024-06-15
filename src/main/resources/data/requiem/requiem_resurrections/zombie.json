@@ -3,6 +3,7 @@
   "priority": 80,
   "killing_blow": {
     "direct_entity": {
+      "expected": true,
       "type": "#requiem:zombies"
     }
   },

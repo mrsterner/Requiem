@@ -36,7 +36,7 @@ package ladysnake.requiem.common.item;
 
 import ladysnake.requiem.common.entity.RequiemEntities;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.dispenser.DispenserBlock;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.test.GameTest;

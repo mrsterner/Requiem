@@ -51,7 +51,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
+import net.minecraft.network.packet.c2s.play.ClientStatusUpdateC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -192,7 +192,7 @@ public class PlayerShellsTests implements QuiltGameTest {
         // make sure it's dead, origins makes them invincible
         player.setHealth(0);
         player.kill();
-        player.networkHandler.onClientStatus(new ClientStatusC2SPacket(ClientStatusC2SPacket.Mode.PERFORM_RESPAWN));
+        player.networkHandler.onClientStatusUpdate(new ClientStatusUpdateC2SPacket(ClientStatusUpdateC2SPacket.Mode.PERFORM_RESPAWN));
         GameTestUtil.assertTrue("Dying should trigger an identity reset", listener.countResets() == 1);
         ctx.complete();
     }

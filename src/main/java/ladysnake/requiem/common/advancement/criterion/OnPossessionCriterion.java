@@ -39,7 +39,6 @@ import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
@@ -66,7 +65,8 @@ public class OnPossessionCriterion extends AbstractCriterion<OnPossessionCriteri
 
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        return new Conditions(this.id, playerPredicate, C_ctsfmifk.method_27807("entity", predicateDeserializer, obj, LootContextTypes.ENTITY));
+        C_ctsfmifk c_ctsfmifk2 = EntityPredicate.method_51705(obj, "entity", predicateDeserializer);
+        return new Conditions(this.id, playerPredicate, c_ctsfmifk2);
     }
 
     public static class Conditions extends AbstractCriterionConditions {

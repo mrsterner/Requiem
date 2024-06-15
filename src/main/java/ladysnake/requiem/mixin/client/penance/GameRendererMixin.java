@@ -53,7 +53,7 @@ public abstract class GameRendererMixin {
     @Final
     private MinecraftClient client;
 
-    @Inject(method = "render", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/network/ClientPlayerEntity;lastNauseaStrength:F"))
+    @Inject(method = "render", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/network/ClientPlayerEntity;lastScreenSwirlIntensity:F"))
     private void renderPenanceOverlay(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
         assert this.client.player != null;
         float f = PenanceComponent.KEY.get(this.client.player).getOverlayStrength(tickDelta);

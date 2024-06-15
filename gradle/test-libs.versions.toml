@@ -1,9 +1,9 @@
 [versions]
-elmendorf = "0.12.0"
+elmendorf = "0.11.0"
 junit = "4.13.2"
 mockito = "4.2.0"
 
 [libraries]
-elmendorf = { group = "org.ladysnake", name = "elmendorf", version.ref = "elmendorf" }
+elmendorf = { group = "io.github.ladysnake", name = "elmendorf", version.ref = "elmendorf" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
