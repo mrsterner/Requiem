@@ -60,6 +60,7 @@ public final class RequiemCompatibilityManager {
             load("eldritch_mobs", EldritchMobsCompat.class);
             load("golemsgalore", GolemsGaloreCompat.class);
             // Haema must be loaded before Origins, because vampire data must be stored before the origin gets cleared
+            load("bewitchment", BewitchmentCompat.class);
             load("origins", OriginsCompat.class);
             load("snowmercy", SnowMercyCompat.class);
             load("the_bumblezone", BumblezoneCompat.class);
