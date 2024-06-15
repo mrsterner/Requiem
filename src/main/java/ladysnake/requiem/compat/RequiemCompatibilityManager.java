@@ -60,7 +60,6 @@ public final class RequiemCompatibilityManager {
             load("eldritch_mobs", EldritchMobsCompat.class);
             load("golemsgalore", GolemsGaloreCompat.class);
             // Haema must be loaded before Origins, because vampire data must be stored before the origin gets cleared
-            load("haema", HaemaCompat.class);
             load("origins", OriginsCompat.class);
             load("snowmercy", SnowMercyCompat.class);
             load("the_bumblezone", BumblezoneCompat.class);
@@ -86,10 +85,6 @@ public final class RequiemCompatibilityManager {
             registry.beginRegistration(PlayerEntity.class, OriginsCompat.ORIGIN_HOLDER_KEY).after(OriginsCompat.APOLI_HOLDER_KEY).respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY).end(p -> new OriginsCompat.OriginDataHolder(OriginsCompat.ORIGIN_KEY, OriginsCompat.ORIGIN_HOLDER_KEY));
             registry.beginRegistration(PlayerShellEntity.class, OriginsCompat.APOLI_HOLDER_KEY).end(shell -> new ComponentDataHolder<>(OriginsCompat.APOLI_POWER_KEY, OriginsCompat.APOLI_HOLDER_KEY));
             registry.beginRegistration(PlayerShellEntity.class, OriginsCompat.ORIGIN_HOLDER_KEY).after(OriginsCompat.APOLI_HOLDER_KEY).end(shell -> new OriginsCompat.OriginDataHolder(OriginsCompat.ORIGIN_KEY, OriginsCompat.ORIGIN_HOLDER_KEY));
-        }
-        if (QuiltLoader.isModLoaded("haema")) {
-            registry.registerForPlayers(HaemaCompat.HOLDER_KEY, p -> new ComponentDataHolder<>(HaemaCompat.VAMPIRE_KEY, HaemaCompat.HOLDER_KEY), RespawnCopyStrategy.ALWAYS_COPY);
-            registry.registerFor(PlayerShellEntity.class, HaemaCompat.HOLDER_KEY, shell -> new ComponentDataHolder<>(HaemaCompat.VAMPIRE_KEY, HaemaCompat.HOLDER_KEY));
         }
     }
 

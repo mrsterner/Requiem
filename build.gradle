@@ -195,7 +195,7 @@ dependencies {
 
     modCompileOnly (compatLibs.eldritchMobs) { transitive = false }
 //    modLocalRuntime compatLibs.eldritchMobs
-    modCompileOnly (compatLibs.haema) { transitive = false }
+//    modCompileOnly (compatLibs.haema) { transitive = false }
 //    modLocalRuntime compatLibs.bundles.haema
     modCompileOnly (compatLibs.golemsGalore) { transitive = false }
 //    modLocalRuntime compatLibs.bundles.golemsGalore
