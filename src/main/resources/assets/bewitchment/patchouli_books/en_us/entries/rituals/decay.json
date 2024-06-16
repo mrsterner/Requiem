@@ -10,12 +10,12 @@
     },
     {
       "type": "bewitchment:ritual",
-      "recipe": "darkrites:rituals/decay_zombie",
+      "recipe": "dark_rites:rituals/decay_zombie",
       "text": "Rot the flesh of a living demon."
     },
     {
       "type": "bewitchment:ritual",
-      "recipe": "darkrites:rituals/decay_skeleton",
+      "recipe": "dark_rites:rituals/decay_skeleton",
       "text": "Decay the skin of a living demon."
     }
   ]
