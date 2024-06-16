@@ -121,7 +121,7 @@ public class VagrantPlayerTests implements QuiltGameTest {
             }
         };
         ctx.getWorld().getChunk(regularPlayer.getBlockPos()).getListenerRegistry(ChunkSectionPos.getSectionCoord(regularPlayer.getY())).register(listener);
-        Vec3d movement = new Vec3d(2, 0, 0);
+        Vec3d movement = new Vec3d(2, -0.5, 0);
         regularPlayer.move(MovementType.SELF, movement);
         vagrantPlayer.move(MovementType.SELF, movement);
         possessor.move(MovementType.SELF, movement);
