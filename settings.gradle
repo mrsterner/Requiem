@@ -21,6 +21,7 @@ rootProject.name = 'requiem'
 
 include "requiem-api"
 include "requiem-core"
+include "requiem-core:vaquero"
 
 ['pandemonium'].forEach {
     include it

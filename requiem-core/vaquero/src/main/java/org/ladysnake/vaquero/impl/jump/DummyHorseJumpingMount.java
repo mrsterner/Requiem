@@ -15,13 +15,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; If not, see <https://www.gnu.org/licenses>.
  */
-package ladysnake.requiem.api.v1.internal;
+package org.ladysnake.vaquero.impl.jump;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentFactory;
-import ladysnake.requiem.api.v1.entity.ExternalJumpingMount;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import org.jetbrains.annotations.Nullable;
 
-public interface ExternalJumpingMountFactory {
-    <E extends LivingEntity> ComponentFactory<E, ExternalJumpingMount> simple(float baseJumpStrength, SoundEvent stepSound);
+import java.util.function.Function;
+
+public class DummyHorseJumpingMount extends DummyJumpingMount {
+    public DummyHorseJumpingMount(HorseBaseEntity mob, SoundEvent stepSound, Function<LivingEntity, @Nullable PlayerEntity> getPlayer) {
+        super(mob, -1, stepSound, getPlayer);
+    }
+
+    @Override
+    protected double getBaseJumpingStrength() {
+        return ((HorseBaseEntity) this.mob).getJumpStrength();
+    }
 }

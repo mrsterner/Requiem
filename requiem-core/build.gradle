@@ -3,6 +3,7 @@ group = rootProject.group
 
 dependencies {
     api project(path: ":requiem-api", configuration: "namedElements")
+    api(project(path: ":requiem-core:vaquero", configuration: "namedElements"))
     modImplementation(libs.playerAbilityLib) {
         exclude group: "net.fabricmc"
     }

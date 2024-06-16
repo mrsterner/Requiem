@@ -35,11 +35,8 @@
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
 import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CatEntity;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -48,10 +45,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class CatEntityMixin extends LivingEntityMixin {
     @Shadow
     public abstract void setInSleepingPose(boolean sleeping);
-
-    protected CatEntityMixin(EntityType<? extends TameableEntity> entityType, World world) {
-        super(entityType, world);
-    }
 
     @Override
     protected void requiem$sleep(BlockPos pos, CallbackInfo ci) {

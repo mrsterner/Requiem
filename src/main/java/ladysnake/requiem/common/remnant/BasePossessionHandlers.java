@@ -36,8 +36,6 @@ package ladysnake.requiem.common.remnant;
 
 import dev.onyxstudios.cca.api.v3.entity.TrackingStartCallback;
 import ladysnake.requiem.Requiem;
-import ladysnake.requiem.api.v1.entity.ExternalJumpingMount;
-import ladysnake.requiem.api.v1.event.minecraft.JumpingMountEvents;
 import ladysnake.requiem.api.v1.event.minecraft.MobConversionCallback;
 import ladysnake.requiem.api.v1.event.requiem.PossessionEvents;
 import ladysnake.requiem.api.v1.event.requiem.PossessionStartCallback;
@@ -112,7 +110,6 @@ public final class BasePossessionHandlers {
             }
             return PossessionStartCallback.Result.PASS;
         });
-        JumpingMountEvents.MOUNT_CHECK.register(ExternalJumpingMount.KEY::getNullable);
         MobConversionCallback.EVENT.register(PossessedDataBase::onMobConverted);
         MobConversionCallback.EVENT.register((original, converted) -> dropArmorIfBanned(converted));
         MobConversionCallback.EVENT.register(SoulHolderComponent::onMobConverted);

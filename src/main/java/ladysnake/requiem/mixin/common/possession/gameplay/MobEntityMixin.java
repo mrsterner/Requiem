@@ -34,90 +34,19 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
-import ladysnake.requiem.api.v1.entity.ExternalJumpingMount;
-import ladysnake.requiem.api.v1.event.minecraft.JumpingMountEvents;
-import ladysnake.requiem.api.v1.event.minecraft.MobTravelRidingCallback;
 import ladysnake.requiem.api.v1.event.requiem.PossessionEvents;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.core.util.DetectionHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("UnreachableCode")
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntityMixin implements Possessable {
-    private @Nullable Float requiem$previousStepHeight;
-
-    @Shadow
-    public abstract void setMovementSpeed(float movementSpeed);
-
-    public MobEntityMixin(EntityType<?> type, World world) {
-        super(type, world);
-    }
-
-    @Override
-    protected Vec3d requiem$travelStart(Vec3d movementInput) {
-        if (this.requiem$previousStepHeight != null) {
-            this.setStepHeight(this.requiem$previousStepHeight);
-            this.requiem$previousStepHeight = null;
-        }
-
-        LivingEntity self = (LivingEntity) (Object) this;
-        if (JumpingMountEvents.MOUNT_CHECK.invoker().getJumpingMount(self) instanceof ExternalJumpingMount jumpingMount) {
-            jumpingMount.attemptJump();
-        }
-
-        // Straight up copied from HorseBaseEntity#travel
-        // Also replaces canBeControlledByRider and getPrimaryPassenger with more generic alternatives
-        if (this.isAlive() && this.hasPassengers()) {
-            Entity primaryPassenger = this.getPrimaryPassenger();
-            Entity passenger = primaryPassenger != null ? primaryPassenger : this.getFirstPassenger();
-
-            if (!(passenger instanceof LivingEntity livingEntity) || !MobTravelRidingCallback.EVENT.invoker().canBeControlled((MobEntity) (Object) this, livingEntity)) {
-                return movementInput;
-            }
-
-            this.setYaw(livingEntity.getYaw());
-            this.prevYaw = this.getYaw();
-            this.setPitch(livingEntity.getPitch() * 0.5F);
-            this.setRotation(this.getYaw(), this.getPitch());
-            this.bodyYaw = this.getYaw();
-            this.headYaw = this.bodyYaw;
-
-            if (this.getStepHeight() < 1.0F) {
-                this.requiem$previousStepHeight = this.getStepHeight();
-                this.setStepHeight(1.0F);
-            }
-
-            float sidewaysSpeed = livingEntity.sidewaysSpeed * 0.5F;
-            float forwardSpeed = livingEntity.forwardSpeed;
-            if (forwardSpeed <= 0.0F) {
-                forwardSpeed *= 0.25F;
-            }
-
-            // isLogicalSideForUpdatingMovement but inlined
-            if (passenger instanceof PlayerEntity player && player.isMainPlayer() || !this.getWorld().isClient()) {
-                float speed = this.getRiddenSpeed(passenger instanceof PlayerEntity ? (PlayerEntity) passenger : getPossessor());
-                this.setMovementSpeed(speed);
-                return new Vec3d(sidewaysSpeed, movementInput.y, forwardSpeed);
-            } else if (livingEntity instanceof PlayerEntity) {
-                this.setVelocity(Vec3d.ZERO);
-            }
-        }
-        return movementInput;
-    }
-
     @Override
     public void requiem$pushed(Entity pushed, CallbackInfo ci) {
         MobEntity self = (MobEntity) (Object) this;

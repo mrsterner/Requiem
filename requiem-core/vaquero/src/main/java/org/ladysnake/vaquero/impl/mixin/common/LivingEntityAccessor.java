@@ -15,23 +15,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; If not, see <https://www.gnu.org/licenses>.
  */
-package ladysnake.requiem.api.v1.event.minecraft;
+package org.ladysnake.vaquero.impl.mixin.common;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@FunctionalInterface
-public interface MobTravelRidingCallback {
-    Event<MobTravelRidingCallback> EVENT = EventFactory.createArrayBacked(MobTravelRidingCallback.class, callbacks -> (mount, rider) -> {
-        for (MobTravelRidingCallback callback : callbacks) {
-            if (callback.canBeControlled(mount, rider)) {
-                return true;
-            }
-        }
-        return false;
-    });
-
-    boolean canBeControlled(MobEntity mount, LivingEntity rider);
+@Mixin(LivingEntity.class)
+public interface LivingEntityAccessor {
+    @Accessor
+    void setJumpingCooldown(int cooldown);
 }

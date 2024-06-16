@@ -40,10 +40,10 @@ import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import dev.onyxstudios.cca.api.v3.scoreboard.ScoreboardComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.scoreboard.ScoreboardComponentInitializer;
 import ladysnake.requiem.api.v1.entity.CurableEntityComponent;
-import ladysnake.requiem.api.v1.entity.ExternalJumpingMount;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import ladysnake.requiem.api.v1.internal.StatusEffectReapplicator;
+import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.api.v1.possession.PossessedData;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.api.v1.record.GlobalRecordKeeper;
@@ -61,7 +61,6 @@ import ladysnake.requiem.common.entity.effect.PenanceComponent;
 import ladysnake.requiem.common.entity.effect.StatusEffectReapplicatorImpl;
 import ladysnake.requiem.common.gamerule.RequiemSyncedGamerules;
 import ladysnake.requiem.common.possession.LootingPossessedData;
-import ladysnake.requiem.common.possession.jump.DummyHorseJumpingMount;
 import ladysnake.requiem.common.remnant.DroppedVesselTracker;
 import ladysnake.requiem.common.remnant.GlobalAttritionFocus;
 import ladysnake.requiem.common.remnant.PlayerBodyTracker;
@@ -85,7 +84,13 @@ import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.passive.FrogEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
+import org.jetbrains.annotations.Nullable;
+import org.ladysnake.vaquero.api.ExternalJumpingMount;
+import org.ladysnake.vaquero.impl.jump.DummyHorseJumpingMount;
+
+import java.util.function.Function;
 
 public final class RequiemComponents implements EntityComponentInitializer, ScoreboardComponentInitializer {
 
@@ -112,9 +117,10 @@ public final class RequiemComponents implements EntityComponentInitializer, Scor
         registry.registerForPlayers(PlayerBodyTracker.KEY, PlayerBodyTracker::new, RespawnCopyStrategy.ALWAYS_COPY);
         registry.registerForPlayers(PenanceComponent.KEY, PenanceComponent::new, RespawnCopyStrategy.LOSSLESS_ONLY);
         registry.registerFor(LivingEntity.class, SoulHolderComponent.KEY, SoulHolderComponent::new);
-        registry.registerFor(FrogEntity.class, ExternalJumpingMount.KEY, ExternalJumpingMount.simple(0.6F, SoundEvents.ENTITY_FROG_STEP));
-        registry.registerFor(GoatEntity.class, ExternalJumpingMount.KEY, ExternalJumpingMount.simple(1F, SoundEvents.ENTITY_GOAT_STEP));
-        registry.registerFor(HorseBaseEntity.class, ExternalJumpingMount.KEY, e -> new DummyHorseJumpingMount(e, SoundEvents.ENTITY_HORSE_STEP));
+        Function<LivingEntity, @Nullable PlayerEntity> getPossessor = e -> ((Possessable) e).getPossessor();
+        registry.registerFor(FrogEntity.class, ExternalJumpingMount.KEY, ExternalJumpingMount.simple(0.6F, SoundEvents.ENTITY_FROG_STEP, getPossessor));
+        registry.registerFor(GoatEntity.class, ExternalJumpingMount.KEY, ExternalJumpingMount.simple(1F, SoundEvents.ENTITY_GOAT_STEP, getPossessor));
+        registry.registerFor(HorseBaseEntity.class, ExternalJumpingMount.KEY, e -> new DummyHorseJumpingMount(e, SoundEvents.ENTITY_HORSE_STEP, getPossessor));
         registry.registerForPlayers(RiftTracker.KEY, PlayerRiftTracker::new, RespawnCopyStrategy.ALWAYS_COPY);
         registry.registerForPlayers(DroppedVesselTracker.KEY, DroppedVesselTracker::new, RespawnCopyStrategy.LOSSLESS_ONLY);
     }
