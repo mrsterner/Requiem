@@ -50,7 +50,7 @@ public class PossessionAiTests implements QuiltGameTest {
         ZombieEntity nu = ctx.spawnMob(EntityType.ZOMBIE, 3, 0, 1);
         ZombieEntity xi = ctx.spawnMob(EntityType.ZOMBIE, 4, 0, 1);
         RequiemTestUtil.startPossession(player, mu);
-        ctx.waitAndRun(1, () -> {
+        ctx.waitAndRun(2, () -> {
             mu.tryAttack(nu);
             ctx.succeedWhen(() -> {
                 ctx.assertTrue(nu.getTarget() == mu, "Attacked party should target attacker");
