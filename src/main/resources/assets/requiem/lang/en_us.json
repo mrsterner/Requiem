@@ -241,5 +241,8 @@
 
   "stat.requiem.interact_with_rift": "[Requiem] Interactions with Obelisk Rift",
 
-  "requiem.message.peaceful_despawn": "This host may not belong to such a peaceful world"
+  "requiem.message.peaceful_despawn": "This host may not belong to such a peaceful world",
+
+  "ritual.requiem.ritual.decay_zombie": "Decay Zombie",
+  "ritual.requiem.ritual.decay_skeleton": "Decay Skeleton"
 }
