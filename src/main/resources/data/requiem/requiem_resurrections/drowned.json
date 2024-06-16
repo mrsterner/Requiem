@@ -4,6 +4,7 @@
   "killing_blow": {
     "tags": [
       {
+        "expected": true,
         "id": "requiem:is_drowning"
       }
     ]

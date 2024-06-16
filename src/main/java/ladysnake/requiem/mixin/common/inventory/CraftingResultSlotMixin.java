@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ package ladysnake.requiem.mixin.common.inventory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.screen.slot.CraftingResultSlot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,7 +47,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CraftingResultSlot.class)
 public abstract class CraftingResultSlotMixin extends SlotMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void constructor(PlayerEntity player, CraftingInventory input, Inventory inventory, int index, int x, int y, CallbackInfo ci) {
+    private void constructor(PlayerEntity player, RecipeInputInventory input, Inventory inventory, int index, int x, int y, CallbackInfo ci) {
         if (player != null) {
             this.requiem$player = player;
         }

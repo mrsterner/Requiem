@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ public final class PandemoniumItems {
 
     public static void init() {
         registerItem(PandemoniumItems.BALEFUL_SOUL_VESSEL, "baleful_soul_vessel");
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS.getId()).register(entries -> entries.addItem(BALEFUL_SOUL_VESSEL));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS_AND_UTILITIES).register(entries -> entries.addItem(BALEFUL_SOUL_VESSEL));
     }
 
     public static <T extends Item> void registerItem(T item, String name) {

@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +62,11 @@ public class OnDeathAfterPossessionCriterion extends AbstractCriterion<OnDeathAf
 
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+        C_ctsfmifk entity = EntityPredicate.method_51705(obj, "entity", predicateDeserializer);
         return new Conditions(
             this.id,
             playerPredicate,
-            C_ctsfmifk.method_27807("entity", predicateDeserializer, obj, LootContextTypes.ENTITY),
+            entity,
             DamageSourcePredicate.fromJson(obj.get("killing_blow")),
             Optional.ofNullable(obj.get("seppukku")).map(JsonElement::getAsBoolean).orElse(null)
         );

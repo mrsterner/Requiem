@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public abstract class MerchantScreenMixin extends HandledScreen<MerchantScreenHa
         this.requiem$exorcising = exorcising;
     }
 
-    @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/util/Identifier;)V", ordinal = 0))
+    @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawTexture(Lnet/minecraft/util/Identifier;IIIFFIIII)V", ordinal = 0))
     private Identifier swapBackground(Identifier textureId) {
         if (this.requiem$exorcising) {
             return REQUIEM$EXORCISE_BACKGROUND;

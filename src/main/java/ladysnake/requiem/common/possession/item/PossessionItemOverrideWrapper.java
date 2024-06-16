@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public record PossessionItemOverrideWrapper(
     int priority,
@@ -138,7 +137,7 @@ public record PossessionItemOverrideWrapper(
 
     public static Optional<InstancedItemOverride> findOverride(World world, PlayerEntity player, MobEntity possessedEntity, ItemStack heldStack) {
         Optional<InstancedItemOverride> fallback = Optional.empty();
-        for (PossessionItemOverrideWrapper wrapper : world.getRegistryManager().get(RequiemRegistries.MOB_ITEM_OVERRIDE_KEY).stream().sorted().collect(Collectors.toList())) {
+        for (PossessionItemOverrideWrapper wrapper : world.getRegistryManager().get(RequiemRegistries.MOB_ITEM_OVERRIDE_KEY).stream().sorted().toList()) {
             Optional<InstancedItemOverride> tested = wrapper.test(player, possessedEntity, heldStack);
             if (tested.isPresent()) {
                 if (tested.get().shortCircuits()) {
@@ -153,7 +152,7 @@ public record PossessionItemOverrideWrapper(
 
     public static List<Text> buildTooltip(World world, PlayerEntity player, MobEntity possessedEntity, ItemStack heldStack) {
         List<Text> lines = new ArrayList<>();
-        for (PossessionItemOverrideWrapper wrapper : world.getRegistryManager().get(RequiemRegistries.MOB_ITEM_OVERRIDE_KEY).stream().sorted().collect(Collectors.toList())) {
+        for (PossessionItemOverrideWrapper wrapper : world.getRegistryManager().get(RequiemRegistries.MOB_ITEM_OVERRIDE_KEY).stream().sorted().toList()) {
             Optional<InstancedItemOverride> tested = wrapper.test(player, possessedEntity, heldStack);
             if (tested.isPresent()) {
                 InstancedItemOverride override = tested.get();

@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,8 +120,8 @@ public class VagrantPlayerTests implements QuiltGameTest {
                 return false;
             }
         };
-        ctx.getWorld().getChunk(regularPlayer.getBlockPos()).m_fbrqbtve(ChunkSectionPos.getSectionCoord(regularPlayer.getY())).m_zgxgxcnm(listener);
-        Vec3d movement = new Vec3d(2, 0, 0);
+        ctx.getWorld().getChunk(regularPlayer.getBlockPos()).getListenerRegistry(ChunkSectionPos.getSectionCoord(regularPlayer.getY())).register(listener);
+        Vec3d movement = new Vec3d(2, -0.5, 0);
         regularPlayer.move(MovementType.SELF, movement);
         vagrantPlayer.move(MovementType.SELF, movement);
         possessor.move(MovementType.SELF, movement);

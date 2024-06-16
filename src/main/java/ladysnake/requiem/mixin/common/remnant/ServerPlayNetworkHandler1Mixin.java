@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ public abstract class ServerPlayNetworkHandler1Mixin implements PlayerInteractio
 
     // The qualifier is 100% not unnecessary, refmaps get broken otherwise
     @SuppressWarnings({"InvalidInjectorMethodSignature", "UnnecessaryQualifiedMemberReference"})
+    //Lnet/minecraft/server/network/ServerPlayNetworkHandler$C_wsexhymd;processInteract(Lnet/minecraft/util/Hand;Lnet/minecraft/server/network/ServerPlayNetworkHandler$Interaction;)V
     @Inject(method = "Lnet/minecraft/server/network/ServerPlayNetworkHandler$C_wsexhymd;processInteract(Lnet/minecraft/util/Hand;Lnet/minecraft/server/network/ServerPlayNetworkHandler$Interaction;)V", at = @At("HEAD"), cancellable = true)
     private void onPlayerInteractEntity(Hand hand, @Coerce Object action, CallbackInfo ci) {
         ServerWorld world = this.networkHandler.getPlayer().getServerWorld();

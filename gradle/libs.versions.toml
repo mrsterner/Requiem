@@ -1,6 +1,6 @@
 [versions]
 automatone = "0.11.0"
-blabber = "1.4.4-mc1.20.1-SNAPSHOT"
+blabber = "1.5.1-mc1.20.1"
 cca = "5.2.2"
 chenille = "0.12.0"
 chime = "cec3bcbaed508eb5f564deac8c33923dcccfdf7e"

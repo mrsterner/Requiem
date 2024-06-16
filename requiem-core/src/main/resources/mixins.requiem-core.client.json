@@ -1,7 +1,7 @@
 {
   "parent": "mixins.requiem-core.common.json",
-  "package": "ladysnake.requiem.core.mixin.client",
-  "plugin": "io.github.ladysnake.locki.impl.LockiClientMixinPlugin",
+  "package": "ladysnake.requiem.core.mixin",
+  "plugin": "org.ladysnake.locki.impl.LockiClientMixinPlugin",
   "mixins": [
   ]
 }

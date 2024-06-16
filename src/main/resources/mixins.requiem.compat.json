@@ -9,7 +9,7 @@
     "additionalentityattributes.LivingEntityMixin",
     "bettergraves.BetterGravesMixin",
     "biomemakeover.EntityPartMixin",
-    "haema.VampireBloodInjectorItemMixin",
+    "bewitchment.CleansingRitualMixin",
     "snowmercy.WeaponizedSnowGolemEntityMixin",
     "the_bumblezone.BeehiveBlockMixin"
   ]

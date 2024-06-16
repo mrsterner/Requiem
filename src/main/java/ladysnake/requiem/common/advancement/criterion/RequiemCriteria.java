@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 package ladysnake.requiem.common.advancement.criterion;
 
 import ladysnake.requiem.Requiem;
-import net.fabricmc.fabric.api.object.builder.v1.advancement.CriterionRegistry;
+import net.minecraft.advancement.criterion.Criteria;
 
 public class RequiemCriteria {
     public static final OnResurrectCriterion PLAYER_RESURRECTED_AS_ENTITY = new OnResurrectCriterion(Requiem.id("player_resurrected_as_entity"));
@@ -47,12 +47,12 @@ public class RequiemCriteria {
     public static final UsedRequiemTotemCriterion USED_TOTEM = new UsedRequiemTotemCriterion(Requiem.id("used_totem"));
 
     public static void init() {
-        CriterionRegistry.register(PLAYER_RESURRECTED_AS_ENTITY);
-        CriterionRegistry.register(MADE_REMNANT_CHOICE);
-        CriterionRegistry.register(PLAYER_POSSESSED_ENTITY);
-        CriterionRegistry.register(DEATH_AFTER_POSSESSION);
-        CriterionRegistry.register(POSSESSED_HIT_ENTITY);
-        CriterionRegistry.register(TRANSFORMED_POSSESSED_ENTITY);
-        CriterionRegistry.register(USED_TOTEM);
+        Criteria.register(PLAYER_RESURRECTED_AS_ENTITY);
+        Criteria.register(MADE_REMNANT_CHOICE);
+        Criteria.register(PLAYER_POSSESSED_ENTITY);
+        Criteria.register(DEATH_AFTER_POSSESSION);
+        Criteria.register(POSSESSED_HIT_ENTITY);
+        Criteria.register(TRANSFORMED_POSSESSED_ENTITY);
+        Criteria.register(USED_TOTEM);
     }
 }

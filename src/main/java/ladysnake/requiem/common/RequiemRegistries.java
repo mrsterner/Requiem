@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,14 +59,16 @@ import static org.apiguardian.api.API.Status.EXPERIMENTAL;
 @API(status = EXPERIMENTAL)
 public final class RequiemRegistries {
 
+    public static final RegistryKey<Registry<PossessionItemAction>> MOB_ACTIONS_KEY = RegistryKey.ofRegistry(Requiem.id("mob_actions"));
     public static final SimpleRegistry<PossessionItemAction> MOB_ACTIONS =
-        FabricRegistryBuilder.createSimple(PossessionItemAction.class, Requiem.id("mob_actions")).buildAndRegister();
+        FabricRegistryBuilder.createSimple(MOB_ACTIONS_KEY).buildAndRegister();
+    public static final RegistryKey<Registry<RemnantType>> REMNANT_STATES_KEY = RegistryKey.ofRegistry(Requiem.id("remnant_states"));
     public static final DefaultedRegistry<RemnantType> REMNANT_STATES =
-        FabricRegistryBuilder.createDefaulted(RemnantType.class, Requiem.id("remnant_states"), new Identifier(RemnantState.NULL_STATE_ID))
+        FabricRegistryBuilder.createDefaulted(REMNANT_STATES_KEY, new Identifier(RemnantState.NULL_STATE_ID))
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
 
-    public static final RegistryKey<Registry<PossessionItemOverrideWrapper>> MOB_ITEM_OVERRIDE_KEY = RegistryKey.ofRegistry(Requiem.id("requiem/mob_items"));
+    public static final RegistryKey<Registry<PossessionItemOverrideWrapper>> MOB_ITEM_OVERRIDE_KEY = RegistryKey.ofRegistry(Requiem.id("mob_items"));
 
     public static void init() {
         Registry.register(REMNANT_STATES, new Identifier(RemnantState.NULL_STATE_ID), RemnantTypes.MORTAL);

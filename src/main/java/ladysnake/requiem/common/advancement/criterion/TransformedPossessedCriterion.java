@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +60,14 @@ public class TransformedPossessedCriterion extends AbstractCriterion<Transformed
 
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+        C_ctsfmifk before = EntityPredicate.method_51705(obj, "before", predicateDeserializer);
+        C_ctsfmifk after = EntityPredicate.method_51705(obj, "after", predicateDeserializer);
+
         return new Conditions(
             this.id,
             playerPredicate,
-            C_ctsfmifk.method_27807("before", predicateDeserializer, obj, LootContextTypes.ENTITY),
-            C_ctsfmifk.method_27807("after", predicateDeserializer, obj, LootContextTypes.ENTITY),
+            before,
+            after,
             Optional.ofNullable(obj.get("cure")).map(JsonElement::getAsBoolean).orElse(null)
         );
     }

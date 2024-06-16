@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.common.VanillaRequiemPlugin;
 import ladysnake.requiem.mixin.common.access.ArrowShooter;
@@ -42,6 +44,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
@@ -71,12 +74,12 @@ public abstract class BowItemMixin extends RangedWeaponItem {
         return infinity;
     }
 
-    @ModifyVariable(method = "onStoppedUsing", ordinal = 0, at = @At("STORE"))
-    private PersistentProjectileEntity useSkeletonArrow(PersistentProjectileEntity firedArrow, ItemStack item, World world, LivingEntity user, int charge) {
-        LivingEntity possessed = PossessionComponent.getHost(user);
+    @WrapOperation(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArrowItem;createArrow(Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"))
+    private PersistentProjectileEntity useSkeletonArrow(ArrowItem instance, World world, ItemStack stack, LivingEntity shooter, Operation<PersistentProjectileEntity> original) {
+        LivingEntity possessed = PossessionComponent.getHost(shooter);
         if (possessed instanceof ArrowShooter) {
-            return ((ArrowShooter)possessed).requiem$invokeCreateArrow(((ProjectileEntityAccessor)firedArrow).requiem$invokeAsItemStack(), 1f);
+            return ((ArrowShooter)possessed).requiem$invokeCreateArrow(((ProjectileEntityAccessor)original.call(instance, world, stack, shooter)).requiem$invokeAsItemStack(), 1f);
         }
-        return firedArrow;
+        return original.call(instance, world, stack, shooter);
     }
 }

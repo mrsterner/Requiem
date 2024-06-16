@@ -1,6 +1,6 @@
 /*
  * Requiem
- * Copyright (C) 2017-2023 Ladysnake
+ * Copyright (C) 2017-2024 Ladysnake
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -101,6 +102,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
     @Shadow public abstract float getAbsorptionAmount();
 
     @Shadow public float headYaw;
+    @Mutable
     @Shadow @Final public LimbData limbData;
 
     @Shadow
@@ -254,7 +256,9 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
                 this.setVelocity(player.getVelocity());
                 this.move(MovementType.SELF, this.getVelocity());
                 this.setPosition(player.getX(), player.getY(), player.getZ());
+
                 // TODO update limb movement
+                this.limbData = player.limbData;
 //                this.limbData.limbAngle = player.limbData.getLimbAngle(0);
 //                this.limbData.setLimbDistance(player.limbData.getLimbDistance());
                 this.horizontalCollision = player.horizontalCollision;
