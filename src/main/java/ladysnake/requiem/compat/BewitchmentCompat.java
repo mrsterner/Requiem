@@ -34,17 +34,24 @@
  */
 package ladysnake.requiem.compat;
 
+import dev.onyxstudios.cca.api.v3.component.ComponentKey;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
+import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.RequiemApi;
 import ladysnake.requiem.api.v1.RequiemPlayer;
 import ladysnake.requiem.api.v1.RequiemPlugin;
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
 import ladysnake.requiem.api.v1.event.requiem.PossessionStartCallback;
+import ladysnake.requiem.api.v1.event.requiem.RemnantStateChangeCallback;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import moriyashiine.bewitchment.api.BewitchmentAPI;
+import moriyashiine.bewitchment.api.component.TransformationComponent;
 import moriyashiine.bewitchment.api.registry.RitualFunction;
+import moriyashiine.bewitchment.api.registry.Transformation;
 import moriyashiine.bewitchment.common.item.TaglockItem;
 import moriyashiine.bewitchment.common.registry.BWComponents;
 import moriyashiine.bewitchment.common.registry.BWRegistries;
+import moriyashiine.bewitchment.common.registry.BWTransformations;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -61,12 +68,34 @@ import net.minecraft.util.math.BlockPos;
 
 public class BewitchmentCompat implements RequiemPlugin {
 
+    public static final ComponentKey<TransformationComponent> TRANSFORMATION_KEY = BWComponents.TRANSFORMATION_COMPONENT;
+
+    @SuppressWarnings("unchecked")
+    public static final ComponentKey<ComponentDataHolder<TransformationComponent>> HOLDER_KEY =
+        ComponentRegistry.getOrCreate(Requiem.id("bewitchment_holder"), ((Class<ComponentDataHolder<TransformationComponent>>) (Class<?>) ComponentDataHolder.class));
+
     public static final RitualFunction DECAY = new DecayRitualFunction();
 
     @CalledThroughReflection
     public static void init() {
         RequiemApi.registerPlugin(new BewitchmentCompat());
         Registry.register(BWRegistries.RITUAL_FUNCTION, new Identifier("dark_rites", "decay"), DECAY);
+
+        RemnantStateChangeCallback.EVENT.register((player, state, cause) -> {
+            if (!player.getWorld().isClient) {
+                if (state.isVagrant()) {
+                    HOLDER_KEY.get(player).storeDataFrom(player, !cause.isCharacterSwitch());
+                    TransformationComponent transformationComponent = TRANSFORMATION_KEY.get(player);
+
+                    transformationComponent.setTransformation(BWTransformations.HUMAN);
+                } else if (!cause.isCharacterSwitch()) {
+                    HOLDER_KEY.get(player).restoreDataToPlayer(player, true);
+                }
+
+                TRANSFORMATION_KEY.sync(player);
+            }
+        });
+        RequiemCompatibilityManager.registerShellDataCallbacks(BewitchmentCompat.HOLDER_KEY);
     }
 
     @Override
@@ -130,4 +159,30 @@ public class BewitchmentCompat implements RequiemPlugin {
             super.start(world, glyphPos, effectivePos, inventory, catFamiliar);
         }
     }
+    /*
+     public static final ComponentKey<VampireComponent> VAMPIRE_KEY = VampireComponent.Companion.getEntityKey();
+
+    @SuppressWarnings("unchecked")
+    public static final ComponentKey<ComponentDataHolder<VampireComponent>> HOLDER_KEY =
+        ComponentRegistry.getOrCreate(Requiem.id("haema_holder"), ((Class<ComponentDataHolder<VampireComponent>>) (Class<?>) ComponentDataHolder.class));
+
+    @CalledThroughReflection
+    public static void init() {
+        RemnantStateChangeCallback.EVENT.register((player, state, cause) -> {
+            if (!player.world.isClient) {
+                if (state.isVagrant()) {
+                    HOLDER_KEY.get(player).storeDataFrom(player, !cause.isCharacterSwitch());
+                    VampireComponent vampireComponent = VAMPIRE_KEY.get(player);
+                    vampireComponent.setPermanentVampire(false);
+                    vampireComponent.setVampire(false);
+                } else if (!cause.isCharacterSwitch()) {
+                    HOLDER_KEY.get(player).restoreDataToPlayer(player, true);
+                }
+
+                VAMPIRE_KEY.sync(player);
+            }
+        });
+        RequiemCompatibilityManager.registerShellDataCallbacks(HaemaCompat.HOLDER_KEY);
+    }
+     */
 }
