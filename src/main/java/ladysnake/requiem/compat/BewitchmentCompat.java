@@ -79,7 +79,7 @@ public class BewitchmentCompat implements RequiemPlugin {
     @CalledThroughReflection
     public static void init() {
         RequiemApi.registerPlugin(new BewitchmentCompat());
-        Registry.register(BWRegistries.RITUAL_FUNCTION, new Identifier("dark_rites", "decay"), DECAY);
+        Registry.register(BWRegistries.RITUAL_FUNCTION, new Identifier("requiem", "decay"), DECAY);
 
         RemnantStateChangeCallback.EVENT.register((player, state, cause) -> {
             if (!player.getWorld().isClient) {
@@ -100,7 +100,7 @@ public class BewitchmentCompat implements RequiemPlugin {
 
     @Override
     public void onRequiemInitialize() {
-        PossessionStartCallback.EVENT.register(new Identifier("dark_rites", "allow_familiars"), (target, possessor, simulate) -> {
+        PossessionStartCallback.EVENT.register(new Identifier("requiem", "allow_familiars"), (target, possessor, simulate) -> {
             NbtCompound entityTag = new NbtCompound();
             target.saveSelfNbt(entityTag);
 

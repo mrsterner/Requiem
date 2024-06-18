@@ -203,7 +203,7 @@ dependencies {
     modCompileOnly (compatLibs.bumblezone) { transitive = false }
 //    modLocalRuntime compatLibs.bumblezone
     modCompileOnly (compatLibs.bewitchment) { transitive = false }
-    modLocalRuntime (compatLibs.bundles.bewitchment) { transitive = false }
+//    modLocalRuntime (compatLibs.bundles.bewitchment) { transitive = false }
 //    modApi("com.github.Virtuoel:Pehkui:${compatLibs.pehkui}")
     modLocalImplementation (compatLibs.trinkets) {
         exclude group: "net.fabricmc"
