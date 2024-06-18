@@ -17,6 +17,7 @@ flk = "1.6.0+kotlin.1.5.0"
 golemsGalore = "3328376" # v1.0.0+mc1.17
 kano="0.4.1"
 libgui = "3.3.5+1.16.5"
+malum="5441759"
 midnightlib="1.4.1-fabric"
 mobz = "3498091"
 omegaConfig = "1.2.1-1.18.1"
@@ -44,6 +45,7 @@ eldritchMobs =  { group = "maven.modrinth",   name = "eldritch-mobs", version.re
 flk =           { group = "net.fabricmc",            name = "fabric-language-kotlin", version.ref = "flk" }
 golemsGalore =  { group = "curse.maven",             name = "golems-galore-387197", version.ref = "golemsGalore" }
 libgui =        { group = "io.github.cottonmc",      name = "LibGui", version.ref = "libgui" }
+malum =         { group = "curse.maven", name = "malum-484064", version.ref = "malum"}
 midnightlib =   { module = "maven.modrinth:midnightlib", version.ref = "midnightlib"}
 mobz =          { group = "curse.maven",             name = "mobz-336554", version.ref = "mobz" }
 omegaConfig =   { group = "com.github.Draylar.omega-config", name = "omega-config-base", version.ref = "omegaConfig" }
