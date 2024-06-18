@@ -159,30 +159,4 @@ public class BewitchmentCompat implements RequiemPlugin {
             super.start(world, glyphPos, effectivePos, inventory, catFamiliar);
         }
     }
-    /*
-     public static final ComponentKey<VampireComponent> VAMPIRE_KEY = VampireComponent.Companion.getEntityKey();
-
-    @SuppressWarnings("unchecked")
-    public static final ComponentKey<ComponentDataHolder<VampireComponent>> HOLDER_KEY =
-        ComponentRegistry.getOrCreate(Requiem.id("haema_holder"), ((Class<ComponentDataHolder<VampireComponent>>) (Class<?>) ComponentDataHolder.class));
-
-    @CalledThroughReflection
-    public static void init() {
-        RemnantStateChangeCallback.EVENT.register((player, state, cause) -> {
-            if (!player.world.isClient) {
-                if (state.isVagrant()) {
-                    HOLDER_KEY.get(player).storeDataFrom(player, !cause.isCharacterSwitch());
-                    VampireComponent vampireComponent = VAMPIRE_KEY.get(player);
-                    vampireComponent.setPermanentVampire(false);
-                    vampireComponent.setVampire(false);
-                } else if (!cause.isCharacterSwitch()) {
-                    HOLDER_KEY.get(player).restoreDataToPlayer(player, true);
-                }
-
-                VAMPIRE_KEY.sync(player);
-            }
-        });
-        RequiemCompatibilityManager.registerShellDataCallbacks(HaemaCompat.HOLDER_KEY);
-    }
-     */
 }
