@@ -16,6 +16,6 @@
   ],
   "inner": "fiery",
   "outer": "eldritch",
-  "ritual_function": "darkrites:decay",
+  "ritual_function": "requiem:decay",
   "cost": 666
 }

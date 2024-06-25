@@ -258,7 +258,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
                 this.setPosition(player.getX(), player.getY(), player.getZ());
 
                 // TODO update limb movement
-                this.limbData = player.limbData;
+//                this.limbData = player.limbData;
 //                this.limbData.limbAngle = player.limbData.getLimbAngle(0);
 //                this.limbData.setLimbDistance(player.limbData.getLimbDistance());
                 this.horizontalCollision = player.horizontalCollision;

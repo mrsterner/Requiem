@@ -35,6 +35,7 @@
 package ladysnake.requiem.common.block.obelisk;
 
 import ladysnake.requiem.Requiem;
+import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.api.v1.block.ObeliskRune;
 import ladysnake.requiem.api.v1.block.VagrantTargetableBlock;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
@@ -103,7 +104,10 @@ public class RiftRunestoneBlock extends InertRunestoneBlock implements ObeliskRu
     @Override
     public @Nullable NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
         if (world.getBlockEntity(pos) instanceof RunestoneBlockEntity controller) {
-            return new RiftScreenHandlerFactory(controller.getDescriptor().orElseThrow(), controller::canBeUsedBy);
+            Optional<ObeliskDescriptor> optionalObeliskDescriptor = controller.getDescriptor();
+            if (optionalObeliskDescriptor.isPresent()) {
+                return new RiftScreenHandlerFactory(optionalObeliskDescriptor.get(), controller::canBeUsedBy);
+            }
         }
         return null;
     }
