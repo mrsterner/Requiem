@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "org.ladysnake",
+    "id": "vaquero",
+    "version": "${version}",
+    "metadata": {
+      "name": "Vaquero",
+      "description": "Library for riding anything",
+      "license": "LGPL-3.0-or-later",
+      "contributors": {
+        "Pyrofab": "Owner"
+      },
+      "contact": {
+        "sources": "https://github.com/Ladysnake/Requiem",
+        "issues": "https://github.com/Ladysnake/Requiem/issues",
+        "discord": "https://discord.ladysnake.org"
+      }
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": "org.ladysnake.vaquero.impl.Vaquero"
+    }
+  },
+  "environment": "*",
+  "mixin": [
+    {
+      "config": "mixins.vaquero.client.json",
+      "environment": "client"
+    },
+    "mixins.vaquero.common.json"
+  ],
+  "modmenu": {
+    "parent": {
+      "id": "requiem",
+      "name": "Requiem",
+      "description": "Death revamped and ethereal powers",
+      "icon": "skull_logo.png"
+    },
+    "badges": [ "library" ]
+  }
+}

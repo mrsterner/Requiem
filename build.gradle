@@ -152,6 +152,7 @@ dependencies {
     // Required dependencies
     api include(project(path: ":requiem-api", configuration: "namedElements")) { transitive = false }
     api include(project(path: ":requiem-core", configuration: "namedElements")) { transitive = false }
+    api include(project(path: ":requiem-core:vaquero", configuration: "namedElements"))
     modImplementation(libs.bundles.requiredLibraries) {
         exclude group: "net.fabricmc"
         exclude group: "net.fabricmc.fabric-api"

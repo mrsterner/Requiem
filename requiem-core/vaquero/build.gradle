@@ -1,0 +1,18 @@
+archivesBaseName = "vaquero"
+group = rootProject.group + ".requiem"
+
+dependencies {
+    modImplementation(libs.cca.base) {
+        exclude group: "net.fabricmc"
+    }
+    modImplementation(libs.cca.entity) {
+        exclude group: "net.fabricmc"
+    }
+}
+
+chenille {
+    license = 'LGPL'
+    configurePublishing {
+        withLadysnakeMaven()
+    }
+}

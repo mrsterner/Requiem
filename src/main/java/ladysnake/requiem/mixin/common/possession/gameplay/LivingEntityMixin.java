@@ -38,22 +38,16 @@ import ladysnake.requiem.api.v1.internal.ProtoPossessable;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.common.advancement.criterion.RequiemCriteria;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -62,36 +56,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.UUID;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity implements Possessable {
-    @Shadow
-    public float bodyYaw;
-
-    @Shadow
-    public float headYaw;
-
+public abstract class LivingEntityMixin extends EntityMixin implements Possessable {
     private @Nullable UUID requiem$previousPossessorUuid;
-
-    @Shadow
-    public abstract float getMovementSpeed();
-
-    @Shadow
-    public abstract double getAttributeValue(EntityAttribute attribute);
-
-    @Shadow
-    public abstract float getStepHeight();
-
-    @Shadow
-    protected abstract float getRiddenSpeed(PlayerEntity player);
-
-    public LivingEntityMixin(EntityType<?> type, World world) {
-        super(type, world);
-    }
-
-    @ModifyVariable(method = "travel", at = @At("HEAD"), argsOnly = true)
-    protected Vec3d requiem$travelStart(Vec3d movementInput) {
-        // overridden in MobEntityMixin
-        return movementInput;
-    }
 
     @Inject(method = "damage",
         slice = @Slice(
@@ -105,7 +71,7 @@ public abstract class LivingEntityMixin extends Entity implements Possessable {
         if (attacker != null) {
             PlayerEntity possessor = ((ProtoPossessable) attacker).getPossessor();
             if (possessor instanceof ServerPlayerEntity) {
-                RequiemCriteria.POSSESSED_HIT_ENTITY.handle(((ServerPlayerEntity) possessor), attacker, this, source, dealt, amount, blocked);
+                RequiemCriteria.POSSESSED_HIT_ENTITY.handle(((ServerPlayerEntity) possessor), attacker,  (Entity) (Object) this, source, dealt, amount, blocked);
             }
         }
     }
@@ -116,7 +82,7 @@ public abstract class LivingEntityMixin extends Entity implements Possessable {
             PlayerEntity previousPossessor = this.getWorld().getPlayerByUuid(this.requiem$previousPossessorUuid);
 
             if (previousPossessor != null) {
-                RequiemCriteria.DEATH_AFTER_POSSESSION.handle((ServerPlayerEntity) previousPossessor, this, deathCause);
+                RequiemCriteria.DEATH_AFTER_POSSESSION.handle((ServerPlayerEntity) previousPossessor, (Entity) (Object) this, deathCause);
             }
         }
     }

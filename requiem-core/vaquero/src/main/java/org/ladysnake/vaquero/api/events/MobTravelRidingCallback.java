@@ -15,31 +15,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; If not, see <https://www.gnu.org/licenses>.
  */
-package ladysnake.requiem.api.v1.event.minecraft;
+package org.ladysnake.vaquero.api.events;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.JumpingMount;
 import net.minecraft.entity.LivingEntity;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.mob.MobEntity;
 
-public final class JumpingMountEvents {
-    /**
-     *
-     */
-    public static final Event<MountCheckCallback> MOUNT_CHECK = EventFactory.createArrayBacked(MountCheckCallback.class, callbacks -> entity -> {
-        for (MountCheckCallback callback : callbacks) {
-            JumpingMount mount = callback.getJumpingMount(entity);
-            if (mount != null) {
-                return mount;
+@FunctionalInterface
+public interface MobTravelRidingCallback {
+    Event<MobTravelRidingCallback> EVENT = EventFactory.createArrayBacked(MobTravelRidingCallback.class, callbacks -> (mount, rider) -> {
+        for (MobTravelRidingCallback callback : callbacks) {
+            if (callback.canBeControlled(mount, rider)) {
+                return true;
             }
         }
-        return null;
+        return false;
     });
 
-    @FunctionalInterface
-    public interface MountCheckCallback {
-        @Nullable JumpingMount getJumpingMount(LivingEntity entity);
-    }
-
+    boolean canBeControlled(MobEntity mount, LivingEntity rider);
 }

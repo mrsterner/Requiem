@@ -78,8 +78,6 @@ public final class ApiInternals {
     private static SoulbindingRegistry soulbindingRegistry;
     @AccessedThroughReflection
     private static Function<@Nullable World, MovementRegistry> movementRegistryGetter;
-    @AccessedThroughReflection
-    private static ExternalJumpingMountFactory externalJumpingMountFactory;
 
     @SuppressWarnings("unchecked")
     public static <T extends LivingEntity> MobAbilityConfig.Builder<T> mobAbilityConfig$builderImpl() {
@@ -130,10 +128,6 @@ public final class ApiInternals {
     public static MovementRegistry getMovementRegistry(@Nullable World world) {
         if (movementRegistryGetter == null) throw new UninitializedApiException("MovementRegistry is not available");
         return movementRegistryGetter.apply(world);
-    }
-
-    public static ExternalJumpingMountFactory getExternalJumpingMountFactory() {
-        return externalJumpingMountFactory;
     }
 
     public static InventoryLimiter getInventoryLimiter() {

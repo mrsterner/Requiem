@@ -48,7 +48,6 @@ import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityRegistry;
 import ladysnake.requiem.api.v1.event.minecraft.AllowUseEntityCallback;
 import ladysnake.requiem.api.v1.event.minecraft.LivingEntityDropCallback;
-import ladysnake.requiem.api.v1.event.minecraft.MobTravelRidingCallback;
 import ladysnake.requiem.api.v1.event.minecraft.PlayerRespawnCallback;
 import ladysnake.requiem.api.v1.event.minecraft.PrepareRespawnCallback;
 import ladysnake.requiem.api.v1.event.requiem.CanCurePossessedCallback;
@@ -96,7 +95,6 @@ import ladysnake.requiem.common.entity.effect.RequiemStatusEffects;
 import ladysnake.requiem.common.gamerule.PossessionDetection;
 import ladysnake.requiem.common.gamerule.RequiemGamerules;
 import ladysnake.requiem.common.network.RequiemNetworking;
-import ladysnake.requiem.common.possession.MobRidingType;
 import ladysnake.requiem.common.remnant.BasePossessionHandlers;
 import ladysnake.requiem.common.remnant.PlayerSplitter;
 import ladysnake.requiem.common.remnant.RemnantTypes;
@@ -144,6 +142,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.ladysnake.locki.DefaultInventoryNodes;
 import org.ladysnake.locki.ModdedInventoryNodes;
+import org.ladysnake.vaquero.api.MobRidingType;
+import org.ladysnake.vaquero.api.events.JumpingMountEvents;
+import org.ladysnake.vaquero.api.events.MobTravelRidingCallback;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -374,6 +375,10 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
                     case NORMAL, HARD -> PossessionEvents.DetectionAttempt.DetectionResult.CROWD_DETECTED;
                 };
             };
+        });
+        JumpingMountEvents.FIND_PLAYER_JUMP.register(entity -> {
+            MobEntity host = PossessionComponent.getHost(entity);
+            return host == null ? null : JumpingMountEvents.FIND_ENTITY_JUMP.invoker().findJumpingMount(host);
         });
     }
 

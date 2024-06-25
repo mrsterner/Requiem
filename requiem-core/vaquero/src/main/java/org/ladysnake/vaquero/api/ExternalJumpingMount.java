@@ -15,20 +15,24 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; If not, see <https://www.gnu.org/licenses>.
  */
-package ladysnake.requiem.api.v1.entity;
+package org.ladysnake.vaquero.api;
 
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentFactory;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import ladysnake.requiem.api.v1.internal.ApiInternals;
 import net.minecraft.entity.JumpingMount;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.apiguardian.api.API;
+import org.jetbrains.annotations.Nullable;
+import org.ladysnake.vaquero.impl.jump.DummyJumpingMount;
+
+import java.util.function.Function;
 
 /**
  * A fake {@link JumpingMount} that is not implemented by a rideable entity.
@@ -39,8 +43,8 @@ import org.apiguardian.api.API;
 public interface ExternalJumpingMount extends JumpingMount, Component {
     ComponentKey<ExternalJumpingMount> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "charged_jump"), ExternalJumpingMount.class);
 
-    static <E extends LivingEntity> ComponentFactory<E, ExternalJumpingMount> simple(float baseJumpStrength, SoundEvent stepSound) {
-        return ApiInternals.getExternalJumpingMountFactory().simple(baseJumpStrength, stepSound);
+    static <E extends LivingEntity> ComponentFactory<E, ExternalJumpingMount> simple(float baseJumpStrength, SoundEvent stepSound, Function<LivingEntity, @Nullable PlayerEntity> getPlayer) {
+        return e -> new DummyJumpingMount(e, baseJumpStrength, stepSound, getPlayer);
     }
 
     /**

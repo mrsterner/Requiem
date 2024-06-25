@@ -39,6 +39,7 @@ import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import ladysnake.requiem.Requiem;
+import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
 import ladysnake.requiem.api.v1.event.requiem.PlayerShellEvents;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.entity.PlayerShellEntity;
@@ -59,7 +60,6 @@ public final class RequiemCompatibilityManager {
         try {
             load("eldritch_mobs", EldritchMobsCompat.class);
             load("golemsgalore", GolemsGaloreCompat.class);
-            // Haema must be loaded before Origins, because vampire data must be stored before the origin gets cleared
             load("bewitchment", BewitchmentCompat.class);
             load("malum", MalumCompat.class);
             load("origins", OriginsCompat.class);
@@ -81,6 +81,7 @@ public final class RequiemCompatibilityManager {
         }
     }
 
+    @CalledThroughReflection
     public static void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         if (QuiltLoader.isModLoaded("origins")) {
             registry.beginRegistration(PlayerEntity.class, OriginsCompat.APOLI_HOLDER_KEY).respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY).end(p -> new ComponentDataHolder<>(OriginsCompat.APOLI_POWER_KEY, OriginsCompat.APOLI_HOLDER_KEY));

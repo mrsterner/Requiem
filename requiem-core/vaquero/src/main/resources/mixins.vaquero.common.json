@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "org.ladysnake.vaquero.impl.mixin.common",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.7.11-SNAPSHOT",
+  "mixins": [
+    "EntityAccessor",
+    "EntityMixin",
+    "LivingEntityAccessor",
+    "LivingEntityMixin",
+    "MobEntityMixin",
+    "ServerPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
