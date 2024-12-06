@@ -1,8 +1,6 @@
-// Credits to UpcraftLP for the base build script
-
 plugins {
-    alias(libs.plugins.quilt.loom)
-    alias(libs.plugins.chenille)
+    id 'org.quiltmc.loom' version "1.8.+"
+    id 'io.github.ladysnake.chenille' version "0.12.0"
 }
 
 group = rootProject.maven_group
@@ -104,6 +102,18 @@ allprojects {
             }
         }
         mavenLocal()
+        maven {
+            name = "Ladysnake Mods"
+            url = "https://maven.ladysnake.org/releases"
+            content {
+                includeGroupByRegex '(org|io\\.github).ladysnake.*'
+                includeGroupByRegex '(dev|io\\.github)\\.onyxstudios.*'
+            }
+        }
+        maven {
+            name = "Nexus Repository Manager"
+            url = 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
     }
 
     processResources {
@@ -126,8 +136,12 @@ allprojects {
         modImplementation "org.quiltmc:qsl:${qsl_version}+${minecraft_version}"
         modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}"
 
-        compileOnly metaLibs.bundles.devAnnotations
+        compileOnly("com.google.code.findbugs:jsr305:3.0.2")
+        compileOnly 'org.jetbrains:annotations:26.0.1'
+        compileOnly("org.apiguardian:apiguardian-api:1.1.2")
+        compileOnly("com.demonwav.mcdev:annotations:2.1.0")
     }
+
 }
 
 chenille {
@@ -153,41 +167,51 @@ dependencies {
     api include(project(path: ":requiem-api", configuration: "namedElements")) { transitive = false }
     api include(project(path: ":requiem-core", configuration: "namedElements")) { transitive = false }
     api include(project(path: ":requiem-core:vaquero", configuration: "namedElements"))
-    modImplementation(libs.bundles.requiredLibraries) {
-        exclude group: "net.fabricmc"
-        exclude group: "net.fabricmc.fabric-api"
-    }
-    include libs.bundles.requiredLibraries
+
+    include modImplementation("io.github.ladysnake:automatone:0.11.0")
+    include modImplementation("org.ladysnake:blabber:1.5.1-mc1.20.1")
+    include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2")
+    include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2")
+    include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-scoreboard:5.2.2")
+    include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-world:5.2.2")
+
+    include modImplementation("com.github.emilyploszaj:chime:cec3bcbaed508eb5f564deac8c33923dcccfdf7e")
+    include modImplementation("me.shedaniel.cloth:cloth-config-fabric:11.1.118")
+    include modImplementation("me.lucko:fabric-permissions-api:0.2-SNAPSHOT")
+    include modImplementation("me.zeroeightsix:fiber:0.23.0-2")
+    include modImplementation("com.github.pyrofab:fibertocloth:v3-SNAPSHOT")
+    include modImplementation("me.zeroeightsix:fiber:0.23.0-2")
+    include modImplementation("org.ladysnake:impersonate:2.10.2")
+    include modImplementation("org.ladysnake:locki:0.11.1")
+    include modImplementation("com.terraformersmc:modmenu:7.2.2")
+    include modImplementation("io.github.ladysnake:PlayerAbilityLib:1.8.0")
+    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:2.4.0")
+    include modImplementation("org.ladysnake:satin:1.14.0")
 
     // Test dependencies
-    testImplementation testLibs.junit
-    testImplementation testLibs.mockito
-    testmodImplementation testLibs.mockito
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "io.github.ladysnake:elmendorf:0.11.0"
+    testmodImplementation "org.mockito:mockito-core:4.2.0"
     modLocalImplementation(testLibs.elmendorf) {
         exclude group: "net.fabricmc"
         exclude group: "net.fabricmc.fabric-api"
     }
 
     // Optional dependencies
-    modCompileOnly(libs.modmenu) { transitive = false }
-    modLocalRuntime(libs.modmenu) { transitive = false }
-    modCompileOnly (libs.bundles.cloth) { transitive = false }
-    modLocalRuntime (libs.bundles.cloth) { transitive = false }
-    include libs.fiberToCloth
+    modCompileOnly("com.terraformersmc:modmenu:7.2.2") { transitive = false }
+    modLocalRuntime("com.terraformersmc:modmenu:7.2.2") { transitive = false }
+    modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:11.1.118")
+    modLocalRuntime("me.shedaniel.cloth:cloth-config-fabric:11.1.118")
+    modCompileOnly("com.github.pyrofab:fibertocloth:v3-SNAPSHOT")
+    modLocalRuntime("com.github.pyrofab:fibertocloth:v3-SNAPSHOT")
 
-    // Extra compatibility dependencies
-//    modLocalRuntime compatLibs.mobz
+    include "com.github.pyrofab:fibertocloth:v3-SNAPSHOT"
+
     modCompileOnly (compatLibs.betterGraves) { transitive = false }
-//    modLocalRuntime compatLibs.betterGraves
-//    modCompileOnly compatLibs.biomeMakeover
-//    modLocalRuntime compatLibs.biomeMakeover
     modCompileOnly (compatLibs.trinkets) { transitive = false }
-//    modLocalRuntime compatLibs.trinkets
     modCompileOnly (compatLibs.pehkui) { transitive = false }
-//    modApi (compatLibs.pehkui) { transitive = false }
 
     modCompileOnly (compatLibs.snowmercy) { transitive = false }
-//    modLocalRuntime compatLibs.snowmercy
     modCompileOnly (compatLibs.bundles.origins) { transitive = false }
     modLocalRuntime (compatLibs.bundles.origins) { transitive = false }
     modLocalImplementation (compatLibs.additionalEntityAttributes) {
@@ -196,16 +220,9 @@ dependencies {
     }
 
     modCompileOnly (compatLibs.eldritchMobs) { transitive = false }
-//    modLocalRuntime compatLibs.eldritchMobs
-//    modCompileOnly (compatLibs.haema) { transitive = false }
-//    modLocalRuntime compatLibs.bundles.haema
     modCompileOnly (compatLibs.golemsGalore) { transitive = false }
-//    modLocalRuntime compatLibs.bundles.golemsGalore
     modCompileOnly (compatLibs.bumblezone) { transitive = false }
-//    modLocalRuntime compatLibs.bumblezone
     modCompileOnly (compatLibs.bewitchment) { transitive = false }
-//    modLocalRuntime (compatLibs.bundles.bewitchment) { transitive = false }
-//    modApi("com.github.Virtuoel:Pehkui:${compatLibs.pehkui}")
     modCompileOnly (compatLibs.malum) { transitive = false }
     modLocalImplementation (compatLibs.trinkets) {
         exclude group: "net.fabricmc"
