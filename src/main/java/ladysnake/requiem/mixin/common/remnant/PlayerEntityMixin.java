@@ -65,7 +65,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
     @Shadow @Final private PlayerAbilities abilities;
     private static final EntityDimensions REQUIEM$SOUL_SNEAKING_SIZE = EntityDimensions.changing(0.6f, 0.6f);
 
-    @Inject(method = "createAttributes", at = @At("RETURN"))
+    @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
     private static void addSoulOffenseAttribute(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
         cir.getReturnValue().add(RequiemEntityAttributes.SOUL_OFFENSE);
     }
@@ -86,7 +86,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
         }
     }
 
-    @ModifyReturnValue(method = "getAirSpeed", at = @At("RETURN"))
+    @ModifyReturnValue(method = "getOffGroundSpeed", at = @At("RETURN"))
     private float slowGhosts(float airSpeed) {
         if (MovementAlterer.KEY.get(this).isNoClipping()) {
             return airSpeed * 0.1f;
@@ -99,7 +99,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
         double yMotion = this.getRotationVector().y;
         double modifier = yMotion < -0.2D ? 0.085D : 0.06D;
         // If the motion change would not be applied, apply it ourselves
-        if (yMotion > 0.0D && !this.jumping && this.getWorld().getBlockState(BlockPos.create(
+        if (yMotion > 0.0D && !this.jumping && this.getWorld().getBlockState(BlockPos.ofFloored(
             this.getX(),
             this.getY() + 1.0D - 0.1D,
             this.getZ()
@@ -113,7 +113,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
      * Players' sizes are hardcoded in an immutable enum map.
      * This injection makes souls smaller when sneaking.
      */
-    @Inject(method = "getDimensions", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getBaseDimensions", at = @At("HEAD"), cancellable = true)
     private void adjustSize(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
         if (RemnantComponent.KEY.get(this).isIncorporeal() && pose == EntityPose.CROUCHING) {
             cir.setReturnValue(REQUIEM$SOUL_SNEAKING_SIZE);
@@ -121,7 +121,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
     }
 
     // 1.27 is the sneaking eye height
-    @Inject(method = "getActiveEyeHeight", at = @At(value = "CONSTANT", args = "floatValue=1.27"), cancellable = true)
+    @Inject(method = "getStandingEyeHeight", at = @At(value = "CONSTANT", args = "floatValue=1.27"), cancellable = true)
     private void adjustSoulSneakingEyeHeight(EntityPose pose, EntityDimensions size, CallbackInfoReturnable<Float> cir) {
         if (RemnantComponent.KEY.get(this).isIncorporeal()) {
             cir.setReturnValue(0.4f);

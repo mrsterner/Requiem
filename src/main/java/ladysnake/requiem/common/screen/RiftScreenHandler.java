@@ -77,6 +77,7 @@ public class RiftScreenHandler extends ScreenHandler {
         return source;
     }
 
+
     @Override
     public boolean canUse(PlayerEntity player) {
         return RemnantComponent.isIncorporeal(player) && canBeUsedBy.test(player) && RequiemBlocks.RIFT_RUNE.canBeUsedByVagrant(player);
@@ -106,7 +107,7 @@ public class RiftScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public ItemStack quickTransfer(PlayerEntity player, int index) {
+    public ItemStack quickMove(PlayerEntity player, int slot) {
         return ItemStack.EMPTY;
     }
 }

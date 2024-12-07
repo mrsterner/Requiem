@@ -35,49 +35,41 @@
 package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.common.advancement.criterion.OnResurrectCriterion.Conditions;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.Entity;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.unmapped.C_ctsfmifk;
-import net.minecraft.util.Identifier;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class OnResurrectCriterion extends AbstractCriterion<Conditions> {
-    private final Identifier id;
-
-    public OnResurrectCriterion(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    public Identifier getId() {
-        return this.id;
-    }
 
     public void handle(ServerPlayerEntity player, Entity body) {
         this.trigger(player, conditions -> conditions.test(player, body));
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject json, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer ctx) {
-        return new Conditions(this.getId(), playerPredicate, EntityPredicate.method_8913(json.get("body")));
+    public Codec<Conditions> getConditionsCodec() {
+        return Conditions.CODEC;
     }
 
-    static class Conditions extends AbstractCriterionConditions {
-        private final EntityPredicate entity;
+    record Conditions(Optional<LootContextPredicate> player, Optional<EntityPredicate> entity) implements AbstractCriterion.Conditions {
 
-        public Conditions(Identifier id, C_ctsfmifk playerPredicate, EntityPredicate entity) {
-            super(id, playerPredicate);
-            this.entity = entity;
-        }
+        public static final Codec<OnResurrectCriterion.Conditions> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(OnResurrectCriterion.Conditions::player),
+                    EntityPredicate.CODEC.optionalFieldOf("player").forGetter(OnResurrectCriterion.Conditions::entity)
+                )
+                .apply(instance, OnResurrectCriterion.Conditions::new)
+        );
 
         public boolean test(ServerPlayerEntity player, @Nullable Entity body) {
-            return this.entity.test(player, body);
+            return this.entity.isPresent() && this.entity.get().test(player, body);
         }
     }
 }

@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.core.possession;
 
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import ladysnake.requiem.api.v1.event.requiem.SoulboundStackCheckCallback;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.api.v1.possession.PossessedData;
@@ -43,15 +42,19 @@ import ladysnake.requiem.core.util.OrderedInventory;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.SelectedSlotUpdateS2CPacket;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 public abstract class PossessedDataBase implements PossessedData, AutoSyncedComponent {
     public static void onMobConverted(LivingEntity original, LivingEntity converted) {
@@ -64,7 +67,7 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
             ((Possessable) converted).setPossessor(possessor);
         }
         // copy possessed data to avoid losing the inventory
-        possessedData.copyFrom(KEY.get(original));
+        possessedData.copyFrom(KEY.get(original), original.getWorld().getRegistryManager());
     }
 
     protected final Entity holder;
@@ -110,7 +113,7 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
                 }
                 this.inventory = null;
                 inventory.selectedSlot = this.selectedSlot;
-                ((ServerPlayerEntity) inventory.player).networkHandler.sendPacket(new SelectedSlotUpdateS2CPacket(inventory.selectedSlot));
+                ((ServerPlayerEntity) inventory.player).networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(inventory.selectedSlot));
             }
         }
     }
@@ -134,22 +137,22 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
     }
 
     @Override
-    public void copyFrom(PossessedData original) {
-        this.readFromNbt(Util.make(new NbtCompound(), original::writeToNbt));
+    public void copyFrom(PossessedData original, RegistryWrapper.WrapperLookup wrapperLookup) {
+        this.readFromNbt(Util.make(new NbtCompound(), (w) -> original.writeToNbt(w, wrapperLookup)), wrapperLookup);
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeBoolean(this.convertedUnderPossession);
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         this.convertedUnderPossession = buf.readBoolean();
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (tag.contains("hunger_data", NbtType.COMPOUND)) {
             this.hungerData = tag.getCompound("hunger_data");
         }
@@ -168,7 +171,7 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (this.hungerData != null) {
             PlayerEntity possessor = ((Possessable) this.holder).getPossessor();
             if (possessor != null) possessor.getHungerManager().writeNbt(this.hungerData);

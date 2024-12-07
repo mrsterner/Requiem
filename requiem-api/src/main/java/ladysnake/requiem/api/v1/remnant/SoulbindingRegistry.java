@@ -19,6 +19,7 @@ package ladysnake.requiem.api.v1.remnant;
 
 import ladysnake.requiem.api.v1.internal.ApiInternals;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.registry.entry.RegistryEntry;
 
 public interface SoulbindingRegistry {
     static SoulbindingRegistry instance() {
@@ -29,7 +30,7 @@ public interface SoulbindingRegistry {
      * Registers a {@code StatusEffect} as soulbound.
      * @see #isSoulbound(StatusEffect)
      */
-    void registerSoulbound(StatusEffect effect);
+    void registerSoulbound(RegistryEntry<StatusEffect> effect);
 
     /**
      * Returns {@code true} if the given {@link StatusEffect} is registered as
@@ -41,7 +42,7 @@ public interface SoulbindingRegistry {
      *
      * @param effect status effect to test
      * @return {@code true} if {@code effect} is soulbound
-     * @see #registerSoulbound(StatusEffect)
+     * @see #registerSoulbound(RegistryEntry<StatusEffect>)
      */
     boolean isSoulbound(StatusEffect effect);
 }

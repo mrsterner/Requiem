@@ -64,7 +64,7 @@ public abstract class WitchEntityMixin extends HostileEntity {
      * Witches normally keep lobbing poison at zombies when trying to attack them.
      * This injection makes them prioritize a more useful weakness potion - making it easier to heal back to human when possessing a zombie.
      */
-    @ModifyVariable(method = "attack", at = @At(value = "LOAD"))
+    @ModifyVariable(method = "shootAt", at = @At(value = "LOAD"))
     private Potion makeWitchesThrowWeaknessAtUndead(Potion thrownPotion, LivingEntity target, float charge) {
         if (target.isUndead() && !target.hasStatusEffect(StatusEffects.WEAKNESS)) {
             return Potions.WEAKNESS;

@@ -44,6 +44,6 @@ public final class RequiemItemTags {
     public static final TagKey<Item> BONES = TagKey.of(RegistryKeys.ITEM, Requiem.id("bones"));
     public static final TagKey<Item> RAW_MEATS = TagKey.of(RegistryKeys.ITEM, Requiem.id("raw_meats"));
     public static final TagKey<Item> RAW_FISHES = TagKey.of(RegistryKeys.ITEM, Requiem.id("raw_fishes"));
-    public static final TagKey<Item> WATER_BUCKETS = TagKey.of(RegistryKeys.ITEM, new Identifier("c", "water_buckets"));
-    public static final TagKey<Item> SHIELDS = TagKey.of(RegistryKeys.ITEM, new Identifier("c", "shields"));
+    public static final TagKey<Item> WATER_BUCKETS = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "water_buckets"));
+    public static final TagKey<Item> SHIELDS = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "shields"));
 }

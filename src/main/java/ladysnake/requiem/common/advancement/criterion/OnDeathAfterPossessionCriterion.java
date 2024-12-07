@@ -37,84 +37,63 @@ package ladysnake.requiem.common.advancement.criterion;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
+import net.minecraft.advancement.criterion.BredAnimalsCriterion;
+import net.minecraft.advancement.criterion.OnKilledCriterion;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.Codecs;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 public class OnDeathAfterPossessionCriterion extends AbstractCriterion<OnDeathAfterPossessionCriterion.Conditions> {
-    private final Identifier id;
-
-    public OnDeathAfterPossessionCriterion(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        LootContextPredicate entity = EntityPredicate.method_51705(obj, "entity", predicateDeserializer);
-        return new Conditions(
-            this.id,
-            playerPredicate,
-            entity,
-            DamageSourcePredicate.fromJson(obj.get("killing_blow")),
-            Optional.ofNullable(obj.get("seppukku")).map(JsonElement::getAsBoolean).orElse(null)
-        );
-    }
 
     public void handle(ServerPlayerEntity player, Entity entity, DamageSource deathCause) {
         this.trigger(player, (conditions) -> conditions.test(player, entity, deathCause));
     }
 
     @Override
-    public Identifier getId() {
-        return this.id;
-    }
-
-    @Override
     public Codec<Conditions> getConditionsCodec() {
-        return null;
+        return Conditions.CODEC;
     }
 
+    public record Conditions(
+        Optional<LootContextPredicate> player,
+        Optional<DamageSourcePredicate> killingBlow,
+        Boolean seppukku) implements AbstractCriterion.Conditions {
 
-    public static class Conditions extends AbstractCriterionConditions {
-        private final C_ctsfmifk entity;
-        private final DamageSourcePredicate killingBlow;
-        private final @Nullable Boolean seppukku;
-
-        public Conditions(Identifier id, C_ctsfmifk player, C_ctsfmifk entity, DamageSourcePredicate killingBlow, @Nullable Boolean seppukku) {
-            super(id, player);
-            this.entity = entity;
-            this.killingBlow = killingBlow;
-            this.seppukku = seppukku;
-        }
+        public static final Codec<OnDeathAfterPossessionCriterion.Conditions> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(OnDeathAfterPossessionCriterion.Conditions::player),
+                    DamageSourcePredicate.CODEC.optionalFieldOf("killing_blow").forGetter(OnDeathAfterPossessionCriterion.Conditions::killingBlow),
+                    Codec.BOOL.fieldOf("seppukku").forGetter(OnDeathAfterPossessionCriterion.Conditions::seppukku)
+                )
+                .apply(instance, OnDeathAfterPossessionCriterion.Conditions::new)
+        );
 
         public boolean test(ServerPlayerEntity player, Entity entity, DamageSource killingBlow) {
             LootContext lootContext = EntityPredicate.createAdvancementEntityLootContext(player, entity);
-            return this.killingBlow.test(player, killingBlow)
-                && this.entity.method_27806(lootContext)
-                && (seppukku == null || seppukku == (killingBlow.getAttacker() == entity));
-        }
+            if (this.killingBlow.isPresent() && !this.killingBlow.get().test(player, killingBlow)) {
+                return false;
+            }
 
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add("entity", this.entity.method_27804(predicateSerializer));
-            jsonObject.add("killing_blow", this.killingBlow.toJson());
-            jsonObject.addProperty("seppukku", this.seppukku);
-            return jsonObject;
+            if (this.player.isPresent() && !this.player.get().test(lootContext)) {
+                return false;
+            }
+
+            if (seppukku != null && seppukku != (killingBlow.getAttacker() == entity)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -17,15 +17,13 @@
  */
 package ladysnake.requiem.api.v1.entity;
 
-import com.demonwav.mcdev.annotations.CheckEnv;
-import com.demonwav.mcdev.annotations.Env;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import org.ladysnake.cca.api.v3.component.tick.CommonTickingComponent;
 
 import javax.annotation.CheckForNull;
 
@@ -34,7 +32,7 @@ import javax.annotation.CheckForNull;
  * according to a {@link MovementConfig}.
  */
 public interface MovementAlterer extends CommonTickingComponent, AutoSyncedComponent {
-    ComponentKey<MovementAlterer> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "movement_alterer"), MovementAlterer.class);
+    ComponentKey<MovementAlterer> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "movement_alterer"), MovementAlterer.class);
 
     static MovementAlterer get(PlayerEntity player) {
         return KEY.get(player);

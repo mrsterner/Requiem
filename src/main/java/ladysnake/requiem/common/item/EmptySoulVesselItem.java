@@ -49,6 +49,7 @@ import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
 import ladysnake.requiem.core.entity.SoulHolderComponent;
 import ladysnake.requiem.core.record.EntityPositionClerk;
 import net.minecraft.block.Block;
+import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -77,6 +78,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class EmptySoulVesselItem extends Item {
+
+    public static final ComponentType<UUID> TARGET = ComponentType.<UUID>builder().build();
+    public static final ComponentType<Integer> USE_TIME = ComponentType.<Integer>builder().build();
 
     public static final String ACTIVE_DATA_TAG = "requiem:soul_capture";
     /**
@@ -137,11 +141,10 @@ public class EmptySoulVesselItem extends Item {
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
         Optional<SoulCaptureEvents.CaptureType> captureType = checkCapturePreconditions(user, entity);
         if (captureType.isPresent()) {
-            NbtCompound activeData = stack.getOrCreateSubNbt(ACTIVE_DATA_TAG);
-            activeData.putInt("use_time", computeCaptureTime(entity, user, captureType.get()));
-            activeData.putUuid("target", entity.getUuid());
+            stack.set(TARGET, entity.getUuid());
+            stack.set(USE_TIME, computeCaptureTime(entity, user, captureType.get()));
             // will be a copy in creative mode, so need to copy changes too
-            user.getStackInHand(hand).getOrCreateSubNbt(ACTIVE_DATA_TAG).copyFrom(activeData);
+            user.setStackInHand(hand, stack);
             user.setCurrentHand(hand);
             return ActionResult.CONSUME;
         }
@@ -179,11 +182,13 @@ public class EmptySoulVesselItem extends Item {
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
         if (!(world instanceof ServerWorld serverWorld)) return stack;
-        NbtCompound activeData = stack.getSubNbt(ACTIVE_DATA_TAG);
+        var activeData = stack.get(TARGET);
         if (activeData == null) return stack;
 
-        stack.removeSubNbt(ACTIVE_DATA_TAG);
-        Entity entity = serverWorld.getEntity(activeData.getUuid("target"));
+        stack.remove(TARGET);
+        stack.remove(USE_TIME);
+
+        Entity entity = serverWorld.getEntity(activeData);
 
         if (!(entity instanceof LivingEntity target)) return stack;
         if (!(user instanceof ServerPlayerEntity remnant)) return stack;

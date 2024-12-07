@@ -17,16 +17,16 @@
  */
 package ladysnake.requiem.api.v1.remnant;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import org.ladysnake.cca.api.v3.component.Component;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 
 import java.util.UUID;
 
 public interface AttritionFocus extends Component {
-    ComponentKey<AttritionFocus> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "attrition_focus"), AttritionFocus.class);
+    ComponentKey<AttritionFocus> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "attrition_focus"), AttritionFocus.class);
 
     void addAttrition(UUID playerUuid, int level);
 

@@ -46,6 +46,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
@@ -94,7 +95,7 @@ public class PlayerRiftTracker implements RiftTracker {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         this.riftRecordUuids.clear();
         for (NbtElement uuid : tag.getList("rift_records", NbtElement.INT_ARRAY_TYPE)) {
             this.riftRecordUuids.add(NbtHelper.toUuid(uuid));
@@ -102,7 +103,7 @@ public class PlayerRiftTracker implements RiftTracker {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         NbtList list = new NbtList();
         for (UUID uuid : this.riftRecordUuids) {
             list.add(NbtHelper.fromUuid(uuid));

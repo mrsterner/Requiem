@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.common.screen;
 
+import io.netty.buffer.Unpooled;
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.api.v1.remnant.RiftTracker;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -47,19 +48,13 @@ import net.minecraft.text.Text;
 
 import java.util.function.Predicate;
 
-public final class RiftScreenHandlerFactory implements ExtendedScreenHandlerFactory {
+public final class RiftScreenHandlerFactory implements ExtendedScreenHandlerFactory<PacketByteBuf> {
     private final ObeliskDescriptor source;
     private final Predicate<PlayerEntity> useCheck;
 
     public RiftScreenHandlerFactory(ObeliskDescriptor source, Predicate<PlayerEntity> useCheck) {
         this.source = source;
         this.useCheck = useCheck;
-    }
-
-    @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, this.source);
-        buf.writeCollection(player.getComponent(RiftTracker.KEY).fetchKnownObelisks(), (b, o) -> b.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, o));
     }
 
     @Override
@@ -70,5 +65,13 @@ public final class RiftScreenHandlerFactory implements ExtendedScreenHandlerFact
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
         return new RiftScreenHandler(RequiemScreenHandlers.RIFT_SCREEN_HANDLER, syncId, source, this.useCheck, player.getComponent(RiftTracker.KEY).fetchKnownObelisks());
+    }
+
+    @Override
+    public PacketByteBuf getScreenOpeningData(ServerPlayerEntity serverPlayerEntity) {
+        var buf = new PacketByteBuf(Unpooled.buffer());
+        buf.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, this.source);
+        buf.writeCollection(serverPlayerEntity.getComponent(RiftTracker.KEY).fetchKnownObelisks(), (b, o) -> b.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, o));
+        return buf;
     }
 }

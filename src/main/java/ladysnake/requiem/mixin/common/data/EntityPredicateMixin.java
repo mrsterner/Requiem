@@ -56,7 +56,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(EntityPredicate.class)
 public abstract class EntityPredicateMixin {
     private @Nullable Boolean requiem$canBeCured;
-    private NumberRange.FloatRange requiem$healthFraction = NumberRange.FloatRange.ANY;
+    private NumberRange.DoubleRange requiem$healthFraction = NumberRange.DoubleRange.ANY;
 
     @Inject(method = "test(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/entity/Entity;)Z", at = @At("RETURN"), cancellable = true)
     private void test(ServerWorld world, Vec3d pos, Entity entity, CallbackInfoReturnable<Boolean> cir) {
@@ -84,6 +84,6 @@ public abstract class EntityPredicateMixin {
             ret.requiem$canBeCured
                 = JsonHelper.getBoolean(entityData, "requiem:can_be_cured");
         }
-        ret.requiem$healthFraction = NumberRange.FloatRange.fromJson(entityData.get("requiem:health_fraction"));
+        ret.requiem$healthFraction = NumberRange.DoubleRange.fromJson(entityData.get("requiem:health_fraction"));
     }
 }

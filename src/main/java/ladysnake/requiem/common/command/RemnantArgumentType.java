@@ -90,9 +90,9 @@ public class RemnantArgumentType implements ArgumentType<RemnantType> {
 
         try {
             if (string.contains(":")) {
-                return new Identifier(string);
+                return Identifier.of(string);
             } else {
-                return new Identifier(Requiem.MOD_ID + ":" + string);
+                return Identifier.of(Requiem.MOD_ID + ":" + string);
             }
         } catch (InvalidIdentifierException var4) {
             reader.setCursor(i);

@@ -71,7 +71,7 @@ public final class RequiemSoundEvents {
 
     private static SoundEvent register(String name) {
         Identifier id = Requiem.id(name);
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
+        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
     }
 
     public static void init() {

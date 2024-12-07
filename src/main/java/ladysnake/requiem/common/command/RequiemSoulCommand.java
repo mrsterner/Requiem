@@ -34,10 +34,12 @@
  */
 package ladysnake.requiem.common.command;
 
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import ladysnake.requiem.core.entity.SoulHolderComponent;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -74,15 +76,17 @@ public final class RequiemSoulCommand {
                     .executes(context -> removeSoul(context.getSource(), EntityArgumentType.getEntities(context, "target"), false))));
     }
 
-    private static int removeSoul(ServerCommandSource source, Collection<? extends Entity> targets, boolean soulless) {
+    private static int removeSoul(ServerCommandSource source, Collection<? extends Entity> targets, boolean soulless) throws CommandSyntaxException {
         int count = 0;
         for (Entity target : targets) {
             if (!(target instanceof LivingEntity living)) {
-                throw new CommandException(Text.translatable("requiem:commands.soul.set.fail.not_living", target.getDisplayName()));
+                Message message = Text.translatable("requiem:commands.soul.set.fail.not_living", target.getDisplayName());
+                throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
             }
 
             if (target.getType().isIn(RequiemCoreEntityTags.SOULLESS)) {
-                throw new CommandException(Text.translatable("requiem:commands.soul.set.fail.permanently_soulless"));
+                Message message = Text.translatable("requiem:commands.soul.set.fail.permanently_soulless");
+                throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
             }
 
             if (SoulHolderComponent.isSoulless(living) != soulless) {

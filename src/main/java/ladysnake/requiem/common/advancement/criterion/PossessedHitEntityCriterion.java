@@ -35,78 +35,52 @@
 package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.predicate.DamagePredicate;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
+import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
+import java.util.Optional;
+
 public class PossessedHitEntityCriterion extends AbstractCriterion<PossessedHitEntityCriterion.Conditions> {
-    private final Identifier id;
-
-    public PossessedHitEntityCriterion(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        C_ctsfmifk possessed = EntityPredicate.method_51705(obj, "possessed", predicateDeserializer);
-        C_ctsfmifk entity = EntityPredicate.method_51705(obj, "entity", predicateDeserializer);
-
-        return new Conditions(
-            this.id,
-            playerPredicate,
-            DamagePredicate.fromJson(obj.get("damage")),
-            possessed,
-            entity
-        );
-    }
 
     public void handle(ServerPlayerEntity player, Entity possessed, Entity entity, DamageSource source, float dealt, float taken, boolean blocked) {
         this.trigger(player, (conditions) -> conditions.test(player, source, dealt, taken, blocked, possessed, entity));
     }
 
     @Override
-    public Identifier getId() {
-        return this.id;
+    public Codec<Conditions> getConditionsCodec() {
+        return Conditions.CODEC;
     }
 
 
-    public static class Conditions extends AbstractCriterionConditions {
-        private final DamagePredicate damage;
-        private final C_ctsfmifk possessed;
-        private final C_ctsfmifk entity;
+    public record Conditions(Optional<DamagePredicate> damage, Optional<LootContextPredicate> player, Optional<LootContextPredicate> possessed, Optional<LootContextPredicate> entity) implements AbstractCriterion.Conditions {
 
-        public Conditions(Identifier id, C_ctsfmifk player, DamagePredicate damage, C_ctsfmifk possessed, C_ctsfmifk entity) {
-            super(id, player);
-            this.damage = damage;
-            this.possessed = possessed;
-            this.entity = entity;
-        }
+        public static final Codec<PossessedHitEntityCriterion.Conditions> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    DamagePredicate.CODEC.optionalFieldOf("killing_blow").forGetter(PossessedHitEntityCriterion.Conditions::damage),
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(PossessedHitEntityCriterion.Conditions::player),
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("possessed").forGetter(PossessedHitEntityCriterion.Conditions::possessed),
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("entity").forGetter(PossessedHitEntityCriterion.Conditions::entity)
+                )
+                .apply(instance, PossessedHitEntityCriterion.Conditions::new)
+        );
 
         public boolean test(ServerPlayerEntity player, DamageSource source, float dealt, float taken, boolean blocked, Entity possessed, Entity target) {
-            if (this.damage.test(player, source, dealt, taken, blocked)) {
+            if (this.damage.isPresent() && this.damage.get().test(player, source, dealt, taken, blocked)) {
                 LootContext possessedCtx = EntityPredicate.createAdvancementEntityLootContext(player, possessed);
                 LootContext targetCtx = EntityPredicate.createAdvancementEntityLootContext(player, target);
-                return this.possessed.method_27806(possessedCtx) && this.entity.method_27806(targetCtx);
+                return this.possessed.isPresent() && this.possessed.get().test(possessedCtx) && this.entity.isPresent() && this.entity.get().test(targetCtx);
             }
             return false;
-        }
-
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add("damage", this.damage.toJson());
-            jsonObject.add("possessed", this.possessed.method_27804(predicateSerializer));
-            jsonObject.add("entity", this.entity.method_27804(predicateSerializer));
-            return jsonObject;
         }
     }
 }

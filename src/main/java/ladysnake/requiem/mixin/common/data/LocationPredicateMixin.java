@@ -66,7 +66,7 @@ public abstract class LocationPredicateMixin {
     @Inject(method = "test", at = @At("RETURN"), cancellable = true)
     private void test(ServerWorld world, double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValueZ() && this.requiem$biomeTag != null) {
-            BlockPos blockPos = BlockPos.create(x, y, z);
+            BlockPos blockPos = BlockPos.ofFloored(x, y, z);
 
             if (!(world.canSetBlock(blockPos) && world.getBiome(blockPos).isIn(this.requiem$biomeTag))) {
                 cir.setReturnValue(false);

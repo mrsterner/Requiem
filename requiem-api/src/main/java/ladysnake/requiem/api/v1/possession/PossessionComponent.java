@@ -17,10 +17,6 @@
  */
 package ladysnake.requiem.api.v1.possession;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
 import ladysnake.requiem.api.v1.RequiemPlayer;
 import ladysnake.requiem.api.v1.event.requiem.PossessionStartCallback;
 import net.minecraft.entity.Entity;
@@ -30,12 +26,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 /**
  * A {@link PossessionComponent} handles a player's possession status.
  */
 public interface PossessionComponent extends AutoSyncedComponent, ServerTickingComponent {
-    ComponentKey<PossessionComponent> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "possessor"), PossessionComponent.class);
+    ComponentKey<PossessionComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "possessor"), PossessionComponent.class);
 
     /**
      * Return a player's {@link PossessionComponent}. The possession component is

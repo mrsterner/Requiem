@@ -36,77 +36,52 @@ package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
+import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 public class TransformedPossessedCriterion extends AbstractCriterion<TransformedPossessedCriterion.Conditions> {
-    private final Identifier id;
-
-    public TransformedPossessedCriterion(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        C_ctsfmifk before = EntityPredicate.method_51705(obj, "before", predicateDeserializer);
-        C_ctsfmifk after = EntityPredicate.method_51705(obj, "after", predicateDeserializer);
-
-        return new Conditions(
-            this.id,
-            playerPredicate,
-            before,
-            after,
-            Optional.ofNullable(obj.get("cure")).map(JsonElement::getAsBoolean).orElse(null)
-        );
-    }
 
     public void handle(ServerPlayerEntity player, LivingEntity before, LivingEntity after, boolean cure) {
         this.trigger(player, (conditions) -> conditions.test(player, before, after, cure));
     }
 
     @Override
-    public Identifier getId() {
-        return this.id;
+    public Codec<Conditions> getConditionsCodec() {
+        return Conditions.CODEC;
     }
 
+    public record Conditions(
+        Optional<LootContextPredicate> player,
+        Optional<LootContextPredicate> before,
+        Optional<LootContextPredicate> after,
+        Boolean cure) implements AbstractCriterion.Conditions {
 
-    public static class Conditions extends AbstractCriterionConditions {
-        private final C_ctsfmifk before;
-        private final C_ctsfmifk after;
-        private final @Nullable Boolean cure;
-
-        public Conditions(Identifier id, C_ctsfmifk player, C_ctsfmifk before, C_ctsfmifk after, @Nullable Boolean cure) {
-            super(id, player);
-            this.before = before;
-            this.after = after;
-            this.cure = cure;
-        }
+        public static final Codec<TransformedPossessedCriterion.Conditions> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(TransformedPossessedCriterion.Conditions::player),
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("before").forGetter(TransformedPossessedCriterion.Conditions::before),
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("after").forGetter(TransformedPossessedCriterion.Conditions::after),
+                    Codec.BOOL.fieldOf("cure").forGetter(TransformedPossessedCriterion.Conditions::cure)
+                )
+                .apply(instance, TransformedPossessedCriterion.Conditions::new)
+        );
 
         public boolean test(ServerPlayerEntity player, LivingEntity before, LivingEntity after, boolean cure) {
             LootContext beforeCtx = EntityPredicate.createAdvancementEntityLootContext(player, before);
             LootContext afterCtx = EntityPredicate.createAdvancementEntityLootContext(player, after);
-            return this.before.method_27806(beforeCtx) && this.after.method_27806(afterCtx) && (this.cure == null || this.cure == cure);
+            return this.before.isPresent() &&  this.before.get().test(beforeCtx) && this.after.isPresent() && this.after.get().test(afterCtx) && (this.cure == null || this.cure == cure);
         }
 
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add("before", this.before.method_27804(predicateSerializer));
-            jsonObject.add("after", this.after.method_27804(predicateSerializer));
-            jsonObject.addProperty("cure", this.cure);  // Takes nullable values too
-            return jsonObject;
-        }
     }
 }

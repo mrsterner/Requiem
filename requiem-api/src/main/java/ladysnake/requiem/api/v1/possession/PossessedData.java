@@ -17,16 +17,17 @@
  */
 package ladysnake.requiem.api.v1.possession;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.tick.ClientTickingComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
 
 public interface PossessedData extends ClientTickingComponent {
-    ComponentKey<PossessedData> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "possessed_data"), PossessedData.class);
+    ComponentKey<PossessedData> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "possessed_data"), PossessedData.class);
 
     NbtCompound getHungerData();
 
@@ -40,5 +41,5 @@ public interface PossessedData extends ClientTickingComponent {
 
     void dropItems();
 
-    void copyFrom(PossessedData original);
+    void copyFrom(PossessedData original, RegistryWrapper.WrapperLookup wrapperLookup);
 }

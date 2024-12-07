@@ -87,7 +87,7 @@ public abstract class PandaEntityMixin extends AnimalEntity implements Possessab
         this.setLyingOnBack(false);
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PandaEntity;updateScaredAnimation()V"))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PandaEntity;updateSittingAnimation()V"))
     private void scareIfSneaking(CallbackInfo ci) {
         PlayerEntity possessor = this.getPossessor();
         if (possessor != null) {
@@ -95,7 +95,7 @@ public abstract class PandaEntityMixin extends AnimalEntity implements Possessab
         }
     }
 
-    @Inject(method = "updateScaredAnimation", at = @At("RETURN"))
+    @Inject(method = "updateSittingAnimation", at = @At("RETURN"))
     private void recalculateDimensions(CallbackInfo ci) {
         if (this.lastScaredAnimationProgress != this.scaredAnimationProgress) {
             this.calculateDimensions();

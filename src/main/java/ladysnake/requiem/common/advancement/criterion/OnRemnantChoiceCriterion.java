@@ -35,53 +35,41 @@
 package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
+import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
+import java.util.Optional;
+
 public class OnRemnantChoiceCriterion extends AbstractCriterion<OnRemnantChoiceCriterion.Conditions> {
-    private final Identifier id;
 
-    public OnRemnantChoiceCriterion(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    public Identifier getId() {
-        return this.id;
-    }
-
-    @Override
-    protected Conditions conditionsFromJson(JsonObject json, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        return new Conditions(this.getId(), playerPredicate, RemnantTypePredicate.deserialize(json.get("remnant_type")));
-    }
 
     public void handle(ServerPlayerEntity player, RemnantType chosenType) {
         this.trigger(player, (conditions) -> conditions.test(chosenType));
     }
 
-    public static class Conditions extends AbstractCriterionConditions {
-        private final RemnantTypePredicate predicate;
+    @Override
+    public Codec<Conditions> getConditionsCodec() {
+        return Conditions.CODEC;
+    }
 
-        public Conditions(Identifier id, C_ctsfmifk playerPredicate, RemnantTypePredicate predicate) {
-            super(id, playerPredicate);
-            this.predicate = predicate;
-        }
+    public record Conditions(Optional<LootContextPredicate> player, Optional<RemnantTypePredicate> predicate) implements AbstractCriterion.Conditions {
+
+        public static final Codec<OnRemnantChoiceCriterion.Conditions> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(OnRemnantChoiceCriterion.Conditions::player),
+                    RemnantTypePredicate.CODEC.optionalFieldOf("predicate").forGetter(OnRemnantChoiceCriterion.Conditions::predicate)
+                )
+                .apply(instance, OnRemnantChoiceCriterion.Conditions::new)
+        );
 
         public boolean test(RemnantType type) {
-            return this.predicate.matches(type);
-        }
-
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject json = super.toJson(predicateSerializer);
-            json.add("type", this.predicate.serialize());
-            return json;
+            return this.predicate.isPresent() && this.predicate.get().matches(type);
         }
     }
 }

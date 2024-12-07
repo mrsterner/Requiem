@@ -39,6 +39,7 @@ import ladysnake.requiem.common.remnant.DroppedVesselTracker;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -78,7 +79,7 @@ public abstract class PlayerManagerMixin {
             ordinal = 0
         )
     )
-    private void requiem$mergeWithVessel(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    private void requiem$mergeWithVessel(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         DroppedVesselTracker.get(player).tryMergeWithVessel();
     }
 }

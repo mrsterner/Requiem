@@ -36,8 +36,6 @@ package ladysnake.requiem.common;
 
 import baritone.api.fakeplayer.AutomatoneFakePlayer;
 import com.mojang.authlib.GameProfile;
-import io.github.ladysnake.impersonate.Impersonate;
-import io.github.ladysnake.impersonate.Impersonator;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.RequiemPlugin;
 import ladysnake.requiem.api.v1.entity.CurableEntityComponent;
@@ -117,22 +115,23 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.FoodComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.EntityStatusEffectUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.EntityStatusEffectS2CPacket;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -140,6 +139,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.impersonate.Impersonator;
 import org.ladysnake.locki.DefaultInventoryNodes;
 import org.ladysnake.locki.ModdedInventoryNodes;
 import org.ladysnake.vaquero.api.MobRidingType;
@@ -259,7 +259,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
             // effects do not normally get synced after respawn, so we do it ourselves
             // TODO check if still necessary
             for (StatusEffectInstance effect : player.getStatusEffects()) {
-                player.networkHandler.sendPacket(new EntityStatusEffectUpdateS2CPacket(player.getId(), effect));
+                player.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(player.getId(), effect, true));
             }
         }));
         RemnantStateChangeCallback.EVENT.register((player, remnant, cause) -> {
@@ -519,11 +519,11 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
     }
 
     public static TypedActionResult<ItemStack> healWithFood(PlayerEntity player, MobEntity possessed, ItemStack stack, World world, Hand hand) {
-        FoodComponent food = stack.getItem().getFoodComponent();
+        var food = stack.get(DataComponentTypes.FOOD);
 
         if (food != null) {
-            possessed.heal(food.getHunger());
-            player.eatFood(world, stack);
+            possessed.heal(food.nutrition());
+            player.eatFood(world, stack, food);
             return TypedActionResult.success(stack);
         }
 
@@ -540,17 +540,17 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
     }
 
     public static TypedActionResult<ItemStack> eatWitchFood(PlayerEntity player, MobEntity possessed, ItemStack stack, World world, Hand hand) {
-        Map<StatusEffect, StatusEffectInstance> before = new HashMap<>(possessed.getActiveStatusEffects());
+        Map<RegistryEntry<StatusEffect>, StatusEffectInstance> before = new HashMap<>(possessed.getActiveStatusEffects());
         ItemStack ret = stack.getItem().finishUsing(stack, world, player);
-        Map<StatusEffect, StatusEffectInstance> after = new HashMap<>(possessed.getActiveStatusEffects());
+        Map<RegistryEntry<StatusEffect>, StatusEffectInstance> after = new HashMap<>(possessed.getActiveStatusEffects());
         // Remove all negative status effects from the food
         revertHarmfulEffects(player, before, after);
         return TypedActionResult.success(ret);
     }
 
-    private static void revertHarmfulEffects(PlayerEntity player, Map<StatusEffect, StatusEffectInstance> before, Map<StatusEffect, StatusEffectInstance> after) {
-        for (StatusEffect statusEffect : after.keySet()) {
-            if (statusEffect.getType() == StatusEffectType.HARMFUL) {
+    private static void revertHarmfulEffects(PlayerEntity player, Map<RegistryEntry<StatusEffect>, StatusEffectInstance> before, Map<RegistryEntry<StatusEffect>, StatusEffectInstance> after) {
+        for (RegistryEntry<StatusEffect> statusEffect : after.keySet()) {
+            if (statusEffect.value().getCategory() == StatusEffectCategory.HARMFUL) {
                 StatusEffectInstance previous = before.get(statusEffect);
                 StatusEffectInstance current = after.get(statusEffect);
                 if (!Objects.equals(previous, current)) {
@@ -563,8 +563,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
                             previous.isAmbient(),
                             previous.shouldShowParticles(),
                             previous.shouldShowIcon(),
-                            previous,
-                            statusEffect.getFactorData()
+                            previous
                         ));
                     }
                 }

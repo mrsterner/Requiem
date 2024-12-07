@@ -39,6 +39,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
 import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.common.remnant.RemnantTypes;
@@ -46,6 +49,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
 import javax.annotation.Nullable;
+
 
 public abstract class RemnantTypePredicate {
     public static final RemnantTypePredicate ANY = new RemnantTypePredicate() {
@@ -55,26 +59,33 @@ public abstract class RemnantTypePredicate {
         }
 
         @Override
-        public JsonElement serialize() {
-            return JsonNull.INSTANCE;
+        public Codec<RemnantTypePredicate> codec() {
+            return Codec.unit(this);
         }
     };
+
     private static final Joiner COMMA_JOINER = Joiner.on(", ");
 
-    public abstract boolean matches(RemnantType var1);
+    // Abstract methods
+    public abstract boolean matches(RemnantType type);
 
-    public abstract JsonElement serialize();
+    public abstract Codec<RemnantTypePredicate> codec();
 
-    public static RemnantTypePredicate deserialize(@Nullable JsonElement json) {
-        if (json != null && !json.isJsonNull()) {
-            Identifier id = new Identifier(JsonHelper.asString(json, "type"));
-            RemnantType type = RequiemRegistries.REMNANT_STATES.getOrEmpty(id).orElseThrow(() -> new JsonSyntaxException("Unknown remnant type '" + id + "', valid types are: " + COMMA_JOINER.join(RequiemRegistries.REMNANT_STATES.getIds())));
-            return new Single(type);
-        } else {
-            return ANY;
-        }
-    }
-    static class Single extends RemnantTypePredicate {
+    public static final Codec<RemnantTypePredicate> CODEC = Codec.either(
+        Identifier.CODEC.xmap(
+            id -> new Single(RequiemRegistries.REMNANT_STATES.getOrEmpty(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                    "Unknown remnant type '" + id + "', valid types are: " + COMMA_JOINER.join(RequiemRegistries.REMNANT_STATES.getIds())
+                ))),
+            predicate -> RequiemRegistries.REMNANT_STATES.getId(predicate.type)
+        ),
+        Codec.unit(ANY)
+    ).xmap(
+        either -> either.map(predicate -> predicate, predicate -> predicate),
+        predicate -> predicate instanceof Single single ? Either.left(single) : Either.right(predicate)
+    );
+
+    public static class Single extends RemnantTypePredicate {
         private final RemnantType type;
 
         public Single(RemnantType type) {
@@ -87,9 +98,12 @@ public abstract class RemnantTypePredicate {
         }
 
         @Override
-        public JsonElement serialize() {
-            return new JsonPrimitive(RemnantTypes.getId(this.type).toString());
+        public Codec<RemnantTypePredicate> codec() {
+            return CODEC;
+        }
+
+        public RemnantType getType() {
+            return type;
         }
     }
-
 }

@@ -38,6 +38,7 @@ import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
@@ -53,6 +54,6 @@ public final class RequiemScreenHandlers {
     });
 
     public static void init() {
-        Registry.register(Registries.SCREEN_HANDLER_TYPE, Requiem.id("rift"), RIFT_SCREEN_HANDLER);
+        Registry.register(Registries.SCREEN_HANDLER, Requiem.id("rift"), RIFT_SCREEN_HANDLER);
     }
 }

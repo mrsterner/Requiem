@@ -34,10 +34,13 @@
  */
 package ladysnake.requiem.common.command;
 
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandExceptionType;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -87,15 +90,17 @@ public final class RequiemEtherealCommand {
         return remnant ? 1 : 0;
     }
 
-    private static int setEthereal(ServerCommandSource source, Collection<ServerPlayerEntity> players, boolean ethereal) {
+    private static int setEthereal(ServerCommandSource source, Collection<ServerPlayerEntity> players, boolean ethereal) throws CommandSyntaxException {
         int count = 0;
         for (ServerPlayerEntity player : players) {
             if (RemnantComponent.get(player).isVagrant() != ethereal) {
                 if (!isRemnant(player)) {
-                    throw new CommandException(Text.translatable("requiem:commands.ethereal.set.fail.mortal", player.getDisplayName()));
+                    Message message = Text.translatable("requiem:commands.ethereal.set.fail.mortal", player.getDisplayName());
+                    throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
                 }
                 if (!RemnantComponent.get(player).setVagrant(ethereal)) {
-                    throw new CommandException(Text.translatable("requiem:commands.ethereal.set.fail", player.getDisplayName()));
+                    Message message = Text.translatable("requiem:commands.ethereal.set.fail", player.getDisplayName());
+                    throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
                 }
                 sendSetEtherealFeedback(source, player, ethereal);
                 ++count;
@@ -110,7 +115,7 @@ public final class RequiemEtherealCommand {
             source.sendFeedback(() -> Text.translatable("requiem:commands.ethereal.set.success.self", name), true);
         } else {
             if (source.getWorld().getGameRules().getBoolean(GameRules.SEND_COMMAND_FEEDBACK)) {
-                player.sendSystemMessage(Text.translatable("requiem:commands.ethereal.set.target", name));
+                player.sendMessage(Text.translatable("requiem:commands.ethereal.set.target", name));
             }
 
             source.sendFeedback(() -> Text.translatable("requiem:commands.ethereal.set.success.other", player.getDisplayName(), name), true);

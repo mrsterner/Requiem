@@ -36,13 +36,13 @@ package ladysnake.requiem.common.structure;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
-import net.minecraft.registry.Holder;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.structure.PoolStructurePiece;
+import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureTemplateManager;
-import net.minecraft.structure.StructureType;
-import net.minecraft.structure.piece.PoolStructurePiece;
-import net.minecraft.structure.piece.StructurePiece;
 import net.minecraft.structure.pool.EmptyPoolElement;
 import net.minecraft.structure.pool.StructurePool;
 import net.minecraft.structure.pool.StructurePoolElement;
@@ -53,34 +53,42 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.math.random.ChunkRandom;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
-import net.minecraft.world.gen.ChunkRandom;
-import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.noise.NoiseConfig;
+import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.structure.StructureType;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.random.RandomGenerator;
 
-public class DerelictObeliskFeature extends StructureFeature {
-    public static final Codec<DerelictObeliskFeature> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        settingsCodec(instance),
-        StructurePool.REGISTRY_CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool)
+import static net.minecraft.structure.StructureLiquidSettings.APPLY_WATERLOGGING;
+
+public class DerelictObeliskFeature extends Structure {
+    public static final MapCodec<DerelictObeliskFeature> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+        configCodecBuilder(instance), // Ensure this method returns a compatible MapCodec
+        StructurePool.REGISTRY_CODEC.fieldOf("start_pool")
+            .forGetter(DerelictObeliskFeature::getStartPool) // Ensure a getter exists for startPool
     ).apply(instance, DerelictObeliskFeature::new));
 
-    private final Holder<StructurePool> startPool;
+    private RegistryEntry<StructurePool> getStartPool() {
+        return startPool;
+    }
 
-    public DerelictObeliskFeature(StructureSettings settings, Holder<StructurePool> startPool) {
+    private final RegistryEntry<StructurePool> startPool;
+
+    public DerelictObeliskFeature(Structure.Config settings, RegistryEntry<StructurePool> startPool) {
         super(settings);
         this.startPool = startPool;
     }
 
     @Override
-    public Optional<GenerationStub> findGenerationPos(GenerationContext context) {
+    public Optional<Structure.StructurePosition> getStructurePosition(Structure.Context context) {
         // Turns the chunk coordinates into actual coordinates we can use. (Gets center of that chunk)
         ChunkPos chunkPos = context.chunkPos();
         int x = chunkPos.x * 16;
@@ -88,7 +96,7 @@ public class DerelictObeliskFeature extends StructureFeature {
 
         BlockPos.Mutable centerPos = new BlockPos.Mutable(x, 0, z);
 
-        return Optional.of(new GenerationStub(centerPos, structurePieces -> {
+        return Optional.of(new Structure.StructurePosition(centerPos, structurePieces -> {
             ChunkRandom chunkRandom = context.random();
             StructurePoolElement spawnedStructure = this.startPool.value().getRandomElement(chunkRandom);
 
@@ -102,10 +110,11 @@ public class DerelictObeliskFeature extends StructureFeature {
                     startPos,
                     spawnedStructure.getGroundLevelDelta(),
                     rotation,
-                    spawnedStructure.getBoundingBox(structureManager, startPos, rotation)
+                    spawnedStructure.getBoundingBox(structureManager, startPos, rotation),
+                    APPLY_WATERLOGGING
                 );
                 BlockBox boundingBox = piece.getBoundingBox();
-                OptionalInt floorY = getFloorHeight(context.random(), context.randomState(), context.chunkGenerator(), boundingBox, context.world());
+                OptionalInt floorY = getFloorHeight(context.random(), context.noiseConfig(), context.chunkGenerator(), boundingBox, context.world());
 
                 if (floorY.isEmpty()) return;
 
@@ -134,9 +143,9 @@ public class DerelictObeliskFeature extends StructureFeature {
     }
 
     /**
-     * Stolen from {@link net.minecraft.world.gen.feature.RuinedPortalFeature}
+     * Stolen from {@link net.minecraft.world.gen.structure.RuinedPortalStructure}
      */
-    static OptionalInt getFloorHeight(RandomGenerator random, RandomState randomState, ChunkGenerator chunkGenerator, BlockBox box, HeightLimitView world) {
+    static OptionalInt getFloorHeight(ChunkRandom random, NoiseConfig randomState, ChunkGenerator chunkGenerator, BlockBox box, HeightLimitView world) {
         int maxY = MathHelper.nextBetween(random, 60, 100);
 
         List<BlockPos> corners = ImmutableList.of(new BlockPos(box.getMinX(), 0, box.getMinZ()), new BlockPos(box.getMaxX(), 0, box.getMinZ()), new BlockPos(box.getMinX(), 0, box.getMaxZ()), new BlockPos(box.getMaxX(), 0, box.getMaxZ()));

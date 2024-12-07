@@ -44,6 +44,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -74,7 +75,7 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
-    @Inject(method = "createAttributes", at = @At("RETURN"))
+    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
     private static void addSoulDefenseAttribute(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
         cir.getReturnValue().add(RequiemEntityAttributes.SOUL_DEFENSE);
     }
@@ -84,7 +85,7 @@ public abstract class LivingEntityMixin extends Entity {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;dropInventory()V"),
         cancellable = true
     )
-    private void fireDropEvent(DamageSource deathCause, CallbackInfo ci) {
+    private void fireDropEvent(ServerWorld world, DamageSource deathCause, CallbackInfo ci) {
         if (LivingEntityDropCallback.EVENT.invoker().onEntityDrop((LivingEntity) (Object) this, deathCause)) {
             ci.cancel();
         } else if (this instanceof MobResurrectable) {
@@ -112,7 +113,7 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "collides", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "canHit", at = @At("RETURN"), cancellable = true)
     private void requiem$preventTargetingSouls(CallbackInfoReturnable<Boolean> info) {
         if (RemnantComponent.isVagrant(this)) {
             info.setReturnValue(false);

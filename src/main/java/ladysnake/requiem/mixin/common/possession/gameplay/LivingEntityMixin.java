@@ -76,7 +76,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements Possessab
         }
     }
 
-    @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V", shift = At.Shift.AFTER))
+    @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/damage/DamageSource;)V", shift = At.Shift.AFTER))
     private void onDeath(DamageSource deathCause, CallbackInfo ci) {
         if (!this.isBeingPossessed() && this.requiem$previousPossessorUuid != null) {
             PlayerEntity previousPossessor = this.getWorld().getPlayerByUuid(this.requiem$previousPossessorUuid);

@@ -51,7 +51,7 @@ public abstract class WeightedPressurePlateBlockMixin extends AbstractPressurePl
         super(settings, blockSetType);
     }
 
-    @ModifyVariable(method = "calculateRedstoneOutput", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/Math;min(II)I"))
+    @ModifyVariable(method = "getRedstoneOutput(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)I", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/Math;min(II)I"))
     private int removeVagrantPlayersFromCount(int base, World world, BlockPos pos) {
         for (PlayerEntity player : world.getNonSpectatingEntities(PlayerEntity.class, BOX.offset(pos))) {
             if (RemnantComponent.isVagrant(player)) {

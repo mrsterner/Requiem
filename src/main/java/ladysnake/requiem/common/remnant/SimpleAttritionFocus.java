@@ -43,6 +43,7 @@ import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryWrapper;
 
 import javax.annotation.Nonnegative;
 import java.util.UUID;
@@ -78,7 +79,7 @@ public class SimpleAttritionFocus implements AttritionFocus {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (tag.contains("attrition_levels")) {
             NbtList levels = tag.getList("attrition_levels", NbtType.COMPOUND);
             this.attritionLevels.clear();
@@ -91,7 +92,7 @@ public class SimpleAttritionFocus implements AttritionFocus {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (!this.attritionLevels.isEmpty()) {
             NbtList levels = new NbtList();
             for (Object2IntMap.Entry<UUID> entry : attritionLevels.object2IntEntrySet()) {

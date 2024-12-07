@@ -35,28 +35,20 @@
 package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
+import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
+import java.util.Optional;
+
 public class OnPossessionCriterion extends AbstractCriterion<OnPossessionCriterion.Conditions> {
-    private final Identifier id;
-
-    public OnPossessionCriterion(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    public Identifier getId() {
-        return id;
-    }
 
     public void handle(ServerPlayerEntity possessor, LivingEntity possessed) {
         LootContext lootContext = EntityPredicate.createAdvancementEntityLootContext(possessor, possessed);
@@ -64,28 +56,22 @@ public class OnPossessionCriterion extends AbstractCriterion<OnPossessionCriteri
     }
 
     @Override
-    protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        C_ctsfmifk c_ctsfmifk2 = EntityPredicate.method_51705(obj, "entity", predicateDeserializer);
-        return new Conditions(this.id, playerPredicate, c_ctsfmifk2);
+    public Codec<Conditions> getConditionsCodec() {
+        return Conditions.CODEC;
     }
 
-    public static class Conditions extends AbstractCriterionConditions {
-        private final C_ctsfmifk predicate;
+    public record Conditions(Optional<LootContextPredicate> player, Optional<LootContextPredicate> entity) implements AbstractCriterion.Conditions {
 
-        public Conditions(Identifier id, C_ctsfmifk playerPredicate, C_ctsfmifk predicate) {
-            super(id, playerPredicate);
-            this.predicate = predicate;
-        }
+        public static final Codec<OnPossessionCriterion.Conditions> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(OnPossessionCriterion.Conditions::player),
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("entity").forGetter(OnPossessionCriterion.Conditions::entity)
+                )
+                .apply(instance, OnPossessionCriterion.Conditions::new)
+        );
 
         public boolean test(LootContext ctx) {
-            return this.predicate.method_27806(ctx);
-        }
-
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject json = super.toJson(predicateSerializer);
-            json.add("entity", this.predicate.method_27804(predicateSerializer));
-            return json;
+            return this.entity.isPresent() && this.entity.get().test(ctx);
         }
     }
 }

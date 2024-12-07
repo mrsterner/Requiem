@@ -34,10 +34,12 @@
  */
 package ladysnake.requiem.common.command;
 
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
@@ -78,19 +80,22 @@ public final class RequiemPossessionCommand {
             );
     }
 
-    private static int startPossession(ServerCommandSource source, Entity possessed, ServerPlayerEntity player) {
+    private static int startPossession(ServerCommandSource source, Entity possessed, ServerPlayerEntity player) throws CommandSyntaxException {
         if (!(possessed instanceof MobEntity)) {
-            throw new CommandException(Text.translatable("requiem:commands.possession.start.fail.not_mob", possessed.getDisplayName()));
+            Message message = Text.translatable("requiem:commands.possession.start.fail.not_mob", possessed.getDisplayName());
+            throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
         }
 
         if (!RemnantComponent.get(player).isIncorporeal()) {
-            throw new CommandException(Text.translatable("requiem:commands.possession.start.fail.not_incorporeal", player.getDisplayName()));
+            Message message = Text.translatable("requiem:commands.possession.start.fail.not_incorporeal", player.getDisplayName());
+            throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
         }
 
         boolean success = PossessionComponent.get(player).startPossessing((MobEntity) possessed);
 
         if (!success) {
-            throw new CommandException(Text.translatable("requiem:commands.possession.start.fail", possessed.getDisplayName()));
+            Message message = Text.translatable("requiem:commands.possession.start.fail", possessed.getDisplayName());
+            throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
         }
 
 

@@ -57,10 +57,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.GameStateUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 
 public final class BasePossessionHandlers {
@@ -79,7 +80,7 @@ public final class BasePossessionHandlers {
             (possessor, host) -> possessor.getWorld().getGameRules().get(RequiemGamerules.POSSESSION_KEEP_INVENTORY).get().shouldTransfer(host.isAlive()) ? TriState.TRUE : TriState.DEFAULT
         );
         PossessionEvents.HOST_DEATH.register((player, host, deathCause) -> {
-            if (player.getWorld().getProperties().isHardcore()) {
+            if (player.getWorld().getLevelProperties().isHardcore()) {
                 player.damage(player.getDamageSources().requiemSources().attritionHardcoreDeath(), Float.MAX_VALUE);
             } else {
                 AttritionStatusEffect.apply(player);
@@ -132,9 +133,10 @@ public final class BasePossessionHandlers {
             // Set the variable in advance to avoid game credits
             ((ServerPlayerEntity) possessor).notInAnyWorld = true;
             ServerWorld destination = ((ServerPlayerEntity) possessor).server.getWorld(World.OVERWORLD);
-            possessor.moveToWorld(destination);
-            ((ServerPlayerEntity) possessor).networkHandler.sendPacket(new GameStateUpdateS2CPacket(GameStateUpdateS2CPacket.GAME_WON, 0.0F));
-            tpDest = target.moveToWorld(destination);
+            var teleporttarget = new TeleportTarget(destination, possessor.getPos(), possessor.getVelocity(), possessor.getYaw(), possessor.getPitch(), TeleportTarget.NO_OP);
+            possessor.teleportTo(teleporttarget);
+            ((ServerPlayerEntity) possessor).networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.GAME_WON, 0.0F));
+            tpDest = target.teleportTo(teleporttarget);
         }
         if (tpDest != null) {
             possessor.teleport(tpDest.getX(), tpDest.getY(), tpDest.getZ(), true);
@@ -144,7 +146,7 @@ public final class BasePossessionHandlers {
     public static void dropArmorIfBanned(LivingEntity converted) {
         if (converted.getType().isIn(RequiemCoreEntityTags.ARMOR_BANNED)) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
-                if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+                if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                     ItemStack equippedStack = converted.getEquippedStack(slot);
                     converted.dropStack(equippedStack.copy());
                     equippedStack.setCount(0);

@@ -52,6 +52,8 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -224,13 +226,13 @@ public final class RemnantComponentImpl implements RemnantComponent {
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeVarInt(RemnantTypes.getRawId(this.remnantType));
         buf.writeBoolean(this.isVagrant());
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         int remnantId = buf.readVarInt();
         boolean soul = buf.readBoolean();
 
@@ -239,14 +241,14 @@ public final class RemnantComponentImpl implements RemnantComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound compoundTag) {
-        RemnantType remnantType = RemnantTypes.get(new Identifier(compoundTag.getString("id")));
+    public void readFromNbt(NbtCompound compoundTag, RegistryWrapper.WrapperLookup wrapperLookup) {
+        RemnantType remnantType = RemnantTypes.get(Identifier.of(compoundTag.getString("id")));
         this.become(remnantType);
         this.setVagrant(compoundTag.getBoolean(ETHEREAL_TAG));
     }
 
     @Override
-    public void writeToNbt(NbtCompound compoundTag) {
+    public void writeToNbt(NbtCompound compoundTag, RegistryWrapper.WrapperLookup wrapperLookup) {
         compoundTag.putString("id", RemnantTypes.getId(this.remnantType).toString());
         compoundTag.putBoolean(ETHEREAL_TAG, this.isVagrant());
     }

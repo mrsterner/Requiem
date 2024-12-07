@@ -80,11 +80,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Re
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
     private void suspendDeath(DamageSource killingBlow, CallbackInfo ci) {
         Identifier advancementId = Requiem.id("adventure/the_choice");
-        Advancement theChoice = this.getServerWorld().getServer().getAdvancementLoader().get(advancementId);
+        var theChoice = this.getServerWorld().getServer().getAdvancementLoader().get(advancementId);
         AdvancementProgress progress = this.getAdvancementTracker().getProgress(theChoice);
         if (progress == null) {
             Requiem.LOGGER.error("Advancement '{}' is missing", advancementId);
-        } else if (!progress.isDone() && !getWorld().getProperties().isHardcore()) {
+        } else if (!progress.isDone() && !getWorld().getLevelProperties().isHardcore()) {
             RemnantType startingRemnantType = getWorld().getGameRules().get(RequiemGamerules.STARTING_SOUL_MODE).get().getRemnantType();
             if (startingRemnantType == null) {
                 DeathSuspender.get(this).suspendDeath(killingBlow);
@@ -100,7 +100,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Re
      */
     @Inject(method = "onDeath", at = @At(value = "FIELD", target = "Lnet/minecraft/world/GameRules;SHOW_DEATH_MESSAGES:Lnet/minecraft/world/GameRules$Key;"))
     private void revokeLifeRights(DamageSource source, CallbackInfo ci) {
-        if (getWorld().getProperties().isHardcore()) {
+        if (getWorld().getLevelProperties().isHardcore()) {
             RemnantComponent.get(this).become(RemnantTypes.MORTAL);
         }
     }

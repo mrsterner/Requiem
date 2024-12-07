@@ -41,6 +41,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -87,9 +88,9 @@ public abstract class LivingEntityMixin extends Entity {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;dropInventory()V"),
         cancellable = true
     )
-    private void preventXpDrop(DamageSource deathCause, CallbackInfo ci) {
+    private void preventXpDrop(ServerWorld world, DamageSource damageSource, CallbackInfo ci) {
         // prevent xp drops if not enough humanity
-        if (DamageHelper.getHumanityLevel(deathCause) == 1) {
+        if (DamageHelper.getHumanityLevel(damageSource) == 1) {
             this.playerHitTimer = 0;
         }
     }

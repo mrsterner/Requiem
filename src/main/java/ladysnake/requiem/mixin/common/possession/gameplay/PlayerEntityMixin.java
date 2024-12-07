@@ -54,7 +54,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         super(entityType, world);
     }
 
-    @Inject(method = "getArrowType", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getProjectileType", at = @At("RETURN"), cancellable = true)
     private void generateArrow(ItemStack weapon, CallbackInfoReturnable<ItemStack> cir) {
         if (cir.getReturnValue().isEmpty()) {
             MobEntity host = PossessionComponent.getHost(this);

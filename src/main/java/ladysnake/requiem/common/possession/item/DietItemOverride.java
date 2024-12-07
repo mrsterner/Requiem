@@ -41,6 +41,7 @@ import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.util.MoreCodecs;
 import ladysnake.requiem.common.VanillaRequiemPlugin;
 import ladysnake.requiem.core.data.LazyItemPredicate;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -83,7 +84,7 @@ public class DietItemOverride implements PossessionItemOverride, InstancedItemOv
     public Optional<InstancedItemOverride> test(PlayerEntity player, MobEntity possessed, ItemStack stack) {
         if (this.food.get(possessed.getWorld()).test(stack)) {
             return Optional.of(this);
-        } else if (stack.isFood()) {
+        } else if (stack.contains(DataComponentTypes.FOOD)) {
             return Optional.of(OverrideFailure.get(true));
         }
         return Optional.empty();

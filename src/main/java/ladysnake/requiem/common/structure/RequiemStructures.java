@@ -37,7 +37,7 @@ package ladysnake.requiem.common.structure;
 import ladysnake.requiem.Requiem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.structure.StructureType;
+import net.minecraft.world.gen.structure.StructureType;
 
 public final class RequiemStructures {
     public static final StructureType<DerelictObeliskFeature> DERELICT_OBELISK = () -> DerelictObeliskFeature.CODEC;

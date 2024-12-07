@@ -55,7 +55,7 @@ public final class RequiemDamageSources {
     }
 
     public DamageSource mortalDysmorphia(GameProfile baseIdentity, GameProfile bodyIdentity) {
-        return new MortalDysmorphiaDamageSource(this.damageSources.registry.getHolderOrThrow(MORTAL_DYSMORPHIA), Text.of(baseIdentity.getName()), Text.of(bodyIdentity.getName()));
+        return new MortalDysmorphiaDamageSource(this.damageSources.registry.getEntry(MORTAL_DYSMORPHIA).get(), Text.of(baseIdentity.getName()), Text.of(bodyIdentity.getName()));
     }
 
     public DamageSource attritionHardcoreDeath() {

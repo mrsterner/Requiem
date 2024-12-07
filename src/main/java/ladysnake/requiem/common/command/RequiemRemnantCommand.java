@@ -100,7 +100,7 @@ public final class RequiemRemnantCommand {
             source.sendFeedback(() -> Text.translatable("requiem:commands.remnant.set.success.self", type.getName()), true);
         } else {
             if (source.getWorld().getGameRules().getBoolean(GameRules.SEND_COMMAND_FEEDBACK)) {
-                player.sendSystemMessage(Text.translatable("requiem:commands.remnant.set.target", type.getName()));
+                player.sendMessage(Text.translatable("requiem:commands.remnant.set.target", type.getName()));
             }
 
             source.sendFeedback(() -> Text.translatable("requiem:commands.remnant.set.success.other", player.getDisplayName(), type.getName()), true);

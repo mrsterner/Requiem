@@ -48,7 +48,6 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 import org.apiguardian.api.API;
-import org.quiltmc.qsl.registry.api.dynamic.DynamicMetaRegistry;
 
 import static org.apiguardian.api.API.Status.EXPERIMENTAL;
 
@@ -64,14 +63,14 @@ public final class RequiemRegistries {
         FabricRegistryBuilder.createSimple(MOB_ACTIONS_KEY).buildAndRegister();
     public static final RegistryKey<Registry<RemnantType>> REMNANT_STATES_KEY = RegistryKey.ofRegistry(Requiem.id("remnant_states"));
     public static final DefaultedRegistry<RemnantType> REMNANT_STATES =
-        FabricRegistryBuilder.createDefaulted(REMNANT_STATES_KEY, new Identifier(RemnantState.NULL_STATE_ID))
+        FabricRegistryBuilder.createDefaulted(REMNANT_STATES_KEY, Identifier.of(RemnantState.NULL_STATE_ID))
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
 
     public static final RegistryKey<Registry<PossessionItemOverrideWrapper>> MOB_ITEM_OVERRIDE_KEY = RegistryKey.ofRegistry(Requiem.id("mob_items"));
 
     public static void init() {
-        Registry.register(REMNANT_STATES, new Identifier(RemnantState.NULL_STATE_ID), RemnantTypes.MORTAL);
+        Registry.register(REMNANT_STATES, Identifier.of(RemnantState.NULL_STATE_ID), RemnantTypes.MORTAL);
         DynamicMetaRegistry.registerSynced(MOB_ITEM_OVERRIDE_KEY, PossessionItemOverrideWrapper.CODEC, PossessionItemOverrideWrapper.NETWORK_CODEC);
     }
 }

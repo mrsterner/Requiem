@@ -35,11 +35,13 @@
 package ladysnake.requiem.common.command;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.entity.PlayerShellEntity;
 import ladysnake.requiem.common.remnant.PlayerSplitter;
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -69,19 +71,43 @@ public final class RequiemShellCommand {
             )
             .then(literal("split")
                 // pandemonium shell split
-                .executes(context -> RequiemCommand.runOne(context.getSource().getPlayer(), RequiemShellCommand::split))
+                .executes(context -> RequiemCommand.runOne(context.getSource().getPlayer(),(s) -> {
+                    try {
+                        RequiemShellCommand.split(s);
+                    } catch (CommandSyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
+                }))
                 .then(argument("players", players())
                     // pandemonium shell split <players>
-                    .executes(context -> RequiemCommand.runMany(getPlayers(context, "players"), RequiemShellCommand::split))
+                    .executes(context -> RequiemCommand.runMany(getPlayers(context, "players"), (s) -> {
+                        try {
+                            RequiemShellCommand.split(s);
+                        } catch (CommandSyntaxException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }))
                 )
             )
             .then(literal("merge").then(argument("shell", entity())
                 .executes(context -> {
                     Entity shell = getEntity(context, "shell");
-                    return RequiemCommand.runOne(context.getSource().getPlayer(), player -> merge(player, shell));
+                    return RequiemCommand.runOne(context.getSource().getPlayer(), player -> {
+                        try {
+                            merge(player, shell);
+                        } catch (CommandSyntaxException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
                 }).then(argument("player", player()).executes(context -> {
                     Entity shell = getEntity(context, "shell");
-                    return RequiemCommand.runOne(getPlayer(context, "player"), player -> merge(player, shell));
+                    return RequiemCommand.runOne(getPlayer(context, "player"), player -> {
+                        try {
+                            merge(player, shell);
+                        } catch (CommandSyntaxException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
                 })))
             )
             .then(literal("identity").then(literal("set")
@@ -90,23 +116,31 @@ public final class RequiemShellCommand {
                             Collection<GameProfile> profiles = getProfileArgument(context, "profile");
                             if (profiles.size() > 1) throw TOO_MANY_PLAYERS_EXCEPTION.create();
                             GameProfile profile = profiles.iterator().next();
-                            return RequiemCommand.runMany(getEntities(context, "shells"), s -> setIdentity(s, profile));
+                            return RequiemCommand.runMany(getEntities(context, "shells"), s -> {
+                                try {
+                                    setIdentity(s, profile);
+                                } catch (CommandSyntaxException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
                         })
                     ))
                 )
             );
     }
 
-    private static void merge(ServerPlayerEntity player, Entity entity) {
+    private static void merge(ServerPlayerEntity player, Entity entity) throws CommandSyntaxException {
         if (!(entity instanceof PlayerShellEntity shell)) {
-            throw new CommandException(Text.translatable("requiem:commands.shell.fail.not_shell"));
+            Message message = Text.translatable("requiem:commands.shell.fail.not_shell");
+            throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
         }
         RemnantComponent.get(player).merge(shell);
     }
 
-    private static void setIdentity(Entity shell, GameProfile profile) {
+    private static void setIdentity(Entity shell, GameProfile profile) throws CommandSyntaxException {
         if (!(shell instanceof PlayerShellEntity)) {
-            throw new CommandException(Text.translatable("requiem:commands.shell.fail.not_shell"));
+            Message message = Text.translatable("requiem:commands.shell.fail.not_shell");
+            throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
         }
         ((PlayerShellEntity) shell).setDisplayProfile(profile);
     }
@@ -117,13 +151,15 @@ public final class RequiemShellCommand {
         player.getWorld().spawnEntity(shell);
     }
 
-    private static void split(ServerPlayerEntity player) {
+    private static void split(ServerPlayerEntity player) throws CommandSyntaxException {
         RemnantComponent remnantComponent = RemnantComponent.get(player);
         if (!remnantComponent.getRemnantType().isDemon()) {
-            throw new CommandException(Text.translatable("requiem:commands.shell.split.fail.mortal", player.getDisplayName()));
+            Message message = Text.translatable("requiem:commands.shell.split.fail.mortal", player.getDisplayName());
+            throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
         }
         if (remnantComponent.isVagrant()) {
-            throw new CommandException(Text.translatable("requiem:commands.shell.split.fail.vagrant", player.getDisplayName()));
+            Message message = Text.translatable("requiem:commands.shell.split.fail.vagrant", player.getDisplayName());
+            throw new CommandSyntaxException(new SimpleCommandExceptionType(message), message);
         }
         remnantComponent.splitPlayer(true);
     }

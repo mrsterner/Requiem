@@ -42,9 +42,9 @@ import ladysnake.requiem.api.v1.possession.item.PossessionItemAction;
 import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.core.data.LazyEntityPredicate;
 import ladysnake.requiem.core.data.LazyItemPredicate;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -135,8 +135,8 @@ public record OldPossessionItemOverride(
                 return false;
             }
             if (this.canEat.isPresent()) {
-                FoodComponent foodComponent = stack.getItem().getFoodComponent();
-                return this.canEat.get() == (foodComponent != null && player.canConsume(foodComponent.isAlwaysEdible()));
+                var foodComponent = stack.get(DataComponentTypes.FOOD);
+                return this.canEat.get() == (foodComponent != null && player.canConsume(foodComponent.canAlwaysEat()));
             }
             return true;
         }

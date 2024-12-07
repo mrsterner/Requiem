@@ -39,14 +39,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(HorseBaseEntity.class)
+@Mixin(AbstractHorseEntity.class)
 public abstract class HorseBaseEntityMixin extends MobEntity {
 
     protected HorseBaseEntityMixin(EntityType<? extends MobEntity> type, World world) {
@@ -59,9 +59,9 @@ public abstract class HorseBaseEntityMixin extends MobEntity {
     @Inject(method = "isSaddled", at = @At("HEAD"), cancellable = true)
     private void undeadHorsesAutoSaddled(CallbackInfoReturnable<Boolean> cir) {
         Entity passenger = this.getFirstPassenger();
-        if (this.isUndead() && passenger != null) {
+        if (this.hasInvertedHealingAndHarm() && passenger != null) {
             LivingEntity possessedEntity = PossessionComponent.getHost(passenger);
-            if (possessedEntity != null && possessedEntity.isUndead()) {
+            if (possessedEntity != null && possessedEntity.hasInvertedHealingAndHarm()) {
                 cir.setReturnValue(true);
             }
         }

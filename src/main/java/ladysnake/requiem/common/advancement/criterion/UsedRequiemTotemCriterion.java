@@ -35,61 +35,43 @@
 package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.advancement.criterion.UsedTotemCriterion;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
+import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
 
+import java.util.Optional;
+
 public class UsedRequiemTotemCriterion extends AbstractCriterion<UsedRequiemTotemCriterion.Conditions> {
-    private final Identifier id;
-
-    public UsedRequiemTotemCriterion(Identifier id) {
-        this.id = id;
-    }
-
-    @Override
-    public Identifier getId() {
-        return this.id;
-    }
-
-    @Override
-    public Conditions conditionsFromJson(JsonObject jsonObject, C_ctsfmifk extended, AdvancementEntityPredicateDeserializer advancementEntityPredicateDeserializer) {
-        ItemPredicate itemPredicate = ItemPredicate.fromJson(jsonObject.get("item"));
-        return new Conditions(this.id, extended, itemPredicate);
-    }
 
     public void trigger(ServerPlayerEntity player, ItemStack stack) {
         this.trigger(player, (conditions) -> conditions.matches(stack));
     }
 
-    public static class Conditions extends AbstractCriterionConditions {
-        private final ItemPredicate item;
+    @Override
+    public Codec<Conditions> getConditionsCodec() {
+        return Conditions.CODEC;
+    }
 
-        public Conditions(Identifier id, C_ctsfmifk player, ItemPredicate item) {
-            super(id, player);
-            this.item = item;
-        }
+    public record Conditions(Optional<LootContextPredicate> player, Optional<ItemPredicate> item) implements AbstractCriterion.Conditions {
 
-        public static UsedTotemCriterion.Conditions create(ItemConvertible item) {
-            return new UsedTotemCriterion.Conditions(C_ctsfmifk.field_24388, ItemPredicate.Builder.create().items(item).build());
-        }
+        public static final Codec<UsedRequiemTotemCriterion.Conditions> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(UsedRequiemTotemCriterion.Conditions::player),
+                    ItemPredicate.CODEC.optionalFieldOf("item").forGetter(UsedRequiemTotemCriterion.Conditions::item)
+                )
+                .apply(instance, UsedRequiemTotemCriterion.Conditions::new)
+        );
 
         public boolean matches(ItemStack stack) {
-            return this.item.test(stack);
-        }
-
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add("item", this.item.toJson());
-            return jsonObject;
+            return this.item.isPresent() && this.item.get().test(stack);
         }
     }
 }

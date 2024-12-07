@@ -47,6 +47,8 @@ import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -85,20 +87,20 @@ public class LootingPossessedData extends PossessedDataBase {
     }
 
     protected void dropLoot(PlayerEntity player) {
-        Identifier identifier = this.getLootTable();
+        RegistryKey<LootTable> identifier = this.getLootTable();
         ServerWorld world = (ServerWorld) this.holder.getWorld();
-        LootTable lootTable = world.getServer().getLootManager().getLootTable(identifier);
+        LootTable lootTable = world.getServer().getReloadableRegistries().getLootTable(identifier);
         LootContext lootContext = new LootContext.Builder(
             new LootContextParameterSet.Builder(world)
                 .addOptional(LootContextParameters.THIS_ENTITY, this.holder)
                 .add(LootContextParameters.ORIGIN, this.holder.getPos())
-                .withLuck(player.getLuck())
+                .luck(player.getLuck())
                 .build(RequiemLootTables.POSSESSION)
         ).build(null);
         lootTable.generateLoot(lootContext, player.getInventory()::offerOrDrop);
     }
 
-    private Identifier getLootTable() {
+    private RegistryKey<LootTable> getLootTable() {
         Identifier identifier = Registries.ENTITY_TYPE.getId(this.holder.getType());
         return new Identifier(identifier.getNamespace(), "requiem/possession/" + identifier.getPath());
     }
@@ -109,8 +111,8 @@ public class LootingPossessedData extends PossessedDataBase {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
-        super.readFromNbt(tag);
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
+        super.readFromNbt(tag, wrapperLookup);
 
         if (tag.contains("previously_possessed")) {
             this.previouslyPossessed = tag.getBoolean("previously_possessed");
@@ -118,8 +120,8 @@ public class LootingPossessedData extends PossessedDataBase {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
-        super.writeToNbt(tag);
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
+        super.writeToNbt(tag, wrapperLookup);
 
         if (this.previouslyPossessed) {
             tag.putBoolean("previously_possessed", true);
