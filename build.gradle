@@ -131,10 +131,11 @@ allprojects {
     dependencies {
         //to change the versions see the gradle.properties file
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
-        mappings "org.quiltmc:quilt-mappings:${minecraft_version}+build.${quilt_mappings}:intermediary-v2"
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
         modImplementation "org.quiltmc:quilt-loader:${project.loader_version}"
-        modImplementation "org.quiltmc:qsl:${qsl_version}+${minecraft_version}"
-        modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}"
+        //modImplementation "org.quiltmc:qsl:${qsl_version}+${minecraft_version}"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+        //modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}"
 
         compileOnly("com.google.code.findbugs:jsr305:3.0.2")
         compileOnly 'org.jetbrains:annotations:26.0.1'
