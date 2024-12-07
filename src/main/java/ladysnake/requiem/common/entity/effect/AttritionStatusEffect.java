@@ -43,8 +43,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.entity.player.PlayerEntity;
 
 import javax.annotation.Nonnegative;
@@ -54,7 +54,7 @@ public class AttritionStatusEffect extends StatusEffect implements StickyStatusE
     public static final int DEFAULT_DURATION = 300;
 
     public static void apply(PlayerEntity target) {
-        apply(target, target.getWorld().getProperties().isHardcore() ? 2 : 1);
+        apply(target, target.getWorld().getLevelProperties().isHardcore() ? 2 : 1);
     }
 
     public static void apply(LivingEntity target, @Nonnegative int amount) {
@@ -70,7 +70,7 @@ public class AttritionStatusEffect extends StatusEffect implements StickyStatusE
         int duration = Math.max(attrition == null ? 0 : attrition.getDuration(), minDuration);
         addAttrition(target, amplifier, duration);
 
-        if (expectedAmplifier > MAX_LEVEL && (!(target instanceof PlayerEntity) || target.getWorld().getProperties().isHardcore())) {
+        if (expectedAmplifier > MAX_LEVEL && (!(target instanceof PlayerEntity) || target.getWorld().getLevelProperties().isHardcore())) {
             target.damage(target.getDamageSources().requiemSources().attritionHardcoreDeath(), Float.MAX_VALUE);
         }
     }
@@ -96,14 +96,14 @@ public class AttritionStatusEffect extends StatusEffect implements StickyStatusE
         target.removeStatusEffect(RequiemStatusEffects.ATTRITION);
         StatusEffectReapplicator.KEY.maybeGet(target)
             .or(() -> StatusEffectReapplicator.KEY.maybeGet(((Possessable)target).getPossessor()))
-            .ifPresent(r -> r.definitivelyClear(RequiemStatusEffects.ATTRITION));
+            .ifPresent(r -> r.definitivelyClear(RequiemStatusEffects.ATTRITION.value()));
 
         if (amplifier >= 0) {
             addAttrition(target, amplifier, DEFAULT_DURATION);
         }
     }
 
-    public AttritionStatusEffect(StatusEffectType type, int color) {
+    public AttritionStatusEffect(StatusEffectCategory type, int color) {
         super(type, color);
     }
 
@@ -126,8 +126,8 @@ public class AttritionStatusEffect extends StatusEffect implements StickyStatusE
     }
 
     @Override
-    public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-        super.onApplied(entity, attributes, amplifier);
+    public void onApplied(LivingEntity entity, int amplifier) {
+        super.onApplied(entity, amplifier);
 
         if (entity.getHealth() > entity.getMaxHealth()) {
             entity.setHealth(entity.getMaxHealth());

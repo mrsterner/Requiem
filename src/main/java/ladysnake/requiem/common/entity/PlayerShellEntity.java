@@ -39,16 +39,15 @@ import baritone.api.event.events.BlockInteractEvent;
 import baritone.api.event.events.PathEvent;
 import baritone.api.event.listener.IGameEventListener;
 import baritone.api.fakeplayer.FakeServerPlayerEntity;
-import com.demonwav.mcdev.annotations.CheckEnv;
-import com.demonwav.mcdev.annotations.Env;
 import com.google.common.collect.ImmutableList;
+import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Dynamic;
-import io.github.ladysnake.impersonate.Impersonator;
 import ladysnake.requiem.common.entity.ai.ShellPathfindingProcess;
 import ladysnake.requiem.common.entity.ai.brain.PandemoniumMemoryModules;
 import ladysnake.requiem.common.entity.ai.brain.PandemoniumSensorTypes;
 import ladysnake.requiem.common.entity.ai.brain.PlayerShellBrain;
 import ladysnake.requiem.common.remnant.PlayerSplitter;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -63,16 +62,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.network.DebugInfoSender;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.Vec3d;
 import org.apiguardian.api.API;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.impersonate.Impersonator;
 
 import java.util.List;
 import java.util.Optional;
@@ -130,7 +131,7 @@ public class PlayerShellEntity extends FakeServerPlayerEntity {
     }
 
     public static DefaultAttributeContainer.Builder createPlayerShellAttributes() {
-        return PlayerEntity.createAttributes();
+        return PlayerEntity.createPlayerAttributes();
     }
 
     public ShellPathfindingProcess getPathfindingProcess() {
@@ -203,7 +204,7 @@ public class PlayerShellEntity extends FakeServerPlayerEntity {
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() != Items.NAME_TAG) {
             if (!this.getWorld().isClient && !player.isSpectator()) {
-                EquipmentSlot slot = MobEntity.getPreferredEquipmentSlot(stack);
+                EquipmentSlot slot = player.getPreferredEquipmentSlot(stack);
                 if (stack.isEmpty()) {
                     EquipmentSlot clickedSlot = this.getClickedSlot(vec);
                     if (this.hasStackEquipped(clickedSlot)) {
@@ -274,8 +275,9 @@ public class PlayerShellEntity extends FakeServerPlayerEntity {
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
 
-        if (tag.contains("PlayerProfile")) {    // port from previous versions
-            this.setDisplayProfile(NbtHelper.toGameProfile(tag.getCompound("PlayerProfile")));
+        if (tag.contains("PlayerProfile")) {
+            var profileComponent = ProfileComponent.CODEC.parse(NbtOps.INSTANCE, tag.get("PlayerProfile")).result();
+            profileComponent.ifPresent(component -> setDisplayProfile(component.gameProfile()));
         }
 
         this.getDataTracker().set(PlayerEntity.PLAYER_MODEL_PARTS, tag.getByte("PlayerModelParts"));

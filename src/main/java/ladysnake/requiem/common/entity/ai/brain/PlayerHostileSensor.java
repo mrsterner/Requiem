@@ -36,8 +36,8 @@ package ladysnake.requiem.common.entity.ai.brain;
 
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.LivingTargetCache;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.brain.VisibleLivingEntitiesCache;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
 import net.minecraft.entity.mob.MobEntity;
@@ -83,7 +83,7 @@ public class PlayerHostileSensor extends Sensor<PlayerEntity> {
         return livingEntity instanceof MobEntity && ((MobEntity) livingEntity).getTarget() == subject;
     }
 
-    private Optional<VisibleLivingEntitiesCache> getVisibleMobs(LivingEntity entity) {
+    private Optional<LivingTargetCache> getVisibleMobs(LivingEntity entity) {
         return entity.getBrain().getOptionalMemory(MemoryModuleType.VISIBLE_MOBS);
     }
 }

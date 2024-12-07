@@ -43,11 +43,12 @@ import ladysnake.requiem.common.entity.ai.brain.AutomatoneWalkTarget;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 
-public class PlayerWanderAroundTask extends Task<PlayerShellEntity> {
+public class PlayerWanderAroundTask extends MultiTickTask<PlayerShellEntity> {
     public PlayerWanderAroundTask() {
         super(ImmutableMap.of(
             MemoryModuleType.WALK_TARGET, MemoryModuleState.VALUE_PRESENT

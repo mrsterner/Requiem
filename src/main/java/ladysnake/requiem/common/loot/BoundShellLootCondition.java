@@ -48,7 +48,6 @@ import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.JsonSerializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;

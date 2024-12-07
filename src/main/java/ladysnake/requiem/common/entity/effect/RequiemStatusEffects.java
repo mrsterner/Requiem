@@ -39,28 +39,25 @@ import ladysnake.requiem.common.entity.RequiemEntityAttributes;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.Identifier;
 
 public final class RequiemStatusEffects {
-    public static final StatusEffect ATTRITION = new AttritionStatusEffect(StatusEffectType.HARMFUL, 0xAA3322)
-        .addAttributeModifier(EntityAttributes.GENERIC_MAX_HEALTH, "069ae0b1-4014-41dd-932f-a5da4417d711", -0.2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)
-        .addAttributeModifier(RequiemEntityAttributes.SOUL_OFFENSE, "eb72767d-93d1-4fc2-861b-f3c9406497a9", -0.2, EntityAttributeModifier.Operation.MULTIPLY_BASE);
-    public static final StatusEffect EMANCIPATION = new EmancipationStatusEffect(StatusEffectType.BENEFICIAL, 0x7799FF);
-    public static final StatusEffect RECLAMATION = new ReclamationStatusEffect(StatusEffectType.BENEFICIAL, 0xFFDF00);
-    public static final StatusEffect PENANCE = new PenanceStatusEffect(StatusEffectType.HARMFUL, 0xB6FF00);
+    public static final RegistryEntry<StatusEffect> ATTRITION = register("attrition", new AttritionStatusEffect(StatusEffectCategory.HARMFUL, 0xAA3322)
+        .addAttributeModifier(EntityAttributes.GENERIC_MAX_HEALTH, Requiem.id("attrition"), -0.2, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+        .addAttributeModifier(RequiemEntityAttributes.SOUL_OFFENSE, Requiem.id("attrition_soul_offence"), -0.2, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+    public static final RegistryEntry<StatusEffect> EMANCIPATION = register("emancipation", new EmancipationStatusEffect(StatusEffectCategory.BENEFICIAL, 0x7799FF));
+    public static final RegistryEntry<StatusEffect> RECLAMATION = register("penance", new ReclamationStatusEffect(StatusEffectCategory.BENEFICIAL, 0xFFDF00));
+    public static final RegistryEntry<StatusEffect> PENANCE = register("reclamation", new PenanceStatusEffect(StatusEffectCategory.HARMFUL, 0xB6FF00));
 
     public static void init() {
-        registerEffect(ATTRITION, "attrition");
-        registerEffect(EMANCIPATION, "emancipation");
-        registerEffect(PENANCE, "penance");
-        registerEffect(RECLAMATION, "reclamation");
-
         PenanceStatusEffect.registerCallbacks();
     }
 
-    public static void registerEffect(StatusEffect effect, String name) {
-        Registry.register(Registries.STATUS_EFFECT, Requiem.id(name), effect);
+    private static RegistryEntry<StatusEffect> register(String id, StatusEffect statusEffect) {
+        return Registry.registerReference(Registries.STATUS_EFFECT, Requiem.id(id), statusEffect);
     }
 }

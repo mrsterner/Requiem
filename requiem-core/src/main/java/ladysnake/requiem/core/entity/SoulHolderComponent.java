@@ -34,16 +34,18 @@
  */
 package ladysnake.requiem.core.entity;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import ladysnake.requiem.core.RequiemCore;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 public class SoulHolderComponent implements AutoSyncedComponent {
     public static final ComponentKey<SoulHolderComponent> KEY = ComponentRegistry.getOrCreate(RequiemCore.id("soul_holder"), SoulHolderComponent.class);
@@ -85,22 +87,22 @@ public class SoulHolderComponent implements AutoSyncedComponent {
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+        this.setSoulRemoved(nbtCompound.getBoolean("removed_soul"));
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+        nbtCompound.putBoolean("removed_soul", removedSoul);
+    }
+
+    @Override
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeBoolean(this.removedSoul);
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         this.removedSoul = buf.readBoolean();
-    }
-
-    @Override
-    public void readFromNbt(NbtCompound tag) {
-        this.setSoulRemoved(tag.getBoolean("removed_soul"));
-    }
-
-    @Override
-    public void writeToNbt(NbtCompound tag) {
-        tag.putBoolean("removed_soul", removedSoul);
     }
 }

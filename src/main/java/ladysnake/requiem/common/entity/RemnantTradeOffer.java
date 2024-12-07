@@ -37,6 +37,9 @@ package ladysnake.requiem.common.entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.village.TradeOffer;
+import net.minecraft.village.TradedItem;
+
+import java.util.Optional;
 
 public class RemnantTradeOffer extends TradeOffer {
     private final TradeOffer vanillaOffer, demonOffer;
@@ -76,12 +79,12 @@ public class RemnantTradeOffer extends TradeOffer {
     }
 
     @Override
-    public ItemStack getAdjustedFirstBuyItem() {
-        return getDelegate().getAdjustedFirstBuyItem();
+    public ItemStack getDisplayedFirstBuyItem() {
+        return getDelegate().getDisplayedFirstBuyItem();
     }
 
     @Override
-    public ItemStack getSecondBuyItem() {
+    public Optional<TradedItem> getSecondBuyItem() {
         return getDelegate().getSecondBuyItem();
     }
 

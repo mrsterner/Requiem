@@ -35,7 +35,7 @@
 package ladysnake.requiem.common.item.dispensing;
 
 import com.mojang.datafixers.util.Function3;
-import net.minecraft.block.dispenser.DispenserBlock;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.entity.DispenserBlockEntity;

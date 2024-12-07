@@ -18,10 +18,6 @@
 package ladysnake.requiem.api.v1.remnant;
 
 import baritone.api.fakeplayer.FakeServerPlayerEntity;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -31,6 +27,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.apiguardian.api.API;
 import org.jetbrains.annotations.Contract;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.Optional;
 
@@ -38,7 +38,7 @@ import java.util.Optional;
  * @since 1.2.0
  */
 public interface RemnantComponent extends AutoSyncedComponent, ServerTickingComponent {
-    ComponentKey<RemnantComponent> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "remnant"), RemnantComponent.class);
+    ComponentKey<RemnantComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "remnant"), RemnantComponent.class);
 
     static boolean isIncorporeal(Entity entity) {
         RemnantComponent r = KEY.getNullable(entity);

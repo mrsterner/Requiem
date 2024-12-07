@@ -42,9 +42,8 @@ import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -52,7 +51,7 @@ import java.util.WeakHashMap;
 public class ReclamationStatusEffect extends StatusEffect implements StickyStatusEffect {
     private static final Map<LivingEntity, Integer> playersToHeal = new WeakHashMap<>();
 
-    public ReclamationStatusEffect(StatusEffectType type, int color) {
+    public ReclamationStatusEffect(StatusEffectCategory type, int color) {
         super(type, color);
     }
 
@@ -68,7 +67,7 @@ public class ReclamationStatusEffect extends StatusEffect implements StickyStatu
     private static void clearReclamation(ServerPlayerEntity soul, LivingEntity body) {
         if (body.hasStatusEffect(RequiemStatusEffects.RECLAMATION)) {
             body.removeStatusEffect(RequiemStatusEffects.RECLAMATION);
-            soul.playSound(RequiemSoundEvents.EFFECT_RECLAMATION_CLEAR, SoundCategory.PLAYERS, 1, 0.8f);
+            soul.playSound(RequiemSoundEvents.EFFECT_RECLAMATION_CLEAR, 1, 0.8f);
         }
     }
 
@@ -78,10 +77,11 @@ public class ReclamationStatusEffect extends StatusEffect implements StickyStatu
     }
 
     @Override
-    public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
         if (!entity.getWorld().isClient()) {
             playersToHeal.put(entity, amplifier + 1);
         }
+        return false;
     }
 
     @Override

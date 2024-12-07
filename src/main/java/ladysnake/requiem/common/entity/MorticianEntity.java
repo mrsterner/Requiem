@@ -56,18 +56,17 @@ import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.record.EntityPositionClerk;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.GoToWalkTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtCustomerGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.StopAndLookAtEntityGoal;
 import net.minecraft.entity.ai.goal.StopFollowingCustomerGoal;
-import net.minecraft.entity.ai.goal.TargetGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
@@ -97,7 +96,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TimeHelper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.int_provider.UniformIntProvider;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.world.Difficulty;
@@ -131,7 +130,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
     public static final int DESPAWN_DELAY = 20 * 30;
 
     public static DefaultAttributeContainer.Builder createMorticianAttributes() {
-        return MobEntity.createAttributes().add(RequiemEntityAttributes.SOUL_OFFENSE, 30);
+        return MobEntity.createMobAttributes().add(RequiemEntityAttributes.SOUL_OFFENSE, 30);
     }
 
     private boolean checkLegacyData;
@@ -146,12 +145,13 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.getDataTracker().startTracking(OBELISK_PROJECTION, false);
-        this.getDataTracker().startTracking(FADING_TICKS, 0);
-        this.getDataTracker().startTracking(SPELL, (byte) 0);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(OBELISK_PROJECTION, false);
+        builder.add(FADING_TICKS, 0);
+        builder.add(SPELL, (byte) 0);
     }
+
 
     @Override
     protected void initGoals() {
@@ -176,7 +176,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
         });
         this.revengeGoal = new RevengeGoal(this);
         this.targetSelector.add(1, revengeGoal);
-        this.targetSelector.add(3, new TargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
     }
 
     public void addCapturedSoul(GlobalRecord soulRecord) {
@@ -213,22 +213,6 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
             return true;
         }
         return super.canTarget(target);
-    }
-
-    @Override
-    public boolean shouldDisplaySoulSpeedEffects() {
-        return super.shouldDisplaySoulSpeedEffects()
-            || this.age % 5 == 0 && this.getVelocity().x != 0.0D && this.getVelocity().z != 0.0D && this.isOnSoulSpeedBlock();
-    }
-
-    @Override
-    protected float getVelocityMultiplier() {
-        return this.isOnSoulSpeedBlock() ? 1.2F : super.getVelocityMultiplier();
-    }
-
-    @Override
-    public EntityGroup getGroup() {
-        return EntityGroup.UNDEAD;
     }
 
     @Override
@@ -371,7 +355,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
 
             if (!this.getWorld().isClient && !this.getOffers().isEmpty()) {
                 this.prepareOffersFor(customer);
-                this.setCurrentCustomer(customer);
+                this.setCustomer(customer);
                 this.sendOffers(customer, this.getDisplayName(), 1);
             }
 
@@ -465,7 +449,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
 
     @Override
     protected void afterUsing(TradeOffer offer) {
-        if (offer instanceof RemnantTradeOffer demonTradeOffer && demonTradeOffer.demonCustomer && this.getCurrentCustomer() instanceof ServerPlayerEntity player) {
+        if (offer instanceof RemnantTradeOffer demonTradeOffer && demonTradeOffer.demonCustomer && this.getCustomer() instanceof ServerPlayerEntity player) {
             RemnantComponent.get(player).become(RemnantTypes.MORTAL, true);
             player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), RequiemSoundEvents.ITEM_OPUS_USE, player.getSoundCategory(), 1.4F, 0.1F);
             RequiemNetworking.sendTo(player, RequiemNetworking.createOpusUsePacket(RemnantTypes.MORTAL, false));
@@ -484,7 +468,7 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
             }
         }
 
-        if (this.getCurrentCustomer() instanceof ServerPlayerEntity sp && sp.currentScreenHandler instanceof MerchantScreenHandler) {
+        if (this.getCustomer() instanceof ServerPlayerEntity sp && sp.currentScreenHandler instanceof MerchantScreenHandler) {
             sp.closeHandledScreen();
         }
 

@@ -45,11 +45,12 @@ import net.minecraft.entity.ai.brain.EntityLookTarget;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
-public class LivingApproachTargetTask extends Task<FakeServerPlayerEntity> {
+public class LivingApproachTargetTask extends MultiTickTask<FakeServerPlayerEntity> {
     private final float speed;
 
     public LivingApproachTargetTask(float speed) {

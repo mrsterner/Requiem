@@ -44,6 +44,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,12 +68,12 @@ public class SimpleCurableEntityComponent implements CurableEntityComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup var2) {
         if (tag.contains("cured")) this.cured = tag.getBoolean("cured");
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup var2) {
         if (this.cured) {
             tag.putBoolean("cured", true);
         }
@@ -80,7 +81,7 @@ public class SimpleCurableEntityComponent implements CurableEntityComponent {
 
     @Override
     public boolean canBeAssimilated() {
-        return this.entity.isUndead() && this.entity.getType().isIn(RequiemCoreEntityTags.ITEM_USERS);
+        return this.entity.hasInvertedHealingAndHarm() && this.entity.getType().isIn(RequiemCoreEntityTags.ITEM_USERS);
     }
 
     @Override
@@ -103,7 +104,7 @@ public class SimpleCurableEntityComponent implements CurableEntityComponent {
                     }
                 }
             }
-            cured.initialize(((ServerWorld) this.entity.getWorld()), this.entity.getWorld().getLocalDifficulty(cured.getBlockPos()), SpawnReason.CONVERSION, null, null);
+            cured.initialize(((ServerWorld) this.entity.getWorld()), this.entity.getWorld().getLocalDifficulty(cured.getBlockPos()), SpawnReason.CONVERSION, null);
             cured.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200, 0));
             cured.setBaby(this.entity.isBaby());
 

@@ -17,17 +17,17 @@
  */
 package ladysnake.requiem.api.v1.entity;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
 import org.apiguardian.api.API;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.Component;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 
 @API(status = API.Status.EXPERIMENTAL)
 public interface CurableEntityComponent extends Component {
-    ComponentKey<CurableEntityComponent> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "curable"), CurableEntityComponent.class);
+    ComponentKey<CurableEntityComponent> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "curable"), CurableEntityComponent.class);
 
     boolean hasBeenCured();
 

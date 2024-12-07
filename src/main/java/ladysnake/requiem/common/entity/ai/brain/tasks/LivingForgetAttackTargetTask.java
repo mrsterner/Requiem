@@ -38,13 +38,14 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class LivingForgetAttackTargetTask<E extends LivingEntity> extends Task<E> {
+public class LivingForgetAttackTargetTask<E extends LivingEntity> extends MultiTickTask<E> {
     private final Predicate<LivingEntity> alternativeCondition;
 
     public LivingForgetAttackTargetTask(Predicate<LivingEntity> alternativeCondition) {

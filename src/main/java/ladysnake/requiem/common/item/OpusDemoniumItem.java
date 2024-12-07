@@ -36,10 +36,10 @@ package ladysnake.requiem.common.item;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.WritableBookItem;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -66,7 +66,7 @@ public class OpusDemoniumItem extends WritableBookItem {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> lines, TooltipContext ctx) {
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> lines, TooltipType type) {
         addTooltipLine(lines, RequiemItems.SEALED_REMNANT_VESSEL);
         addTooltipLine(lines, RequiemItems.PURE_SOUL_VESSEL);
     }

@@ -68,7 +68,7 @@ public final class RequiemEntities {
         .dimensions(EntityType.VILLAGER.getDimensions())
         .trackRangeChunks(EntityType.VILLAGER.getMaxTrackDistance())
         .trackedUpdateRate(EntityType.VILLAGER.getTrackTickInterval())
-        .defaultAttributes(VillagerEntity::createAttributes)
+        .defaultAttributes(VillagerEntity::createVillagerAttributes)
         .build();
     public static final EntityType<PiglinEntity> CURED_PIGLIN = FabricEntityTypeBuilder.<PiglinEntity>createMob()
         .entityFactory((entityType, world) -> {
@@ -79,7 +79,7 @@ public final class RequiemEntities {
         .dimensions(EntityType.PIGLIN.getDimensions())
         .trackRangeChunks(EntityType.PIGLIN.getMaxTrackDistance())
         .trackedUpdateRate(EntityType.PIGLIN.getTrackTickInterval())
-        .defaultAttributes(PiglinEntity::createAttributes)
+        .defaultAttributes(PiglinEntity::createPiglinAttributes)
         .build();
     public static final EntityType<PiglinBruteEntity> CURED_PIGLIN_BRUTE = FabricEntityTypeBuilder.<PiglinBruteEntity>createMob()
         .entityFactory((entityType, world) -> {
@@ -90,7 +90,7 @@ public final class RequiemEntities {
         .dimensions(EntityType.PIGLIN_BRUTE.getDimensions())
         .trackRangeChunks(EntityType.PIGLIN_BRUTE.getMaxTrackDistance())
         .trackedUpdateRate(EntityType.PIGLIN_BRUTE.getTrackTickInterval())
-        .defaultAttributes(PiglinBruteEntity::createAttributes)
+        .defaultAttributes(PiglinBruteEntity::createPiglinBruteAttributes)
         .build();
     public static final ImmutableMap<EntityType<? extends MobEntity>, EntityType<? extends MobEntity>> CURED_PIGLIN_VARIANTS =
         ImmutableMap.of(EntityType.PIGLIN, CURED_PIGLIN, EntityType.PIGLIN_BRUTE, CURED_PIGLIN_BRUTE);

@@ -70,9 +70,9 @@ public class ObeliskSoulEntity extends SoulEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.getDataTracker().startTracking(PHASING, false);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(PHASING, false);
     }
 
     public boolean isPhasing() {
@@ -167,7 +167,7 @@ public class ObeliskSoulEntity extends SoulEntity {
     protected void readCustomDataFromNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         if (nbt.contains("target_pos", NbtElement.COMPOUND_TYPE)) {
-            this.targetPos = NbtHelper.toBlockPos(nbt.getCompound("target_pos"));
+            this.targetPos = NbtHelper.toBlockPos(nbt, "target_pos").get();
         }
     }
 

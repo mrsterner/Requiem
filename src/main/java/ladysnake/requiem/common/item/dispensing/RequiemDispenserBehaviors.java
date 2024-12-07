@@ -36,7 +36,7 @@ package ladysnake.requiem.common.item.dispensing;
 
 import ladysnake.requiem.common.item.EmptySoulVesselItem;
 import ladysnake.requiem.common.item.RequiemItems;
-import net.minecraft.block.dispenser.DispenserBlock;
+import net.minecraft.block.DispenserBlock;
 
 public final class RequiemDispenserBehaviors {
     public static void registerDispenserBehaviors() {

@@ -83,9 +83,9 @@ public class ReleasedSoulEntity extends SoulEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.getDataTracker().startTracking(BODY_STATUS, BODY_FOUND);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(BODY_STATUS, BODY_FOUND);
     }
 
     @Override

@@ -38,6 +38,7 @@ import ladysnake.requiem.api.v1.record.GlobalRecord;
 import ladysnake.requiem.api.v1.record.GlobalRecordKeeper;
 import ladysnake.requiem.common.RequiemRecordTypes;
 import ladysnake.requiem.common.block.obelisk.RiftRunestoneBlock;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -45,20 +46,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
-import org.quiltmc.qsl.lifecycle.api.event.ServerTickEvents;
 
 import java.util.stream.Stream;
 
-public class MorticianSpawner implements ServerTickEvents.End {
+public class MorticianSpawner implements ServerTickEvents.EndTick {
     private static final int SPAWN_COOLDOWN = 1200;
     private int ticksUntilNextSpawn;
 
     public static void init() {
-        ServerTickEvents.END.register(new MorticianSpawner());
+        ServerTickEvents.END_SERVER_TICK.register(new MorticianSpawner());
     }
 
     @Override
-    public void endServerTick(MinecraftServer server) {
+    public void onEndTick(MinecraftServer server) {
         if (server.shouldSpawnAnimals() && server.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
             --this.ticksUntilNextSpawn;
             if (this.ticksUntilNextSpawn <= 0) {
@@ -83,7 +83,7 @@ public class MorticianSpawner implements ServerTickEvents.End {
                 .ifPresent(spawnPos -> {
                     MorticianEntity mortician = RequiemEntities.MORTICIAN.spawn(
                         world,
-                        BlockPos.fromPosition(spawnPos),
+                        BlockPos.ofFloored(spawnPos),
                         SpawnReason.STRUCTURE
                     );
                     if (mortician != null) {

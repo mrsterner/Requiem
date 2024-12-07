@@ -50,6 +50,7 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 
@@ -69,7 +70,7 @@ public final class RequiemItems {
     public static final DemonSoulVesselItem SEALED_REMNANT_VESSEL = new DemonSoulVesselItem(RemnantTypes.REMNANT, Formatting.RED, new Item.Settings().maxCount(1), "requiem:remnant_vessel.curse");
     public static final Item MORTICIAN_SPAWN_EGG = new SpawnEggItem(RequiemEntities.MORTICIAN, 0x592a10, 0x494949, new Item.Settings());
 
-    public static final Map<StatusEffect, IchorVesselItem> vesselsByEffect = new LinkedHashMap<>();
+    public static final Map<RegistryEntry<StatusEffect>, IchorVesselItem> vesselsByEffect = new LinkedHashMap<>();
     public static final IchorVesselItem ICHOR_VESSEL_ATTRITION = makeIchorVessel(RequiemStatusEffects.ATTRITION);
     public static final IchorVesselItem ICHOR_VESSEL_EMANCIPATION = makeIchorVessel(RequiemStatusEffects.EMANCIPATION);
     public static final IchorVesselItem ICHOR_VESSEL_PENANCE = makeIchorVessel(RequiemStatusEffects.PENANCE);
@@ -78,7 +79,7 @@ public final class RequiemItems {
 
     private static final Map<RegistryKey<ItemGroup>, List<ItemConvertible>> itemsByGroup = new LinkedHashMap<>();
 
-    private static IchorVesselItem makeIchorVessel(StatusEffect statusEffect) {
+    private static IchorVesselItem makeIchorVessel(RegistryEntry<StatusEffect> statusEffect) {
         IchorVesselItem item = new IchorVesselItem(new Item.Settings().maxCount(1), new StatusEffectInstance(statusEffect, ICHOR_DEFAULT_DURATION, 0, false, false, true));
         vesselsByEffect.put(statusEffect, item);
         return item;
@@ -87,22 +88,22 @@ public final class RequiemItems {
     public static void init() {
         registerItem(DEBUG_ITEM, "debug_item");
         registerItem(TOTEM_OF_SKELETONIZATION, "totem_of_skeletonization", ItemGroups.COMBAT);
-        registerItem(PURE_SOUL_VESSEL, "pure_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(EMPTY_SOUL_VESSEL, "empty_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(CREATIVE_SOUL_VESSEL, "creative_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(FILLED_SOUL_VESSEL, "filled_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(SHATTERED_SOUL_VESSEL, "shattered_soul_vessel", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(SEALED_REMNANT_VESSEL, "sealed_remnant_vessel", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(ICHOR_VESSEL_ATTRITION, "ichor_vessel_attrition", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(ICHOR_VESSEL_EMANCIPATION, "ichor_vessel_emancipation", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(ICHOR_VESSEL_PENANCE, "ichor_vessel_penance", ItemGroups.TOOLS_AND_UTILITIES);
-        registerItem(ICHOR_VESSEL_RECLAMATION, "ichor_vessel_reclamation", ItemGroups.TOOLS_AND_UTILITIES);
+        registerItem(PURE_SOUL_VESSEL, "pure_soul_vessel", ItemGroups.TOOLS);
+        registerItem(EMPTY_SOUL_VESSEL, "empty_soul_vessel", ItemGroups.TOOLS);
+        registerItem(CREATIVE_SOUL_VESSEL, "creative_soul_vessel", ItemGroups.TOOLS);
+        registerItem(FILLED_SOUL_VESSEL, "filled_soul_vessel", ItemGroups.TOOLS);
+        registerItem(SHATTERED_SOUL_VESSEL, "shattered_soul_vessel", ItemGroups.TOOLS);
+        registerItem(SEALED_REMNANT_VESSEL, "sealed_remnant_vessel", ItemGroups.TOOLS);
+        registerItem(ICHOR_VESSEL_ATTRITION, "ichor_vessel_attrition", ItemGroups.TOOLS);
+        registerItem(ICHOR_VESSEL_EMANCIPATION, "ichor_vessel_emancipation", ItemGroups.TOOLS);
+        registerItem(ICHOR_VESSEL_PENANCE, "ichor_vessel_penance", ItemGroups.TOOLS);
+        registerItem(ICHOR_VESSEL_RECLAMATION, "ichor_vessel_reclamation", ItemGroups.TOOLS);
         registerItem(MORTICIAN_SPAWN_EGG, "mortician_spawn_egg", ItemGroups.SPAWN_EGGS);
 
         itemsByGroup.forEach((group, items) -> {
             ItemGroupEvents.modifyEntriesEvent(group).register(entries -> {
                 for (ItemConvertible item : items) {
-                    entries.addItem(item);
+                    entries.add(item);
                 }
             });
         });

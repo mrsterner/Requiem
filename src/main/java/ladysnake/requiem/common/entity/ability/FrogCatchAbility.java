@@ -61,7 +61,7 @@ public class FrogCatchAbility extends DirectAbilityBase<FrogEntity, Entity> {
 
         if (frog.getWorld().isClient) return true;
         // Taken from CatchAndEatTask#update
-        frog.setTargetEntity(target);
+        frog.setFrogTarget(target);
         frog.getWorld().playSoundFromEntity(null, frog, SoundEvents.ENTITY_FROG_TONGUE, SoundCategory.NEUTRAL, 2.0F, 1.0F);
         frog.setPose(EntityPose.USING_TONGUE);
         target.setVelocity(target.getPos().relativize(frog.getPos()).normalize().multiply(0.75));

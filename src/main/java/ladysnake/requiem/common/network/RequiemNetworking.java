@@ -43,20 +43,20 @@ import ladysnake.requiem.api.v1.util.SubDataManagerHelper;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlockEntity;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.core.RequiemCoreNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.PlayerLookup;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 import java.util.List;
 
@@ -78,7 +78,7 @@ public final class RequiemNetworking {
     public static final Identifier USE_RIFT = Requiem.id("use_rift");
 
     public static void sendToServer(Identifier identifier, PacketByteBuf data) {
-        sendToServer(new CustomPayloadC2SPacket(identifier, data));
+        sendToServer(new CustomPayloadC2SPacket(new SimplePayload(identifier, data)));
     }
 
     public static void sendToServer(CustomPayloadC2SPacket message) {
@@ -100,12 +100,12 @@ public final class RequiemNetworking {
         PacketByteBuf buf = createEmptyBuffer();
         buf.writeVarInt(RemnantTypes.getRawId(chosenType));
         buf.writeBoolean(showBook);
-        return new CustomPayloadS2CPacket(OPUS_USE, buf);
+        return new CustomPayloadS2CPacket(new SimplePayload(OPUS_USE, buf));
     }
 
     @Contract(pure = true)
     public static CustomPayloadS2CPacket createEmptyMessage(Identifier id) {
-        return new CustomPayloadS2CPacket(id, createEmptyBuffer());
+        return new CustomPayloadS2CPacket(new SimplePayload(id, createEmptyBuffer()));
     }
 
     public static CustomPayloadS2CPacket createDataSyncMessage(SubDataManagerHelper helper) {
@@ -117,7 +117,7 @@ public final class RequiemNetworking {
             buf.writeIdentifier(manager.getFabricId());
             manager.toPacket(buf);
         }
-        return new CustomPayloadS2CPacket(DATA_SYNC, buf);
+        return new CustomPayloadS2CPacket(new SimplePayload(DATA_SYNC, buf));
     }
 
     @Contract(pure = true)
@@ -138,7 +138,7 @@ public final class RequiemNetworking {
     }
 
     public static void sendSupercrafterMessage() {
-        sendToServer(new CustomPayloadC2SPacket(OPEN_CRAFTING_MENU, createEmptyBuffer()));
+        sendToServer(new CustomPayloadC2SPacket(new SimplePayload(OPEN_CRAFTING_MENU, createEmptyBuffer())));
     }
 
     public static void sendEtherealAnimationMessage(ServerPlayerEntity player) {
@@ -148,13 +148,13 @@ public final class RequiemNetworking {
     public static void sendBodyCureMessage(LivingEntity entity) {
         PacketByteBuf buf = new PacketByteBuf(buffer());
         buf.writeVarInt(entity.getId());
-        RequiemCoreNetworking.sendToAllTrackingIncluding(entity, new CustomPayloadS2CPacket(BODY_CURE, buf));
+        RequiemCoreNetworking.sendToAllTrackingIncluding(entity, new CustomPayloadS2CPacket(new SimplePayload(BODY_CURE, buf)));
     }
 
     public static void sendAnchorDamageMessage(ServerPlayerEntity player, boolean dead) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(dead);
-        ServerPlayNetworking.send(player, ANCHOR_DAMAGE, buf);
+        ServerPlayNetworking.send(player, new SimplePayload(ANCHOR_DAMAGE, buf));
     }
 
     public static void sendObeliskPowerUpdateMessage(RunestoneBlockEntity runestone) {
@@ -163,12 +163,14 @@ public final class RequiemNetworking {
         buf.writeVarInt(runestone.getCoreWidth());
         buf.writeVarInt(runestone.getCoreHeight());
         buf.writeFloat(runestone.getPowerRate());
-        ServerPlayNetworking.send(PlayerLookup.tracking(runestone), OBELISK_POWER_UPDATE, buf);
+        for(ServerPlayerEntity serverPlayer : PlayerLookup.tracking(runestone)) {
+            ServerPlayNetworking.send(serverPlayer, new SimplePayload(OBELISK_POWER_UPDATE, buf));
+        }
     }
 
     public static void sendRiftWitnessedMessage(ServerPlayerEntity player, Text obeliskName) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeText(obeliskName);
-        ServerPlayNetworking.send(player, RIFT_WITNESSED, buf);
+        ServerPlayNetworking.send(player, new SimplePayload(RIFT_WITNESSED, buf));
     }
 }

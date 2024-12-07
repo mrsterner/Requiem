@@ -34,10 +34,12 @@
  */
 package ladysnake.requiem.common.block.obelisk;
 
+import com.mojang.serialization.MapCodec;
 import ladysnake.requiem.api.v1.block.ObeliskEffectRune;
 import ladysnake.requiem.common.entity.SoulEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.EntityShapeContext;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.effect.StatusEffect;
@@ -55,7 +57,7 @@ public class RunestoneBlock extends InertRunestoneBlock implements ObeliskEffect
     public static Optional<Block> getByEffect(StatusEffect effect) {
         Identifier id = Registries.STATUS_EFFECT.getId(effect);
         return Optional.ofNullable(id).flatMap(i ->
-            Registries.BLOCK.getOrEmpty(new Identifier(i.getNamespace(), "tachylite/runic/" + i.getPath())));
+            Registries.BLOCK.getOrEmpty(Identifier.of(i.getNamespace(), "tachylite/runic/" + i.getPath())));
     }
 
     private final Supplier<StatusEffect> effect;
@@ -83,5 +85,10 @@ public class RunestoneBlock extends InertRunestoneBlock implements ObeliskEffect
             return VoxelShapes.empty();
         }
         return super.getCollisionShape(state, world, pos, context);
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return createCodec(RiftRunestoneBlock::new);
     }
 }

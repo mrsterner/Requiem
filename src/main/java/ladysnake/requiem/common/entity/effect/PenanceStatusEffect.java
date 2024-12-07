@@ -47,8 +47,8 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -59,7 +59,7 @@ public class PenanceStatusEffect extends StatusEffect implements StickyStatusEff
     public static final int PLAYER_BAN_THRESHOLD = 1;
     public static final int MOB_BAN_THRESHOLD = 2;
 
-    public PenanceStatusEffect(StatusEffectType type, int color) {
+    public PenanceStatusEffect(StatusEffectCategory type, int color) {
         super(type, color);
     }
 
@@ -76,8 +76,8 @@ public class PenanceStatusEffect extends StatusEffect implements StickyStatusEff
     }
 
     @Override
-    public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-        super.onApplied(entity, attributes, amplifier);
+    public void onApplied(LivingEntity entity, int amplifier) {
+        super.onApplied(entity, amplifier);
         if (PenanceComponent.KEY.maybeGet(entity).filter(PenanceComponent::shouldApplyPenance).isPresent()) {
             applyPenance(entity, amplifier);
         }

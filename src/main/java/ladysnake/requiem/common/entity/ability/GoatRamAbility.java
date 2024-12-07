@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.common.entity.ability;
 
+import ladysnake.requiem.Requiem;
 import ladysnake.requiem.core.entity.ability.DirectAbilityBase;
 import ladysnake.requiem.core.entity.ability.MeleeAbility;
 import ladysnake.requiem.mixin.common.access.BrainAccessor;
@@ -55,6 +56,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -69,7 +71,7 @@ import java.util.function.ToIntFunction;
 
 public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase<O, Entity> {
     private static final long RAM_DURATION = 40;
-    private static final UUID SPEED_MODIFIER_UUID = UUID.fromString("2f3f65e2-a322-4a33-8d04-db7187941025");
+    private static final Identifier SPEED_MODIFIER_UUID = Requiem.id("2f3f65e2-a322-4a33-8d04-db7187941025");
 
     public static <O extends PathAwareEntity> GoatRamAbility<O> create(O owner) {
         @SuppressWarnings("unchecked") BrainAccessor<O> brain = (BrainAccessor<O>) owner.getBrain();
@@ -164,7 +166,7 @@ public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase
                 speedAttribute.removeModifier(SPEED_MODIFIER_UUID);
                 // see RequiemCore#INHERENT_MOB_SLOWNESS for why speed * 3
                 speedAttribute.addTemporaryModifier(
-                    new EntityAttributeModifier(SPEED_MODIFIER_UUID, "Ram speed bonus", this.speed * 3, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+                    new EntityAttributeModifier(SPEED_MODIFIER_UUID, this.speed * 3, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
                 this.target = target.getPos();
                 this.ramStartTime = time;
                 this.direction = (new Vec3d(startPos.getX() - target.getX(), 0.0, startPos.getZ() - target.getZ())).normalize();

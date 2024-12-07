@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.common.entity.ability;
 
+import ladysnake.requiem.Requiem;
 import ladysnake.requiem.core.entity.ability.IndirectAbilityBase;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -41,6 +42,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.AxolotlEntity;
+import net.minecraft.util.Identifier;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -48,7 +50,7 @@ import java.util.UUID;
 public class AxolotlPlayingDeadAbility extends IndirectAbilityBase<AxolotlEntity> {
     public static final int COOLDOWN = 20 * 30;
     public static final int ABILITY_TIME = AxolotlEntity.PLAY_DEAD_TICKS;
-    public static final UUID SPEED_MODIFIER_UUID = UUID.fromString("5a13c664-7932-4a73-b341-0745cb737754");
+    public static final Identifier SPEED_MODIFIER_UUID = Requiem.id("5a13c664-7932-4a73-b341-0745cb737754");
     public static final int MAX_HP_HEALED = 4;
 
     private int ticksLeft;
@@ -64,7 +66,7 @@ public class AxolotlPlayingDeadAbility extends IndirectAbilityBase<AxolotlEntity
             this.ticksLeft = Math.round(ABILITY_TIME / Math.min(1F, (float) missingHealth / MAX_HP_HEALED));
             EntityAttributeInstance speedAttr = Objects.requireNonNull(this.owner.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED));
             speedAttr.removeModifier(SPEED_MODIFIER_UUID);
-            speedAttr.addTemporaryModifier(new EntityAttributeModifier(SPEED_MODIFIER_UUID, "playing dead slowdow", -0.9, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+            speedAttr.addTemporaryModifier(new EntityAttributeModifier(SPEED_MODIFIER_UUID, -0.9, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             this.owner.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, ticksLeft));
             return true;
         }

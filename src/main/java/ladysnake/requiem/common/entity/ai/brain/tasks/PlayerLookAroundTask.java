@@ -39,10 +39,11 @@ import baritone.api.utils.RotationUtils;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
-public class PlayerLookAroundTask extends Task<FakeServerPlayerEntity> {
+public class PlayerLookAroundTask extends MultiTickTask<FakeServerPlayerEntity> {
     public PlayerLookAroundTask(int minRunTime, int maxRunTime) {
         super(ImmutableMap.of(MemoryModuleType.LOOK_TARGET, MemoryModuleState.VALUE_PRESENT), minRunTime, maxRunTime);
     }

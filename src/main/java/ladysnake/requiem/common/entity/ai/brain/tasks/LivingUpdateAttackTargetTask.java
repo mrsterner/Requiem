@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
@@ -48,7 +49,7 @@ import java.util.function.Predicate;
 /**
  * Literally {@link net.minecraft.entity.ai.brain.task.UpdateAttackTargetTask}, but with a higher type bound
  */
-public class LivingUpdateAttackTargetTask<E extends LivingEntity> extends Task<E> {
+public class LivingUpdateAttackTargetTask<E extends LivingEntity> extends MultiTickTask<E> {
     private final Predicate<E> startCondition;
     private final Function<E, Optional<? extends LivingEntity>> targetGetter;
 

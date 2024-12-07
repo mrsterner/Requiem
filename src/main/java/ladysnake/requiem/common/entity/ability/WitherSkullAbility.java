@@ -92,7 +92,7 @@ public class WitherSkullAbility extends AbilityBase<WitherEntity> {
         WitherSkullEntity witherSkullEntity = new WitherSkullEntity(
             this.owner.getWorld(),
             this.owner,
-            dirX, dirY, dirZ
+            new Vec3d(dirX, dirY, dirZ)
         );
         witherSkullEntity.setOwner(owner);
 

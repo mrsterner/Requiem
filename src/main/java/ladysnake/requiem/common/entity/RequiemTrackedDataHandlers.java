@@ -36,32 +36,32 @@ package ladysnake.requiem.common.entity;
 
 import ladysnake.requiem.Requiem;
 import net.minecraft.entity.data.TrackedDataHandler;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.util.math.Vec3d;
-import org.quiltmc.qsl.entity.networking.api.tracked_data.QuiltTrackedDataHandlerRegistry;
 
 import java.util.Optional;
 
 public final class RequiemTrackedDataHandlers {
-    public static final TrackedDataHandler<Optional<Vec3d>> OPTIONAL_VEC_3D = new TrackedDataHandler<>() {
-        @Override
-        public void write(PacketByteBuf buf, Optional<Vec3d> value) {
-            buf.writeBoolean(value.isPresent());
-            value.ifPresent(vec -> {
-                buf.writeDouble(vec.getX());
-                buf.writeDouble(vec.getY());
-                buf.writeDouble(vec.getZ());
-            });
-        }
+    public static final TrackedDataHandler<Optional<Vec3d>> OPTIONAL_VEC_3D = new TrackedDataHandler<Optional<Vec3d>>() {
 
         @Override
-        public Optional<Vec3d> read(PacketByteBuf buf) {
-            return buf.readBoolean()
-                ? Optional.of(new Vec3d(
-                    buf.readDouble(),
-                    buf.readDouble(),
-                    buf.readDouble()
-                )) : Optional.empty();
+        public PacketCodec<? super RegistryByteBuf, Optional<Vec3d>> codec() {
+            return PacketCodec.of(
+                (value, buf) -> {
+                    buf.writeBoolean(value.isPresent());
+                    value.ifPresent(vec -> {
+                        buf.writeDouble(vec.getX());
+                        buf.writeDouble(vec.getY());
+                        buf.writeDouble(vec.getZ());
+                    });
+                },
+                buf -> buf.readBoolean()
+                    ? Optional.of(new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble()))
+                    : Optional.empty()
+            );
         }
 
         @Override
@@ -71,6 +71,6 @@ public final class RequiemTrackedDataHandlers {
     };
 
     public static void init() {
-        QuiltTrackedDataHandlerRegistry.register(Requiem.id("optional_vec3d"), OPTIONAL_VEC_3D);
+        TrackedDataHandlerRegistry.register(OPTIONAL_VEC_3D);
     }
 }

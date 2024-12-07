@@ -104,7 +104,7 @@ public class IchorVesselItem extends Item {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return MAX_USE_TIME;
     }
 
@@ -134,7 +134,7 @@ public class IchorVesselItem extends Item {
     public TypedActionResult<ItemStack> useOnBlock(World world, BlockPos pos, ItemStack stack) {
         if (world.getBlockState(pos).isOf(RequiemBlocks.TACHYLITE_RUNESTONE)) {
             if (!world.isClient) {
-                Optional<Block> runestone = RunestoneBlock.getByEffect(this.effect.getEffectType());
+                Optional<Block> runestone = RunestoneBlock.getByEffect(this.effect.getEffectType().value());
                 if (runestone.isEmpty()) return TypedActionResult.fail(stack);
 
                 world.setBlockState(pos, runestone.get().getDefaultState(), Block.NOTIFY_LISTENERS | Block.NOTIFY_NEIGHBORS);

@@ -45,6 +45,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,7 +53,7 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 
-public class PlayerMeleeTask extends Task<FakeServerPlayerEntity> {
+public class PlayerMeleeTask extends MultiTickTask<FakeServerPlayerEntity> {
     public PlayerMeleeTask() {
         super(ImmutableMap.of(
             MemoryModuleType.LOOK_TARGET, MemoryModuleState.REGISTERED,

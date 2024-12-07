@@ -39,17 +39,22 @@ import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.Identifier;
 
 public final class RequiemEntityAttributes {
-    public static final EntityAttribute SOUL_OFFENSE = new ClampedEntityAttribute(
+    public static final RegistryEntry<EntityAttribute> SOUL_OFFENSE = register("soul_offense", new ClampedEntityAttribute(
         "attribute.name.remnant.requiem.soul_offense", 15, 0, 1024
-    ).setTracked(true);
-    public static final EntityAttribute SOUL_DEFENSE = new ClampedEntityAttribute(
+    ).setTracked(true));
+    public static final RegistryEntry<EntityAttribute> SOUL_DEFENSE = register("soul_defense",new ClampedEntityAttribute(
         "attribute.name.remnant.requiem.soul_defense", 0, -1024, 1024
-    ).setTracked(true);
+    ).setTracked(true));
+
+    private static RegistryEntry<EntityAttribute> register(String id, EntityAttribute attribute) {
+        return Registry.registerReference(Registries.ATTRIBUTE, Requiem.id(id), attribute);
+    }
 
     public static void init() {
-        Registry.register(Registries.ENTITY_ATTRIBUTE, Requiem.id("soul_offense"), RequiemEntityAttributes.SOUL_OFFENSE);
-        Registry.register(Registries.ENTITY_ATTRIBUTE, Requiem.id("soul_defense"), RequiemEntityAttributes.SOUL_DEFENSE);
+
     }
 }

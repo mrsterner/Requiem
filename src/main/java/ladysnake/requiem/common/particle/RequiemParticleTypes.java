@@ -37,30 +37,30 @@ package ladysnake.requiem.common.particle;
 import com.mojang.serialization.Codec;
 import ladysnake.requiem.Requiem;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
 public final class RequiemParticleTypes {
-    public static final DefaultParticleType ATTRITION = FabricParticleTypes.simple(false);
-    public static final DefaultParticleType ATTUNED = FabricParticleTypes.simple(false);
-    public static final DefaultParticleType CURE = FabricParticleTypes.simple(false);
+    public static final SimpleParticleType ATTRITION = FabricParticleTypes.simple(false);
+    public static final SimpleParticleType ATTUNED = FabricParticleTypes.simple(false);
+    public static final SimpleParticleType CURE = FabricParticleTypes.simple(false);
     public static final ParticleType<RequiemEntityParticleEffect> ENTITY_DUST = new ParticleType<>(false, RequiemEntityParticleEffect.PARAMETERS_FACTORY) {
         @Override
         public Codec<RequiemEntityParticleEffect> getCodec() {
             return RequiemEntityParticleEffect.codec(this);
         }
     };
-    public static final DefaultParticleType GHOST = FabricParticleTypes.simple(true);
+    public static final SimpleParticleType GHOST = FabricParticleTypes.simple(true);
     public static final ParticleType<WispTrailParticleEffect> SOUL_TRAIL = new ParticleType<>(true, WispTrailParticleEffect.PARAMETERS_FACTORY) {
         @Override
         public Codec<WispTrailParticleEffect> getCodec() {
             return WispTrailParticleEffect.CODEC;
         }
     };
-    public static final DefaultParticleType OBELISK_SOUL = FabricParticleTypes.simple(false);
-    public static final DefaultParticleType PENANCE = FabricParticleTypes.simple(false);
+    public static final SimpleParticleType OBELISK_SOUL = FabricParticleTypes.simple(false);
+    public static final SimpleParticleType PENANCE = FabricParticleTypes.simple(false);
 
     public static void init() {
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("attrition"), ATTRITION);

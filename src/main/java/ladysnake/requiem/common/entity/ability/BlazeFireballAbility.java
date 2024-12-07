@@ -78,10 +78,10 @@ public class BlazeFireballAbility extends IndirectAbilityBase<LivingEntity> {
         Vec3d rot = this.owner.getRotationVec(1.0f).multiply(10);
         SmallFireballEntity fireball = new SmallFireballEntity(
                 this.owner.getWorld(),
-                this.owner,
                 rot.x + this.owner.getRandom().nextGaussian() * RANDOM_SKEW_FACTOR,
                 rot.y,
-                rot.z + this.owner.getRandom().nextGaussian() * RANDOM_SKEW_FACTOR
+                rot.z + this.owner.getRandom().nextGaussian() * RANDOM_SKEW_FACTOR,
+            rot.normalize()
         );
         fireball.setPosition(this.owner.getX(), this.owner.getY() + (double)(this.owner.getHeight() / 2.0F) + 0.5D, this.owner.getZ());
         this.owner.getWorld().spawnEntity(fireball);

@@ -36,6 +36,7 @@ package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.entity.Entity;
@@ -46,6 +47,7 @@ import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.unmapped.C_ctsfmifk;
 import net.minecraft.util.Identifier;
@@ -62,7 +64,7 @@ public class OnDeathAfterPossessionCriterion extends AbstractCriterion<OnDeathAf
 
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, C_ctsfmifk playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        C_ctsfmifk entity = EntityPredicate.method_51705(obj, "entity", predicateDeserializer);
+        LootContextPredicate entity = EntityPredicate.method_51705(obj, "entity", predicateDeserializer);
         return new Conditions(
             this.id,
             playerPredicate,
@@ -79,6 +81,11 @@ public class OnDeathAfterPossessionCriterion extends AbstractCriterion<OnDeathAf
     @Override
     public Identifier getId() {
         return this.id;
+    }
+
+    @Override
+    public Codec<Conditions> getConditionsCodec() {
+        return null;
     }
 
 

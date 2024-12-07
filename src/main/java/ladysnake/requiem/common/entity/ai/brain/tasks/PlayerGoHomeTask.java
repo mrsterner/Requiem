@@ -41,13 +41,14 @@ import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.math.GlobalPos;
 
 import java.util.Optional;
 
-public class PlayerGoHomeTask extends Task<LivingEntity> {
+public class PlayerGoHomeTask extends MultiTickTask<LivingEntity> {
     private final MemoryModuleType<GlobalPos> destination;
     private final float speed;
     private final int completionRange;
@@ -83,7 +84,7 @@ public class PlayerGoHomeTask extends Task<LivingEntity> {
                 if (this.reachedDestination(serverWorld, executor, globalPos)) {
                     brain.forget(PandemoniumMemoryModules.GO_HOME_ATTEMPTS);
                 } else {
-                    brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(globalPos.getPos(), this.speed, this.completionRange));
+                    brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(globalPos.pos(), this.speed, this.completionRange));
                     brain.remember(PandemoniumMemoryModules.GO_HOME_ATTEMPTS, brain.getOptionalMemory(PandemoniumMemoryModules.GO_HOME_ATTEMPTS).orElse(0) + 1);
                 }
             } else {
@@ -98,10 +99,10 @@ public class PlayerGoHomeTask extends Task<LivingEntity> {
     }
 
     private boolean isInOtherDimension(ServerWorld currentWorld, GlobalPos target) {
-        return target.getDimension() != currentWorld.getRegistryKey();
+        return target.dimension() != currentWorld.getRegistryKey();
     }
 
     private boolean reachedDestination(ServerWorld world, LivingEntity executor, GlobalPos pos) {
-        return pos.getDimension() == world.getRegistryKey() && pos.getPos().getManhattanDistance(executor.getBlockPos()) <= this.completionRange;
+        return pos.dimension() == world.getRegistryKey() && pos.pos().getManhattanDistance(executor.getBlockPos()) <= this.completionRange;
     }
 }
