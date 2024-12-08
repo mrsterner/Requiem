@@ -69,9 +69,6 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
     @Shadow
     protected abstract void mobTick();
 
-    @Shadow
-    @Nullable
-    public abstract Entity getHoldingEntity();
 
     @Shadow
     public abstract void detachLeash(boolean sendPacket, boolean dropItem);
@@ -116,11 +113,11 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
         }
     }
 
-    @Inject(method = "getItemsHand", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getHandItems", at = @At("HEAD"), cancellable = true)
     private void getItemsHand(CallbackInfoReturnable<Iterable<ItemStack>> cir) {
         PlayerEntity possessor = this.getPossessor();
         if (possessor != null) {
-            cir.setReturnValue(possessor.getItemsHand());
+            cir.setReturnValue(possessor.getHandItems());
         }
     }
 

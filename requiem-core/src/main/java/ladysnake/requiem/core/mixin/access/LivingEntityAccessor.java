@@ -54,7 +54,4 @@ public interface LivingEntityAccessor {
 
     @Invoker("dropInventory")
     void requiem$invokeDropInventory();
-
-    @Invoker("getEyeHeight")
-    float requiem$invokeGetEyeHeight(EntityPose pose, EntityDimensions size);
 }

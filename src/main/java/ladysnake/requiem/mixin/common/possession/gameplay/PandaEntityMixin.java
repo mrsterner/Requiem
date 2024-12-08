@@ -63,16 +63,16 @@ public abstract class PandaEntityMixin extends AnimalEntity implements Possessab
     protected abstract boolean canEat(ItemStack stack);
 
     @Shadow
-    public abstract void setScared(boolean scared);
-
-    @Shadow
-    private float scaredAnimationProgress;
-
-    @Shadow
-    private float lastScaredAnimationProgress;
-
-    @Shadow
     public abstract void setLyingOnBack(boolean lyingOnBack);
+
+    @Shadow
+    public abstract void setSitting(boolean sitting);
+
+    @Shadow
+    private float lastSittingAnimationProgress;
+
+    @Shadow
+    private float sittingAnimationProgress;
 
     @ModifyArg(method = "updateEatingAnimation", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PandaEntity;setEating(Z)V", ordinal = 0))
     private boolean stopEatingConcrete(boolean eat) {
@@ -91,20 +91,22 @@ public abstract class PandaEntityMixin extends AnimalEntity implements Possessab
     private void scareIfSneaking(CallbackInfo ci) {
         PlayerEntity possessor = this.getPossessor();
         if (possessor != null) {
-            this.setScared(possessor.isSneaking());
+            this.setSitting(possessor.isSneaking());
         }
     }
 
     @Inject(method = "updateSittingAnimation", at = @At("RETURN"))
     private void recalculateDimensions(CallbackInfo ci) {
-        if (this.lastScaredAnimationProgress != this.scaredAnimationProgress) {
+        if (this.lastSittingAnimationProgress != this.sittingAnimationProgress) {
             this.calculateDimensions();
         }
     }
-
+/* TODO
     @Intrinsic  // If someone else redefines this method, just let them do whatever
     @Override
     public EntityDimensions getDimensions(EntityPose pose) {
-        return super.getDimensions(pose).scaled(1, 1 + this.scaredAnimationProgress * 0.85f);
+        return super.getDimensions(pose).scaled(1, 1 + this.sittingAnimationProgress * 0.85f);
     }
+
+ */
 }

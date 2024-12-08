@@ -34,7 +34,10 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.possession.Possessable;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -43,13 +46,11 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.WitchEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
@@ -64,12 +65,12 @@ public abstract class WitchEntityMixin extends HostileEntity {
      * Witches normally keep lobbing poison at zombies when trying to attack them.
      * This injection makes them prioritize a more useful weakness potion - making it easier to heal back to human when possessing a zombie.
      */
-    @ModifyVariable(method = "shootAt", at = @At(value = "LOAD"))
-    private Potion makeWitchesThrowWeaknessAtUndead(Potion thrownPotion, LivingEntity target, float charge) {
-        if (target.isUndead() && !target.hasStatusEffect(StatusEffects.WEAKNESS)) {
-            return Potions.WEAKNESS;
+    @ModifyExpressionValue(method = "shootAt", at = @At(value = "INVOKE", target = "Lnet/minecraft/component/type/PotionContentsComponent;createStack(Lnet/minecraft/item/Item;Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/item/ItemStack;"))
+    private ItemStack makeWitchesThrowWeaknessAtUndead(ItemStack original, @Local(argsOnly = true) LivingEntity target) {
+        if (target.hasInvertedHealingAndHarm() && !target.hasStatusEffect(StatusEffects.WEAKNESS)) {
+            return PotionContentsComponent.createStack(Items.SPLASH_POTION, Potions.WEAKNESS);
         }
-        return thrownPotion;
+        return original;
     }
 
     @Inject(

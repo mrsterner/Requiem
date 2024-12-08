@@ -19,9 +19,6 @@ dependencies {
     modImplementation(libs.fabricPermissionsApi) {
         exclude group: "net.fabricmc"
     }
-    modImplementation(libs.reachEntityAttributes) {
-        exclude group: "net.fabricmc"
-    }
 }
 
 remapJar.dependsOn(project(":requiem-api").tasks.remapJar)

@@ -35,7 +35,6 @@
 package ladysnake.requiem.core.mixin.possession.possessor;
 
 import com.mojang.authlib.GameProfile;
-import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
@@ -49,17 +48,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementFlag;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.ItemCooldownManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.ladysnake.cca.api.v3.component.ComponentProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -90,7 +90,7 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
         if (possessed != null && ((VariableMobilityEntity) possessed).requiem_isImmovable()) {
             if (!this.requiem$getWorld().isClient && (this.requiem$getX() != possessed.getX() || this.requiem$getY() != possessed.getY() || this.requiem$getZ() != possessed.getZ())) {
                 ServerPlayNetworkHandler networkHandler = ((ServerPlayerEntity) (Object) this).networkHandler;
-                networkHandler.requestTeleport(possessed.getX(), possessed.getY(), possessed.getZ(), this.requiem$getYaw(), this.requiem$getPitch(), EnumSet.allOf(MovementFlag.class));
+                networkHandler.requestTeleport(possessed.getX(), possessed.getY(), possessed.getZ(), this.requiem$getYaw(), this.requiem$getPitch(), EnumSet.allOf(PositionFlag.class));
                 networkHandler.syncWithPlayerPosition();
             }
             info.cancel();
@@ -114,7 +114,7 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
      * Players' sizes are hardcoded in an immutable enum map.
      * This injection delegates the call to the possessed entity, if any.
      */
-    @Inject(method = "getDimensions", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getBaseDimensions", at = @At("HEAD"), cancellable = true)
     private void adjustSize(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
         Entity possessedEntity = PossessionComponent.KEY.get(this).getHost();
         if (possessedEntity != null) {
@@ -137,7 +137,7 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
             cir.setReturnValue(((Possessable) possessed).isRegularEater() && possessed.getHealth() > 0 && possessed.getHealth() < possessed.getMaxHealth());
         }
     }
-
+/*TODO
     @Inject(method = "addExhaustion", slice = @Slice(to = @At("INVOKE:FIRST")), at = @At(value = "RETURN"))
     private void addExhaustion(float exhaustion, CallbackInfo ci) {
         Possessable possessed = (Possessable) PossessionComponent.KEY.get(this).getHost();
@@ -147,6 +147,8 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
             }
         }
     }
+
+ */
 
     @Override
     protected void requiem$delegateBreath(CallbackInfoReturnable<Integer> cir) {
@@ -229,6 +231,7 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
         }
     }
 
+    /*TODO
     @Inject(method = "getActiveEyeHeight", at = @At("HEAD"), cancellable = true)
     private void adjustEyeHeight(EntityPose pose, EntityDimensions size, CallbackInfoReturnable<Float> cir) {
         // This method can be called in the Entity constructor, before CCA is initialized
@@ -240,18 +243,20 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
         }
     }
 
-    @Inject(method = "setMovementMultiplier", at = @At("HEAD"), cancellable = true)
+     */
+
+    @Inject(method = "slowMovement", at = @At("HEAD"), cancellable = true)
     private void slowMovement(BlockState state, Vec3d multiplier, CallbackInfo ci) {
         MobEntity possessedEntity = PossessionComponent.KEY.get(this).getHost();
         if (possessedEntity != null) {
             possessedEntity.fallDistance = this.requiem$getFallDistance();
-            possessedEntity.setMovementMultiplier(state, multiplier);
+            possessedEntity.slowMovement(state, multiplier);
             this.requiem$setFallDistance(possessedEntity.fallDistance);
             this.requiem$setMovementMultiplier(((EntityAccessor) possessedEntity).requiem$getMovementMultiplier());
             ci.cancel();
         }
     }
-
+/*
     @Inject(method = "getHeightOffset", at = @At("HEAD"), cancellable = true)
     private void requiem$getHeightOffset(CallbackInfoReturnable<Double> cir) {
         MobEntity possessedEntity = PossessionComponent.KEY.get(this).getHost();
@@ -259,4 +264,6 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
             cir.setReturnValue(possessedEntity.getHeightOffset());
         }
     }
+
+ */
 }

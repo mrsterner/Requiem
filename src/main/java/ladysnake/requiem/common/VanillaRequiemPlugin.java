@@ -115,6 +115,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -155,7 +156,8 @@ import java.util.Optional;
 
 public final class VanillaRequiemPlugin implements RequiemPlugin {
 
-    public static final String INFINITY_SHOT_TAG = "requiem:infinity_shot";
+    public static final ComponentType<Boolean> INFINITY_SHOT_TAG = ComponentType.<Boolean>builder().build();
+
     public static final MobAbilityConfig<PlayerEntity> SOUL_ABILITY_CONFIG = MobAbilityConfig.<PlayerEntity>builder()
         .directAttack(player -> new DelegatingDirectAbility<>(player, LivingEntity.class, AbilityType.INTERACT))
         .directInteract(VagrantPossessAbility::new)

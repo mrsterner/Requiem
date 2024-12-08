@@ -39,6 +39,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,8 +48,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(StatusEffectInstance.class)
 public abstract class StatusEffectInstanceMixin {
+
     @Shadow
-    public abstract StatusEffect getEffectType();
+    public abstract RegistryEntry<StatusEffect> getEffectType();
 
     /**
      * Effects may get cancelled on the player side before their last tick runs on the possessed side.

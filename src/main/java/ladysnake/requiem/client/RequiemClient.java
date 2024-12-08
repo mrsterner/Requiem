@@ -40,9 +40,7 @@ import ladysnake.requiem.client.model.lib.SimpleBakedModel;
 import ladysnake.requiem.client.model.lib.SimpleUnbakedModel;
 import ladysnake.requiem.client.network.ClientMessageHandler;
 import ladysnake.requiem.client.particle.CureParticle;
-import ladysnake.requiem.client.particle.EntityDustParticle;
 import ladysnake.requiem.client.particle.GhostParticle;
-import ladysnake.requiem.client.particle.wisp.WispTrailParticle;
 import ladysnake.requiem.client.render.block.RunestoneBlockEntityRenderer;
 import ladysnake.requiem.client.render.entity.CuredPiglinEntityRenderer;
 import ladysnake.requiem.client.render.entity.CuredVillagerEntityRenderer;
@@ -80,7 +78,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
-import org.quiltmc.loader.api.ModContainer;
 
 import java.util.Map;
 
@@ -97,7 +94,7 @@ public final class RequiemClient {
     private static final RequiemClient INSTANCE = new RequiemClient();
 
     @CalledThroughReflection
-    public static void onInitializeClient(ModContainer mod) {
+    public static void onInitializeClient() {
         INSTANCE.init();
     }
 
@@ -156,7 +153,7 @@ public final class RequiemClient {
     }
 
     private void registerScreens() {
-        HandledScreens.register(RequiemScreenHandlers.RIFT_SCREEN_HANDLER, RiftScreen::new);
+        //TODO HandledScreens.register(RequiemScreenHandlers.RIFT_SCREEN_HANDLER, RiftScreen::new);
     }
 
     private void registerBlockModels() {
@@ -195,10 +192,10 @@ public final class RequiemClient {
         registry.register(RequiemParticleTypes.ATTUNED, CureParticle.Factory::new);
         registry.register(RequiemParticleTypes.CURE, CureParticle.Factory::new);
         registry.register(RequiemParticleTypes.GHOST, GhostParticle.Factory::new);
-        registry.register(RequiemParticleTypes.ENTITY_DUST, new EntityDustParticle.Factory());
+        //registry.register(RequiemParticleTypes.ENTITY_DUST, new EntityDustParticle.Factory());
         registry.register(RequiemParticleTypes.OBELISK_SOUL, SoulParticle.Factory::new);
-        registry.register(RequiemParticleTypes.SOUL_TRAIL, WispTrailParticle.Factory::new);
-        registry.register(RequiemParticleTypes.PENANCE, SpellParticle.EntityFactory::new);
+        //registry.register(RequiemParticleTypes.SOUL_TRAIL, WispTrailParticle.Factory::new);
+        //registry.register(RequiemParticleTypes.PENANCE, SpellParticle.EntityFactory::new);
     }
 
     private void registerModelPredicates() {

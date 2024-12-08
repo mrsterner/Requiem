@@ -45,10 +45,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HungerManager.class)
 public abstract class HungerManagerMixin {
+
     @Shadow private float exhaustion;
     @Shadow private int foodLevel;
 
-    @Inject(method = "update", at = @At(value = "INVOKE", ordinal = 0))
+    @Inject(method = "update", at = @At(value = "HEAD", ordinal = 0))
     private void updateSoulHunger(PlayerEntity player, CallbackInfo ci) {
         if (RemnantComponent.get(player).isIncorporeal()) {
             this.exhaustion = 0;

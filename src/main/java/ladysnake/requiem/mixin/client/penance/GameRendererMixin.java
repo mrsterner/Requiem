@@ -39,6 +39,7 @@ import ladysnake.requiem.common.entity.effect.PenanceComponent;
 import ladysnake.requiem.common.entity.effect.RequiemStatusEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,12 +54,12 @@ public abstract class GameRendererMixin {
     @Final
     private MinecraftClient client;
 
-    @Inject(method = "render", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/network/ClientPlayerEntity;lastScreenSwirlIntensity:F"))
-    private void renderPenanceOverlay(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/network/ClientPlayerEntity;prevNauseaIntensity:F"))
+    private void renderPenanceOverlay(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci) {
         assert this.client.player != null;
-        float f = PenanceComponent.KEY.get(this.client.player).getOverlayStrength(tickDelta);
+        float f = PenanceComponent.KEY.get(this.client.player).getOverlayStrength(tickCounter.getTickDelta(false));
         if (f > 0.0F) {
-            RequiemClient.instance().fxRenderer().renderPenanceOverlay(RequiemStatusEffects.PENANCE.getColor(), f);
+            RequiemClient.instance().fxRenderer().renderPenanceOverlay(RequiemStatusEffects.PENANCE.value().getColor(), f);
         }
     }
 

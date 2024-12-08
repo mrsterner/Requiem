@@ -42,7 +42,7 @@ public abstract class EntityMixin {
     public abstract float getYaw();
 
     // Overridden in MobEntityMixin
-    @WrapOperation(method = {"isLogicalSideForUpdatingMovement", "getControlledVehicle"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getPrimaryPassenger()Lnet/minecraft/entity/LivingEntity;"))
+    @WrapOperation(method = {"isLogicalSideForUpdatingMovement", "getControllingVehicle"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getControllingPassenger()Lnet/minecraft/entity/LivingEntity;"))
     protected @Nullable LivingEntity requiem$enablePossessionRiding(Entity instance, Operation<LivingEntity> original) {
         return original.call(instance);
     }

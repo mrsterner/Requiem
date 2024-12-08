@@ -46,19 +46,25 @@ public final class RequiemParticleTypes {
     public static final SimpleParticleType ATTRITION = FabricParticleTypes.simple(false);
     public static final SimpleParticleType ATTUNED = FabricParticleTypes.simple(false);
     public static final SimpleParticleType CURE = FabricParticleTypes.simple(false);
+    /*
     public static final ParticleType<RequiemEntityParticleEffect> ENTITY_DUST = new ParticleType<>(false, RequiemEntityParticleEffect.PARAMETERS_FACTORY) {
         @Override
         public Codec<RequiemEntityParticleEffect> getCodec() {
             return RequiemEntityParticleEffect.codec(this);
         }
     };
+
+     */
     public static final SimpleParticleType GHOST = FabricParticleTypes.simple(true);
+    /*
     public static final ParticleType<WispTrailParticleEffect> SOUL_TRAIL = new ParticleType<>(true, WispTrailParticleEffect.PARAMETERS_FACTORY) {
         @Override
         public Codec<WispTrailParticleEffect> getCodec() {
             return WispTrailParticleEffect.CODEC;
         }
     };
+
+     */
     public static final SimpleParticleType OBELISK_SOUL = FabricParticleTypes.simple(false);
     public static final SimpleParticleType PENANCE = FabricParticleTypes.simple(false);
 
@@ -66,9 +72,9 @@ public final class RequiemParticleTypes {
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("attrition"), ATTRITION);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("attuned"), ATTUNED);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("cure"), CURE);
-        Registry.register(Registries.PARTICLE_TYPE, Requiem.id("entity_dust"), ENTITY_DUST);
+        //Registry.register(Registries.PARTICLE_TYPE, Requiem.id("entity_dust"), ENTITY_DUST);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("ghost"), GHOST);
-        Registry.register(Registries.PARTICLE_TYPE, Requiem.id("soul_trail"), SOUL_TRAIL);
+        //Registry.register(Registries.PARTICLE_TYPE, Requiem.id("soul_trail"), SOUL_TRAIL);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("obelisk_soul"), OBELISK_SOUL);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("penance"), PENANCE);
     }

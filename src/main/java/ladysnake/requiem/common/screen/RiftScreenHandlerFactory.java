@@ -64,7 +64,7 @@ public final class RiftScreenHandlerFactory implements ExtendedScreenHandlerFact
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new RiftScreenHandler(RequiemScreenHandlers.RIFT_SCREEN_HANDLER, syncId, source, this.useCheck, player.getComponent(RiftTracker.KEY).fetchKnownObelisks());
+        return null;//TODO new RiftScreenHandler(RequiemScreenHandlers.RIFT_SCREEN_HANDLER, syncId, source, this.useCheck, player.getComponent(RiftTracker.KEY).fetchKnownObelisks());
     }
 
     @Override

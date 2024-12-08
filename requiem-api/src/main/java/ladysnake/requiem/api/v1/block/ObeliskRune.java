@@ -35,7 +35,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.EXPERIMENTAL)
 public interface ObeliskRune {
-    BlockApiLookup<ObeliskRune, Void> LOOKUP = BlockApiLookup.get(new Identifier("requiem", "obelisk_rune"), ObeliskRune.class, Void.class);
+    BlockApiLookup<ObeliskRune, Void> LOOKUP = BlockApiLookup.get(Identifier.of("requiem", "obelisk_rune"), ObeliskRune.class, Void.class);
 
     /**
      * @return the maximum amount of levels of runes of this type that can be active on a single obelisk

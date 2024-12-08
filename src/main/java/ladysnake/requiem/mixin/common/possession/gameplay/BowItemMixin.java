@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
@@ -61,12 +62,12 @@ public abstract class BowItemMixin extends RangedWeaponItem {
         super(settings);
     }
 
-    @ModifyVariable(method = "onStoppedUsing", ordinal = 0, at = @At("STORE"))
+    @ModifyExpressionValue(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getProjectileType(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;"))
     private boolean giveSkeletonInfinity(boolean infinity, ItemStack item, World world, LivingEntity user, int charge) {
+        //TODO move to playerEntity getProjectile
         MobEntity possessed = PossessionComponent.getHost(user);
-        NbtCompound tag = item.getNbt();
-        if (tag != null && tag.getBoolean(VanillaRequiemPlugin.INFINITY_SHOT_TAG)) {
-            tag.remove(VanillaRequiemPlugin.INFINITY_SHOT_TAG);
+        if (item.contains(VanillaRequiemPlugin.INFINITY_SHOT_TAG) && Boolean.TRUE.equals(item.get(VanillaRequiemPlugin.INFINITY_SHOT_TAG))) {
+            item.remove(VanillaRequiemPlugin.INFINITY_SHOT_TAG);
             return true;
         } else if (possessed instanceof AbstractSkeletonEntity) {
             return infinity || world.getRandom().nextFloat() < 0.8f;

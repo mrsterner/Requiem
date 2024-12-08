@@ -34,10 +34,7 @@
  */
 package ladysnake.requiem.core.ability;
 
-import com.demonwav.mcdev.annotations.CheckEnv;
-import com.demonwav.mcdev.annotations.Env;
 import com.google.common.base.Preconditions;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityConfig;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
@@ -51,6 +48,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -83,30 +81,25 @@ public class PlayerAbilityController implements MobAbilityController, AutoSynced
         this.setDelegate(MobAbilityController.get(possessed));
     }
 
-    @CheckEnv(Env.CLIENT)
     public AbilityType[] getSortedAbilities() {
         return sortedAbilities;
     }
 
-    @CheckEnv(Env.CLIENT)
     public void tryTarget(AbilityType type, Entity target) {
         if (this.canTarget(type, target)) {
             targets.put(type, new WeakReference<>(target));
         }
     }
 
-    @CheckEnv(Env.CLIENT)
     public void clearTargets() {
         this.targets.clear();
     }
 
-    @CheckEnv(Env.CLIENT)
     public @Nullable Entity getTargetedEntity(AbilityType type) {
         WeakReference<Entity> ref = targets.get(type);
         return ref == null ? null : ref.get();
     }
 
-    @CheckEnv(Env.CLIENT)
     public ActionResult useDirectAbility(AbilityType type) {
         Entity targetedEntity = this.getTargetedEntity(type);
 

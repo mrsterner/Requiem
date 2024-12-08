@@ -42,7 +42,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.registry.Registries;
-
+/*
 public class RequiemEntityParticleEffect implements ParticleEffect {
     public static final Factory<RequiemEntityParticleEffect> PARAMETERS_FACTORY = new Factory<>() {
         @Override
@@ -99,4 +99,9 @@ public class RequiemEntityParticleEffect implements ParticleEffect {
     public int getSourceEntityId() {
         return sourceEntityId;
     }
+
+
 }
+
+
+ */

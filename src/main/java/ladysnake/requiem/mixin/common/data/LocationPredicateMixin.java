@@ -58,6 +58,7 @@ public abstract class LocationPredicateMixin {
     /**
      * For... reasons, we run tests on clients with a null server world. This does not work well with {@code LocationPredicate}s, so we skip all the world checks.
      */
+    /* TODO
     @Inject(method = "test", at = @At(value = "FIELD", target = "Lnet/minecraft/predicate/entity/LocationPredicate;dimension:Lnet/minecraft/registry/RegistryKey;", ordinal = 0), cancellable = true)
     private void cancelTestOnClients(@Nullable ServerWorld world, double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
         if (world == null) cir.setReturnValue(true);
@@ -91,4 +92,6 @@ public abstract class LocationPredicateMixin {
             = TagKey.createCodec(RegistryKeys.BIOME).parse(JsonOps.INSTANCE, biomeCategory)
             .getOrThrow(false, msg -> Requiem.LOGGER.error("[Requiem] Failed to parse biome_tag extension to LocationPredicate: {}", msg));
     }
+
+     */
 }

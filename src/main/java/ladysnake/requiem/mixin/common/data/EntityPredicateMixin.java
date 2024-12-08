@@ -73,7 +73,7 @@ public abstract class EntityPredicateMixin {
             }
         }
     }
-
+/* TODO
     // ANY return is actually an early return in the bytecode
     @Inject(method = "method_8913", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void fromJson(JsonElement json, CallbackInfoReturnable<EntityPredicate> cir, JsonObject entityData) {
@@ -86,4 +86,6 @@ public abstract class EntityPredicateMixin {
         }
         ret.requiem$healthFraction = NumberRange.DoubleRange.fromJson(entityData.get("requiem:health_fraction"));
     }
+
+ */
 }

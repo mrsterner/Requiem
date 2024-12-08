@@ -55,7 +55,7 @@ public abstract class CrossbowItemMixin extends RangedWeaponItem {
     public CrossbowItemMixin(Settings settings) {
         super(settings);
     }
-
+/* TODO
     @ModifyVariable(method = "loadProjectiles", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
     private static boolean giveCrossbowInfinity(boolean creative, LivingEntity shooter, ItemStack crossbow) {
         if (!creative) {
@@ -65,7 +65,7 @@ public abstract class CrossbowItemMixin extends RangedWeaponItem {
             // - if we tell the client to *not* eat an arrow but the server does, the server will update back => everything's fine
             // so we default to telling the client that we are never using arrows and letting the server do the work
             if (possessed instanceof CrossbowUser && (shooter.getRandom().nextFloat() < 0.5f || shooter.getWorld().isClient)) {
-                crossbow.getOrCreateNbt().putBoolean(VanillaRequiemPlugin.INFINITY_SHOT_TAG, true);
+                crossbow.set(VanillaRequiemPlugin.INFINITY_SHOT_TAG, true);
                 return true;
             }
         }
@@ -83,4 +83,6 @@ public abstract class CrossbowItemMixin extends RangedWeaponItem {
         }
         return creative;
     }
+
+ */
 }

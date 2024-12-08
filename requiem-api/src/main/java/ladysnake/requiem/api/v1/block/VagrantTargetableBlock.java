@@ -30,7 +30,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.EXPERIMENTAL, since = "2.0.0")
 public interface VagrantTargetableBlock {
-    BlockApiLookup<VagrantTargetableBlock, Void> LOOKUP = BlockApiLookup.get(new Identifier("requiem", "remnant_focusable"), VagrantTargetableBlock.class, Void.class);
+    BlockApiLookup<VagrantTargetableBlock, Void> LOOKUP = BlockApiLookup.get(Identifier.of("requiem", "remnant_focusable"), VagrantTargetableBlock.class, Void.class);
 
     Identifier getTargetedIcon();
 

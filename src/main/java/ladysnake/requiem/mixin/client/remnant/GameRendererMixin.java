@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.mixin.client.remnant;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.block.VagrantTargetableBlock;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import ladysnake.requiem.api.v1.event.minecraft.client.ApplyCameraTransformsCallback;
@@ -48,11 +49,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -86,7 +89,7 @@ public abstract class GameRendererMixin implements GameRendererAccessor {
         return m_vziixqvb(tested);
     }
 
-    @Inject(method = "updateTargetedEntity", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;targetedEntity:Lnet/minecraft/entity/Entity;", ordinal = 0))
+    @Inject(method = "updateCrosshairTarget", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;targetedEntity:Lnet/minecraft/entity/Entity;", ordinal = 0))
     private void updateTargetedEntity(float tickDelta, CallbackInfo ci) {
         UpdateTargetedEntityCallback.EVENT.invoker().updateTargetedEntity(tickDelta);
     }
@@ -109,9 +112,9 @@ public abstract class GameRendererMixin implements GameRendererAccessor {
         }
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V"))
-    private void applyCameraTransformations(float tickDelta, long nanoTime, MatrixStack matrices, CallbackInfo ci) {
-        ApplyCameraTransformsCallback.EVENT.invoker().applyCameraTransformations(this.camera, matrices, tickDelta);
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;mul(Lorg/joml/Matrix4fc;)Lorg/joml/Matrix4f;"))
+    private void applyCameraTransformations(RenderTickCounter tickCounter, CallbackInfo ci, @Local MatrixStack matrices) {
+        ApplyCameraTransformsCallback.EVENT.invoker().applyCameraTransformations(this.camera, matrices, tickCounter.getTickDelta(false));
     }
 
     @Inject(method = "shouldRenderBlockOutline", at = @At("HEAD"), cancellable = true)
@@ -147,7 +150,7 @@ public abstract class GameRendererMixin implements GameRendererAccessor {
         slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V")),
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/Perspective;isFirstPerson()Z")
     )
-    private void forceOverlayWhenIntangible(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo ci) {
+    private void forceOverlayWhenIntangible(Camera camera, float tickDelta, Matrix4f matrix4f, CallbackInfo ci, @Local MatrixStack matrices) {
         assert this.client.player != null;
         if (!this.client.options.getPerspective().isFirstPerson() && MovementAlterer.get(this.client.player).isNoClipping()) {
             InGameOverlayRenderer.renderOverlays(this.client, matrices);

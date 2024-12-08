@@ -39,10 +39,6 @@ public final class MoreCodecs {
         json -> new Dynamic<>(JsonOps.INSTANCE, json)
     );
 
-    public static Codec<Text> text(Codec<JsonElement> jsonCodec) {
-        return jsonCodec.xmap(Text.Serializer::fromJson, Text.Serializer::toJsonTree);
-    }
-
     public static <E extends Enum<E>> Codec<E> enumeration(Class<E> enumType) {
         return Codec.STRING.xmap(s -> Enum.valueOf(enumType, s.toUpperCase(Locale.ROOT)), Enum::name);
     }

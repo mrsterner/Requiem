@@ -52,7 +52,7 @@ public abstract class GameRendererMixin {
         at = @At(
             value = "FIELD",
             opcode = Opcodes.PUTFIELD,
-            target = "Lnet/minecraft/client/render/GameRenderer;shader:Lnet/minecraft/client/gl/ShaderEffect;",
+            target = "Lnet/minecraft/client/render/GameRenderer;postProcessor:Lnet/minecraft/client/gl/PostEffectProcessor;",
             shift = At.Shift.AFTER
         ),
         require = 0,       // optibad compatibility (yes this is a relic now, no I won't do more efforts)

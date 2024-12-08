@@ -22,6 +22,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.ladysnake.vaquero.impl.mixin.PossessionRidingHelper;
@@ -35,8 +36,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends EntityMixin {
-    @Shadow
-    public abstract double getAttributeValue(EntityAttribute attribute);
 
     @Shadow
     public float bodyYaw;
@@ -44,7 +43,10 @@ public abstract class LivingEntityMixin extends EntityMixin {
     @Shadow
     public float headYaw;
 
-    @WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getPrimaryPassenger()Lnet/minecraft/entity/LivingEntity;"))
+    @Shadow
+    public abstract double getAttributeValue(RegistryEntry<EntityAttribute> attribute);
+
+    @WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getControllingPassenger()Lnet/minecraft/entity/LivingEntity;"))
     private @Nullable LivingEntity possessionRiding(LivingEntity instance, Operation<LivingEntity> original) {
         return PossessionRidingHelper.getRider(instance, original.call(instance));
     }
@@ -76,7 +78,7 @@ public abstract class LivingEntityMixin extends EntityMixin {
     }
 
     @SuppressWarnings("CancellableInjectionUsage")
-    @Inject(method = "getRiddenSpeed", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getSaddledSpeed", at = @At("RETURN"), cancellable = true)
     protected void requiem$getRiddenSpeed(PlayerEntity player, CallbackInfoReturnable<Float> cir) {
         // Overridden in MobEntityMixin
     }

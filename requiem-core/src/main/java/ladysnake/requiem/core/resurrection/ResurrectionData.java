@@ -39,6 +39,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.event.requiem.ConsumableItemEvents;
 import ladysnake.requiem.core.RequiemCoreNetworking;
 import net.minecraft.entity.Entity;
@@ -51,6 +53,9 @@ import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryCodecs;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -66,6 +71,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -79,129 +87,104 @@ public record ResurrectionData(
     EntityType<?> entityType,
     @Nullable NbtCompound entityNbt
 ) implements Comparable<ResurrectionData> {
+
     private static final Map<String, BiPredicate<ServerPlayerEntity, DamageSource>> SPECIAL_PREDICATES = Util.make(new HashMap<>(), m -> {
-        m.put("head_in_sand", (lazarus, killingBlow) -> {
-            float eyeHeight = lazarus.getEyeHeight(lazarus.getPose());
-            return lazarus.getWorld().getBlockState(lazarus.getBlockPos().add(0, (int) eyeHeight, 0)).isIn(BlockTags.SAND);
+        m.put("head_in_sand", (player, killingBlow) -> {
+            float eyeHeight = player.getEyeHeight(player.getPose());
+            return player.getWorld().getBlockState(player.getBlockPos().add(0, (int) eyeHeight, 0)).isIn(BlockTags.SAND);
         });
     });
 
-    public boolean matches(ServerPlayerEntity player, @Nullable LivingEntity possessed, DamageSource killingBlow) {
-        if (killingBlow.isTypeIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return false;
-
-        if (damageSourcePredicate != null && !damageSourcePredicate.test(player, killingBlow)) {
-            return false;
-        }
-
-        if (playerPredicate != null && !playerPredicate.test(player, player)) {
-            return false;
-        }
-
-        if (possessedPredicate == null && possessed != null || possessedPredicate != null && !possessedPredicate.test(player, possessed)) {
-            return false;
-        }
-
-        for (BiPredicate<ServerPlayerEntity, DamageSource> specialCondition : specials) {
-            if (!specialCondition.test(player, killingBlow)) {
-                return false;
+    public static final Codec<ResurrectionData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        Codec.INT.optionalFieldOf("priority", 100).forGetter(ResurrectionData::priority),
+        EntityPredicate.CODEC.optionalFieldOf("player").forGetter(data -> Optional.ofNullable(data.playerPredicate())),
+        EntityPredicate.CODEC.optionalFieldOf("possessed").forGetter(data -> Optional.ofNullable(data.possessedPredicate())),
+        DamageSourcePredicate.CODEC.optionalFieldOf("killing_blow").forGetter(data -> Optional.ofNullable(data.damageSourcePredicate())),
+        ItemPredicate.CODEC.optionalFieldOf("consumable").forGetter(data -> Optional.ofNullable(data.consumable())),
+        Codec.STRING.listOf().optionalFieldOf("special_conditions", List.of()).xmap(
+            conditions -> {
+                List<BiPredicate<ServerPlayerEntity, DamageSource>> mappedConditions = new ArrayList<>();
+                for (String condition : conditions) {
+                    BiPredicate<ServerPlayerEntity, DamageSource> predicate = SPECIAL_PREDICATES.get(condition);
+                    if (predicate != null) {
+                        mappedConditions.add(predicate);
+                    }
+                }
+                return mappedConditions;
+            },
+            specials -> {
+                List<String> keys = new ArrayList<>();
+                for (Map.Entry<String, BiPredicate<ServerPlayerEntity, DamageSource>> entry : SPECIAL_PREDICATES.entrySet()) {
+                    if (specials.contains(entry.getValue())) {
+                        keys.add(entry.getKey());
+                    }
+                }
+                return keys;
             }
-        }
+        ).forGetter(ResurrectionData::specials),
+        Registries.ENTITY_TYPE.getCodec().fieldOf("entity").forGetter(ResurrectionData::entityType),
+        NbtCompound.CODEC.optionalFieldOf("nbt").forGetter(data -> Optional.ofNullable(data.entityNbt()))
+    ).apply(instance, (priority, playerPredicate, possessedPredicate, killingBlow, consumable, specials, entityType, nbt) ->
+        new ResurrectionData(priority,
+            playerPredicate.orElse(null),
+            possessedPredicate.orElse(null),
+            killingBlow.orElse(null),
+            consumable.orElse(null),
+            specials,
+            entityType,
+            nbt.orElse(null))
+    ));
 
-        return this.tryUseConsumable(player, possessed == null ? player : possessed);
+    public boolean matches(ServerPlayerEntity player, @Nullable LivingEntity possessed, DamageSource killingBlow) {
+        if (killingBlow.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return false;
+        if (damageSourcePredicate != null && !damageSourcePredicate.test(player, killingBlow)) return false;
+        if (playerPredicate != null && !playerPredicate.test(player, player)) return false;
+        if (possessedPredicate != null && (possessed == null || !possessedPredicate.test(player, possessed))) return false;
+        for (var specialCondition : specials) {
+            if (!specialCondition.test(player, killingBlow)) return false;
+        }
+        return tryUseConsumable(player, possessed == null ? player : possessed);
+    }
+
+    @Nullable
+    public Entity createEntity(World world) {
+        Entity entity = entityType.create(world);
+        if (entity != null && entityNbt != null) {
+            entity.readNbt(entityNbt.copy());
+        }
+        return entity;
+    }
+
+    @Override
+    public int compareTo(@NotNull ResurrectionData o) {
+        return Integer.compare(o.priority, this.priority);
     }
 
     private boolean tryUseConsumable(ServerPlayerEntity player, LivingEntity user) {
-        if (this.consumable == null) return true;
+        if (consumable == null) return true;
 
         Predicate<ItemStack> action = new Predicate<>() {
             private boolean found;
 
             @Override
             public boolean test(ItemStack stack) {
-                if (this.found) throw new IllegalStateException("Consumable already found!");
-
-                if (ResurrectionData.this.consumable.test(stack)) {
+                if (found) throw new IllegalStateException("Consumable already found!");
+                if (consumable.test(stack)) {
                     ItemStack totem = stack.copy();
                     stack.decrement(1);
                     player.incrementStat(Stats.USED.getOrCreateStat(totem.getItem()));
-                    // can't pass the actual user to the packet since it's dying
                     RequiemCoreNetworking.sendItemConsumptionPacket(player, totem);
-                    this.found = true;
+                    found = true;
                     return true;
                 }
-
                 return false;
             }
         };
 
         for (Hand hand : Hand.values()) {
-            if (action.test(user.getStackInHand(hand))) {
-                return true;
-            }
+            if (action.test(user.getStackInHand(hand))) return true;
         }
 
         return ConsumableItemEvents.SEARCH.invoker().findConsumables(player, action);
-    }
-
-    @Nullable
-    public Entity createEntity(World world) {
-        Entity e = this.entityType.create(world);
-        if (e != null && this.entityNbt != null) {
-            e.readNbt(this.entityNbt.copy());   // some entities may keep direct references to the passed NBT
-        }
-        return e;
-    }
-
-    public static ResurrectionData deserialize(JsonObject json) {
-        int schemaVersion = JsonHelper.getInt(json, "schema_version", 0);
-        if (schemaVersion != 0) {
-            throw new JsonParseException(String.format("Invalid/Unsupported schema version \"%s\" was found", schemaVersion));
-        }
-
-        // TODO make a V1 format with `player` and `possessed` merged into `entity` and `entity` renamed to `result`
-        return deserializeV0(json);
-    }
-
-    @NotNull
-    private static ResurrectionData deserializeV0(JsonObject json) {
-        int priority = JsonHelper.getInt(json, "priority", 100);
-        @Nullable DamageSourcePredicate damagePredicate = DamageSourcePredicate.fromJson(json.get("killing_blow"));
-        @Nullable EntityPredicate playerPredicate = json.has("player") ? EntityPredicate.method_8913(json.get("player")) : null;
-        @Nullable EntityPredicate possessedPredicate = json.has("possessed") ? EntityPredicate.method_8913(json.get("possessed")) : null;
-        @Nullable ItemPredicate consumable = json.has("consumable") ? ItemPredicate.fromJson(json.get("consumable")) : null;
-
-        if (damagePredicate == null && playerPredicate == null && possessedPredicate == null && consumable == null) {
-            throw new JsonParseException("Resurrection data must have at least one of a damage source predicate (\"killingBlow\"), or an entity predicate (\"player\" and/or \"possessed\"), or an item predicate (\"consumable\")");
-        }
-
-        List<BiPredicate<ServerPlayerEntity, DamageSource>> specials = new ArrayList<>();
-        JsonArray specialConditions = JsonHelper.getArray(json, "special_conditions", null);
-
-        if (specialConditions != null) {
-            for (JsonElement specialCondition : specialConditions) {
-                specials.add(SPECIAL_PREDICATES.get(JsonHelper.asString(specialCondition, "special condition")));
-            }
-        }
-
-        JsonObject entityData = JsonHelper.getObject(json, "entity");
-        String typeId = JsonHelper.getString(entityData, "type");
-        EntityType<?> type = EntityType.get(typeId).orElseThrow(() -> new JsonParseException("Invalid entity id " + typeId));
-        @Nullable NbtCompound nbt;
-        if (entityData.has("nbt")) {
-            try {
-                nbt = StringNbtReader.parse(JsonHelper.getString(entityData, "nbt"));
-            } catch (CommandSyntaxException e) {
-                throw new JsonParseException("Failed to read resurrection entity NBT: " + e.getMessage());
-            }
-        } else {
-            nbt = null;
-        }
-
-        return new ResurrectionData(priority, playerPredicate, possessedPredicate, damagePredicate, consumable, specials, type, nbt);
-    }
-
-    @Override
-    public int compareTo(@NotNull ResurrectionData o) {
-        return o.priority - this.priority;
     }
 }

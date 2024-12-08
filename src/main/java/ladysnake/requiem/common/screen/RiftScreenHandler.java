@@ -41,6 +41,9 @@ import ladysnake.requiem.common.block.obelisk.RiftRunestoneBlock;
 import ladysnake.requiem.common.entity.effect.AttritionStatusEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -59,7 +62,7 @@ public class RiftScreenHandler extends ScreenHandler {
     private final Set<ObeliskDescriptor> obelisks;
 
     public RiftScreenHandler(int syncId, ObeliskDescriptor source, Set<ObeliskDescriptor> obeliskPositions) {
-        this(RequiemScreenHandlers.RIFT_SCREEN_HANDLER, syncId, source, p -> true, obeliskPositions);
+        this(null/*RequiemScreenHandlers.RIFT_SCREEN_HANDLER*/, syncId, source, p -> true, obeliskPositions);
     }
 
     public RiftScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, ObeliskDescriptor source, Predicate<PlayerEntity> canBeUsedBy, Set<ObeliskDescriptor> obeliskPositions) {

@@ -34,12 +34,12 @@
  */
 package ladysnake.requiem.common.entity.effect;
 
-import com.demonwav.mcdev.annotations.CheckEnv;
-import com.demonwav.mcdev.annotations.Env;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.client.RequiemClient;
 import ladysnake.requiem.common.network.RequiemNetworking;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -78,7 +78,7 @@ public final class PenanceComponent implements ServerTickingComponent, ClientTic
         return this.timeWithPenance >= PENANCE_WARNING_TIME;
     }
 
-    @CheckEnv(Env.CLIENT)
+    @Environment(EnvType.CLIENT)
     public float getOverlayStrength(float tickDelta) {
         return MathHelper.lerp(tickDelta, this.lastPenanceStrength, this.nextPenanceStrength);
     }
@@ -171,7 +171,7 @@ public final class PenanceComponent implements ServerTickingComponent, ClientTic
         byte op = buf.readByte();
         switch (op) {
             case DATA_SYNC -> this.timeWithPenance = buf.readVarInt();
-            case FX_SYNC -> RequiemClient.instance().fxRenderer().playEtherealPulseAnimation(PENANCE_FLASH_INTENSITY, RequiemStatusEffects.PENANCE.getColor());
+            case FX_SYNC -> RequiemClient.instance().fxRenderer().playEtherealPulseAnimation(PENANCE_FLASH_INTENSITY, RequiemStatusEffects.PENANCE.value().getColor());
         }
     }
 

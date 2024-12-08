@@ -40,7 +40,7 @@ import java.util.function.Function;
 public final class RecordType<T> {
     @SuppressWarnings("unchecked")
     public static final SimpleRegistry<RecordType<?>> REGISTRY =
-        FabricRegistryBuilder.createSimple((Class<RecordType<?>>) (Class<?>) RecordType.class, new Identifier("requiem", "record_types")).buildAndRegister();
+        FabricRegistryBuilder.createSimple((Class<RecordType<?>>) (Class<?>) RecordType.class, Identifier.of("requiem", "record_types")).buildAndRegister();
 
     private final Identifier id;
     private final Codec<T> codec;

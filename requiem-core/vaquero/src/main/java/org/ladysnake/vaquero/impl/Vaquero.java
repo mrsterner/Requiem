@@ -17,24 +17,23 @@
  */
 package org.ladysnake.vaquero.impl;
 
+import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import org.ladysnake.vaquero.api.ExternalJumpingMount;
 import org.ladysnake.vaquero.api.events.JumpingMountEvents;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 public final class Vaquero implements ModInitializer {
     public static Identifier id(String path) {
-        return new Identifier("vaquero", path);
+        return Identifier.of("vaquero", path);
     }
 
     @Override
-    public void onInitialize(ModContainer mod) {
+    public void onInitialize() {
         JumpingMountEvents.FIND_ENTITY_JUMP.register(ExternalJumpingMount.KEY::getNullable);
         JumpingMountEvents.FIND_PLAYER_JUMP.register(player -> {
-            Entity controlledVehicle = player.getControlledVehicle();
+            Entity controlledVehicle = player.getControllingVehicle();
             return controlledVehicle instanceof LivingEntity living ? JumpingMountEvents.FIND_ENTITY_JUMP.invoker().findJumpingMount(living) : null;
         });
     }

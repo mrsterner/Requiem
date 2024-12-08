@@ -42,7 +42,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.registry.Registries;
-
+/*
 public record WispTrailParticleEffect(float red, float green, float blue, float redEvolution, float greenEvolution,
                                       float blueEvolution) implements ParticleEffect {
     public static final Codec<WispTrailParticleEffect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -97,3 +97,5 @@ public record WispTrailParticleEffect(float red, float green, float blue, float 
         return RequiemParticleTypes.SOUL_TRAIL;
     }
 }
+
+ */

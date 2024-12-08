@@ -67,9 +67,6 @@ public abstract class PossessorLivingEntityMixin extends PossessorEntityMixin {
     @Shadow
     public abstract void setSprinting(boolean sprinting);
 
-    @Invoker("getAttributeInstance")
-    public abstract @Nullable EntityAttributeInstance requiem$getAttributeInstance(EntityAttribute attribute);
-
     @ModifyArg(method = "swimUpward", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;add(DDD)Lnet/minecraft/util/math/Vec3d;"), index = 1)
     private double updateSwimVelocity(double upwardsVelocity) {
         MovementAlterer alterer = MovementAlterer.KEY.getNullable(this);
@@ -78,7 +75,7 @@ public abstract class PossessorLivingEntityMixin extends PossessorEntityMixin {
         }
         return upwardsVelocity;
     }
-
+/*
     @ModifyVariable(
         method = "travel",
         slice = @Slice(
@@ -94,13 +91,14 @@ public abstract class PossessorLivingEntityMixin extends PossessorEntityMixin {
         ),
         ordinal = 0
     )
-    private float fixUnderwaterVelocity(float /* float_4 */ speedAmount) {
+    private float fixUnderwaterVelocity(float speedAmount) {
         MovementAlterer alterer = MovementAlterer.KEY.getNullable(this);
         if (alterer != null) {
             return alterer.getSwimmingAcceleration(speedAmount);
         }
         return speedAmount;
     }
+    */
     @Inject(method = "isFallFlying", at = @At("RETURN"), cancellable = true)
     protected void requiem$canFly(CallbackInfoReturnable<Boolean> cir) {
         //Overidden
@@ -159,7 +157,7 @@ public abstract class PossessorLivingEntityMixin extends PossessorEntityMixin {
     }
 
     private boolean requiem$wasSprinting;
-    @Inject(method = "getFallingInFluidAdjustedMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSprinting()Z"))
+    @Inject(method = "applyFluidMovingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSprinting()Z"))
     private void preventWaterHovering(double d, boolean bl, Vec3d vec3d, CallbackInfoReturnable<Vec3d> cir) {
         if (this.requiem$isSprinting() && MovementAlterer.KEY.maybeGet(this).map(MovementAlterer::disablesSwimming).orElse(false)) {
             requiem$wasSprinting = true;
@@ -167,7 +165,7 @@ public abstract class PossessorLivingEntityMixin extends PossessorEntityMixin {
         }
     }
 
-    @Inject(method = "getFallingInFluidAdjustedMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSprinting()Z", shift = At.Shift.AFTER))
+    @Inject(method = "applyFluidMovingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSprinting()Z", shift = At.Shift.AFTER))
     private void restoreSprint(double d, boolean bl, Vec3d vec3d, CallbackInfoReturnable<Vec3d> cir) {
         if (requiem$wasSprinting) {
             requiem$wasSprinting = false;

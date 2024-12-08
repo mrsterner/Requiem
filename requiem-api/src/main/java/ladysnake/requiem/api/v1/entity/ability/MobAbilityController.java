@@ -54,9 +54,7 @@ public interface MobAbilityController extends TransientComponent, CommonTickingC
 
     void writeSyncPacket(PacketByteBuf packetByteBuf, ServerPlayerEntity serverPlayerEntity);
 
-    @CheckEnv(Env.CLIENT)
     void applySyncPacket(PacketByteBuf buf);
 
-    @CheckEnv(Env.CLIENT)
     Identifier getIconTexture(AbilityType type);
 }

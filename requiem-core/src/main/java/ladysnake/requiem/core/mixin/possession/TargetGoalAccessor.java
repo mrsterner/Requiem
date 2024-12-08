@@ -35,11 +35,11 @@
 package ladysnake.requiem.core.mixin.possession;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.TargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(TargetGoal.class)
+@Mixin(ActiveTargetGoal.class)
 public interface TargetGoalAccessor {
     @Accessor
     Class<? extends LivingEntity> getTargetClass();

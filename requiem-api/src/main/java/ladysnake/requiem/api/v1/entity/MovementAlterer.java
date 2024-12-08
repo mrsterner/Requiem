@@ -45,7 +45,6 @@ public interface MovementAlterer extends CommonTickingComponent, AutoSyncedCompo
     /**
      * Called at the end of {@code ClientPlayerEntity#tickNewAi()}
      */
-    @CheckEnv(Env.CLIENT)
     void alterControls();
 
     /**

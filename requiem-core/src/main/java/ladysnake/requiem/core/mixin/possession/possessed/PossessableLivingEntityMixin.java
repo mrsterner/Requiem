@@ -49,7 +49,6 @@ import ladysnake.requiem.core.resurrection.ResurrectionDataLoader;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LimbData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.ai.brain.Brain;
@@ -62,6 +61,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.Difficulty;
@@ -94,16 +94,12 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
     @Nullable
     private UUID requiem$previousPossessorUuid;
 
-    @Shadow
-    public abstract EntityAttributeInstance getAttributeInstance(EntityAttribute entityAttribute_1);
 
     @Shadow public abstract float getHealth();
 
     @Shadow public abstract float getAbsorptionAmount();
 
     @Shadow public float headYaw;
-    @Mutable
-    @Shadow @Final public LimbData limbData;
 
     @Shadow
     public float bodyYaw;
@@ -117,6 +113,10 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
 
     @Shadow
     public abstract Brain<?> getBrain();
+
+    @Shadow
+    @org.jetbrains.annotations.Nullable
+    public abstract EntityAttributeInstance getAttributeInstance(RegistryEntry<EntityAttribute> attribute);
 
     @Nullable
     private PlayerEntity possessor;

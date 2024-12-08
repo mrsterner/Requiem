@@ -34,8 +34,6 @@
  */
 package ladysnake.requiem.core.movement;
 
-import com.demonwav.mcdev.annotations.CheckEnv;
-import com.demonwav.mcdev.annotations.Env;
 import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
@@ -66,8 +64,10 @@ import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,8 +83,8 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
     public static final byte DEFAULT_SYNC = 0;
     public static final byte SYNC_NO_CLIP = 1;
     public static final byte SYNC_PHASING_PARTICLES = 2;
-    public static final UUID SPEED_MODIFIER_UUID = UUID.fromString("3708adba-b37f-413f-8b66-62e05330c7da");
-    public static final UUID WATER_SPEED_MODIFIER_UUID = UUID.fromString("0e602dd1-2672-4179-852e-2a26d1579df4");
+    public static final Identifier SPEED_MODIFIER_UUID = RequiemCore.id("3708adba-b37f-413f-8b66-62e05330c7da");
+    public static final Identifier WATER_SPEED_MODIFIER_UUID = RequiemCore.id("0e602dd1-2672-4179-852e-2a26d1579df4");
     public static final int TICKS_BEFORE_PHASING = 60;
 
     @Nullable
@@ -121,17 +121,16 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
         }
     }
 
-    private void updateSpeedModifier(LivingEntity currentBody, UUID speedModifierUuid, ToDoubleFunction<MovementConfig> property, boolean shouldApplyModifier) {
-        EntityAttributeInstance speedAttribute = currentBody.getAttributes().createIfAbsent(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+    private void updateSpeedModifier(LivingEntity currentBody, Identifier speedModifierUuid, ToDoubleFunction<MovementConfig> property, boolean shouldApplyModifier) {
+        EntityAttributeInstance speedAttribute = currentBody.getAttributes().getCustomInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         if (speedAttribute != null) {
             speedAttribute.removeModifier(speedModifierUuid);
             if (shouldApplyModifier && config != null && property.applyAsDouble(config) != 1.0) {
-                speedAttribute.addTemporaryModifier(new EntityAttributeModifier(speedModifierUuid, "Requiem altered movement", property.applyAsDouble(config), EntityAttributeModifier.Operation.MULTIPLY_BASE));
+                speedAttribute.addTemporaryModifier(new EntityAttributeModifier(speedModifierUuid, property.applyAsDouble(config), EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
             }
         }
     }
 
-    @CheckEnv(Env.CLIENT)
     @Override
     public void alterControls() {
         if (this.config != null
@@ -321,7 +320,7 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         this.writeToPacket(buf, DEFAULT_SYNC);
     }
 
@@ -333,7 +332,7 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         byte syncOp = buf.readByte();
         if (syncOp == SYNC_NO_CLIP) {
             this.noClipping = buf.readBoolean();
@@ -343,7 +342,6 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
         }
     }
 
-    @CheckEnv(Env.CLIENT)
     protected abstract void playPhaseEffects();
 
     private Vec3d applyGravity(Vec3d velocity, float addedGravity) {
@@ -366,7 +364,7 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
     private static boolean shouldActuallySinkInWater(MovementConfig config, Entity entity) {
         if (config.shouldSinkInWater() == TriState.DEFAULT) {
             EntityType<?> type = entity.getType();
-            return type.isIn(RequiemCoreEntityTags.GOLEMS) || entity instanceof LivingEntity && ((LivingEntity) entity).isUndead();
+            return type.isIn(RequiemCoreEntityTags.GOLEMS) || entity instanceof LivingEntity && ((LivingEntity) entity).hasInvertedHealingAndHarm();
         }
         return config.shouldSinkInWater().get();
     }

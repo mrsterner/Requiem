@@ -39,7 +39,7 @@ import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.screen.RiftScreenHandler;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -71,17 +71,17 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return true;
     }
 
     @Override
-    protected void drawBackground(GuiGraphics graphics, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext graphics, float delta, int mouseX, int mouseY) {
         // Actually nothing
     }
 
     @Override
-    protected void drawForeground(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void drawForeground(DrawContext graphics, int mouseX, int mouseY) {
         if (this.projectionViewMatrix != null) {
             int obeliskV = 0;
             int sourceObeliskV = 16;
@@ -176,7 +176,7 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
                         formatting = Formatting.GRAY;
                     }
 
-                    lines.add(obelisk.resolveName().copy().formatted(formatting));
+                    lines.add(Text.of(obelisk.resolveName()).copy().formatted(formatting));
                 }
 
                 graphics.drawTooltip(this.textRenderer, lines, centerX, centerY);
@@ -193,8 +193,8 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(graphics);
+    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        this.renderBackground(graphics, mouseX, mouseY, delta);
         super.render(graphics, mouseX, mouseY, delta);
     }
 
@@ -242,11 +242,15 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+/* TODO
+
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         this.selectionIndex = Math.floorMod((int) (this.getSelectionIndex() - amount), this.overlappingSelections);
         return true;
     }
+
+ */
 
     @Override
     protected void init() {
@@ -261,6 +265,6 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
 
     public void updateMatrices(MatrixStack modelViewStack, Matrix4f projectionMatrix) {
         this.projectionViewMatrix = new Matrix4f(projectionMatrix);
-        this.projectionViewMatrix.mul(modelViewStack.peek().getModel());
+        this.projectionViewMatrix.mul(modelViewStack.peek().getPositionMatrix());
     }
 }

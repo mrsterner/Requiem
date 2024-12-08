@@ -18,11 +18,9 @@
 package org.ladysnake.vaquero.impl.jump;
 
 import com.google.common.base.Preconditions;
-import dev.onyxstudios.cca.api.v3.component.TransientComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.sound.SoundCategory;
@@ -30,6 +28,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.TransientComponent;
 import org.ladysnake.vaquero.api.ExternalJumpingMount;
 import org.ladysnake.vaquero.impl.mixin.common.EntityAccessor;
 

@@ -51,6 +51,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -119,9 +120,9 @@ public abstract class PossessorServerPlayerEntityMixin extends PlayerEntity impl
         this.requiem_possessedEntityTag = serializedSecondLife;
     }
 
-    @Inject(method = "moveToWorld", at = @At(value = "HEAD", shift = At.Shift.AFTER))
+    @Inject(method = "teleportTo", at = @At(value = "HEAD", shift = At.Shift.AFTER))
     // Let cancelling mixins do their job
-    private void changePossessedDimension(ServerWorld destination, CallbackInfoReturnable<Entity> info) {
+    private void changePossessedDimension(TeleportTarget teleportTarget, CallbackInfoReturnable<Entity> cir) {
         prepareDimensionChange();
     }
 
@@ -140,8 +141,8 @@ public abstract class PossessorServerPlayerEntityMixin extends PlayerEntity impl
         }
     }
 
-    @Inject(method = "moveToWorld", at = @At(value = "RETURN", ordinal = 1))
-    private void onTeleportDone(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
+    @Inject(method = "teleportTo", at = @At(value = "RETURN", ordinal = 1))
+    private void onTeleportDone(TeleportTarget teleportTarget, CallbackInfoReturnable<Entity> cir) {
         spawnResurrectionEntity();
     }
 

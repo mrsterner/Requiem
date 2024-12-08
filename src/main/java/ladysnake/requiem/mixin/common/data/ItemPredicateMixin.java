@@ -55,11 +55,13 @@ public abstract class ItemPredicateMixin {
             cir.setReturnValue(false);
         }
     }
-
+/* TODO
     // ANY return is actually an early return in the bytecode
     @Inject(method = "fromJson", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void fromJson(JsonElement el, CallbackInfoReturnable<ItemPredicate> cir, JsonObject itemData) {
         //noinspection ConstantConditions
         ((ItemPredicateMixin) (Object) cir.getReturnValue()).requiem$foodComponent = FoodComponentPredicate.fromJson(itemData.get("requiem:food"));
     }
+
+ */
 }

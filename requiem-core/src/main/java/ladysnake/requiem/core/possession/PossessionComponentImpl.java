@@ -34,8 +34,6 @@
  */
 package ladysnake.requiem.core.possession;
 
-import com.demonwav.mcdev.annotations.CheckEnv;
-import com.demonwav.mcdev.annotations.Env;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import ladysnake.requiem.api.v1.entity.MovementRegistry;
 import ladysnake.requiem.api.v1.event.requiem.PossessionEvents;
@@ -64,16 +62,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.EntityAttributesUpdateS2CPacket;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.packet.s2c.play.EntityAttributesS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.random.RandomGenerator;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import java.util.UUID;
+import java.util.random.RandomGenerator;
 
 public final class PossessionComponentImpl implements PossessionComponent {
     private final PlayerEntity player;
@@ -126,7 +126,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
                 InventoryHelper.transferEquipment(host, player);
             }
             for (StatusEffectInstance effect : player.getStatusEffects()) {
-                if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType())) {
+                if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType().value())) {
                     host.addStatusEffect(new StatusEffectInstance(effect));
                 }
             }
@@ -199,7 +199,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
                 // move soulbound effects from the host to the soul
                 // careful with ConcurrentModificationException
                 for (StatusEffectInstance effect : host.getStatusEffects().toArray(new StatusEffectInstance[0])) {
-                    if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType())) {
+                    if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType().value())) {
                         host.removeStatusEffect(effect.getEffectType());
                         player.addStatusEffect(new StatusEffectInstance(effect));
                     }
@@ -221,19 +221,19 @@ public final class PossessionComponentImpl implements PossessionComponent {
             ((LivingEntityAccessor) player).requiem$invokeDropInventory();
         }
         player.clearStatusEffects();
-        if (player.getWorld().getProperties().isHardcore()) {
+        if (player.getWorld().getLevelProperties().isHardcore()) {
             AttritionFocus.KEY.get(possessed).applyAttrition(player);
         }
         PossessionEvents.DISSOCIATION_CLEANUP.invoker().cleanUpAfterDissociation(player, possessed);
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeInt(this.possessed == null ? -1 : this.possessed.getId());
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         int possessedId = buf.readInt();
         Entity entity = player.getWorld().getEntityById(possessedId);
 
@@ -246,7 +246,6 @@ public final class PossessionComponentImpl implements PossessionComponent {
         }
     }
 
-    @CheckEnv(Env.CLIENT)
     private static void updateCamera(PlayerEntity player, Entity cameraEntity) {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.options.getPerspective().isFirstPerson() && player == mc.player) {
@@ -286,7 +285,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
         this.player.setAir(this.player.getMaxAir());
         PossessionComponent.KEY.sync(this.player);
         PossessionStateChangeCallback.EVENT.invoker().onPossessionStateChange(this.player, null);
-        RequiemCoreNetworking.sendToAllTrackingIncluding(player, new EntityAttributesUpdateS2CPacket(player.getId(), player.getAttributes().getAttributesToSend()));
+        RequiemCoreNetworking.sendToAllTrackingIncluding(player, new EntityAttributesS2CPacket(player.getId(), player.getAttributes().getAttributesToSend()));
     }
 
     /**
@@ -309,7 +308,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
     @Override
     public void startCuring() {
         if (!this.player.getWorld().isClient) {
-            RandomGenerator rand = this.player.getRandom();
+            var rand = this.player.getRandom();
             this.conversionTimer = rand.nextInt(1201) + 2400;  // a bit shorter than villager
             this.player.removeStatusEffect(StatusEffects.WEAKNESS);
             this.player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, conversionTimer, 0));
@@ -346,12 +345,12 @@ public final class PossessionComponentImpl implements PossessionComponent {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         tag.putInt("conversionTimer", this.conversionTimer);
     }
 
     @Override
-    public void readFromNbt(NbtCompound compound) {
+    public void readFromNbt(NbtCompound compound, RegistryWrapper.WrapperLookup wrapperLookup) {
         this.conversionTimer = compound.getInt("conversionTimer");
     }
 

@@ -47,13 +47,14 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
 
 public final class GhostParticle extends AbstractSlowingParticle {
     private static boolean renderedGhostParticle;
     private static final VertexConsumerProvider.Immediate ghostVertexConsumers = VertexConsumerProvider.immediate(
-        new BufferBuilder(RequiemRenderPhases.GHOST_PARTICLE_LAYER.getExpectedBufferSize())
+        new BufferAllocator(RequiemRenderPhases.GHOST_PARTICLE_LAYER.getExpectedBufferSize())
     );
 
     public static void draw(float tickDelta) {

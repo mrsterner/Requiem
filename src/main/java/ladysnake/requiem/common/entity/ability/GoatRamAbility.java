@@ -107,7 +107,7 @@ public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase
             owner,
             cooldownFactory,
             ramSoundFactory,
-            ramImpactTask.getSoundFactory(),
+            ramImpactTask.getImpactSoundFactory(),
             ramImpactTask.getStrengthMultiplierFactory(),
             ramImpactTask.getTargetPredicate(),
             speed,

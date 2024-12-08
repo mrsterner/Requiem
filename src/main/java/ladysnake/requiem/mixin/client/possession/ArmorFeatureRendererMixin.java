@@ -55,7 +55,7 @@ public abstract class ArmorFeatureRendererMixin {
         goZoom = entity == RequiemClient.instance().fxRenderer().getAnimationEntity();
     }
 
-    @ModifyArg(method = "renderArmorParts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"))
+    @ModifyArg(method = "renderArmorParts", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"))
     private RenderLayer replaceRenderLayer(RenderLayer base) {
         if (goZoom) {
             RenderLayer ret = RequiemClient.instance().fxRenderer().getZoomFx(base);

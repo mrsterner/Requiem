@@ -61,16 +61,6 @@ public class DummyMobAbilityController implements MobAbilityController {
     }
 
     @Override
-    public void readFromNbt(NbtCompound compoundTag) {
-        // NO-OP
-    }
-
-    @Override
-    public void writeToNbt(NbtCompound compoundTag) {
-        // NO-OP
-    }
-
-    @Override
     public void applySyncPacket(PacketByteBuf buf) {
         // NO-OP
     }

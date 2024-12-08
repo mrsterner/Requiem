@@ -47,7 +47,7 @@ import java.util.function.ToDoubleFunction;
 @Mixin(RamImpactTask.class)
 public interface RamImpactTaskAccessor<E extends LivingEntity> {
     @Accessor
-    Function<E, SoundEvent> getSoundFactory();
+    Function<E, SoundEvent> getImpactSoundFactory();
 
     @Accessor
     ToDoubleFunction<E> getStrengthMultiplierFactory();

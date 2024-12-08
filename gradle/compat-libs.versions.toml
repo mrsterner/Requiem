@@ -1,14 +1,14 @@
 [versions]
-aea = "1.7.4+1.20.0"
-apoli = "2.9.0"
-bumblezone = "3646901" # v4.3.1
+aea = "2.0.0+1.21.1"
+apoli = "2.11.11"
+bumblezone = "5930884" # v4.3.1
 calio = "1.11.0"
-collective = "5378112" # 7.61
-eldritchMobs = "v1.12.6"
+collective = "5840217" # 7.61
+eldritchMobs = "1.16.3"
 malum="5441759"
-origins = "1.10.0"
-pehkui = "3.7.7"
-trinkets = "3.7.2"
+origins = "1.13.0-alpha.10+mc.1.21.x"
+pehkui = "3.8.3"
+trinkets = "3.10.0"
 
 [libraries]
 apoli =         { group = "com.github.apace100",     name = "apoli", version.ref = "apoli" }

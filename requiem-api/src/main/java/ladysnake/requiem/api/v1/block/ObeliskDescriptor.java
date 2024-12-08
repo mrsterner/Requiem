@@ -31,13 +31,13 @@ import java.util.Optional;
 /**
  * @param pos the position of the structure's origin
  */
-public record ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int width, int height, Optional<Text> name) {
+public record ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int width, int height, Optional<String> name) {
     public static final Codec<ObeliskDescriptor> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         World.CODEC.fieldOf("dimension").forGetter(ObeliskDescriptor::dimension),
         BlockPos.CODEC.fieldOf("pos").forGetter(ObeliskDescriptor::pos),
         Codec.INT.optionalFieldOf("width", 1).forGetter(ObeliskDescriptor::width),
         Codec.INT.optionalFieldOf("height", 1).forGetter(ObeliskDescriptor::height),
-        MoreCodecs.text(MoreCodecs.STRING_JSON).optionalFieldOf("name").forGetter(ObeliskDescriptor::name)
+        Codec.STRING.optionalFieldOf("name").forGetter(ObeliskDescriptor::name)
     ).apply(instance, ObeliskDescriptor::new));
 
     public ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int width, int height) {
@@ -52,7 +52,7 @@ public record ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int 
         );
     }
 
-    public Text resolveName() {
-        return this.name().orElseGet(() -> Text.of(this.pos.toShortString()));
+    public String resolveName() {
+        return this.name().orElseGet(this.pos::toShortString);
     }
 }

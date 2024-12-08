@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.mixin.client.remnant;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
 import ladysnake.requiem.api.v1.event.minecraft.client.CrosshairRenderCallback;
 import ladysnake.requiem.api.v1.possession.Possessable;
@@ -42,9 +43,10 @@ import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.tag.RequiemFluidTags;
 import ladysnake.requiem.core.ability.PlayerAbilityController;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -71,17 +73,13 @@ public abstract class InGameHudMixin {
     @Final
     private MinecraftClient client;
 
-    @Shadow
-    private int scaledWidth;
-    @Shadow
-    private int scaledHeight;
 
     @Shadow
     protected abstract PlayerEntity getCameraPlayer();
 
-    @Inject(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;blendFuncSeparate(Lcom/mojang/blaze3d/platform/GlStateManager$SourceFactor;Lcom/mojang/blaze3d/platform/GlStateManager$DestFactor;Lcom/mojang/blaze3d/platform/GlStateManager$SourceFactor;Lcom/mojang/blaze3d/platform/GlStateManager$DestFactor;)V"))
-    private void colorCrosshair(GuiGraphics graphics, CallbackInfo ci) {
-        CrosshairRenderCallback.EVENT.invoker().onCrosshairRender(graphics, this.scaledWidth, this.scaledHeight);
+    @Inject(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;blendFuncSeparate(Lcom/mojang/blaze3d/platform/GlStateManager$SrcFactor;Lcom/mojang/blaze3d/platform/GlStateManager$DstFactor;Lcom/mojang/blaze3d/platform/GlStateManager$SrcFactor;Lcom/mojang/blaze3d/platform/GlStateManager$DstFactor;)V"))
+    private void colorCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        CrosshairRenderCallback.EVENT.invoker().onCrosshairRender(context);
     }
 
     @ModifyVariable(
@@ -100,61 +98,31 @@ public abstract class InGameHudMixin {
         return shouldRender;
     }
 
-    @ModifyVariable(
+    @WrapWithCondition(
         method = "renderStatusBars",
-        slice = @Slice(
-            // precise slice makes it more likely to detect errors from wrong variable index
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getArmor()I"),
-            to = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getArmor()I", shift = At.Shift.AFTER)
-        ),
-        at = @At("STORE"),
-        index = 19 // there are too many ints in this method, so we just take the variable index from the bytecode
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderArmor(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;IIII)V")
     )
-    private int preventArmorRender(int armor) {
+    private boolean preventArmorRender(DrawContext context, PlayerEntity player, int i, int j, int k, int x) {
         assert client.player != null;
 
         if (RemnantComponent.get(client.player).isIncorporeal()) {
             // Make everything that follows *invisible*
-            return 0;
+            return false;
         }
 
-        return armor;
+        return true;
     }
 
-    @ModifyVariable(
+    @WrapWithCondition(
         method = "renderStatusBars",
-        slice = @Slice(
-            // precise slice makes it more likely to detect errors from wrong variable index
-            from = @At(value = "FIELD", target = "Lnet/minecraft/entity/attribute/EntityAttributes;GENERIC_MAX_HEALTH:Lnet/minecraft/entity/attribute/EntityAttribute;"),
-            to = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAbsorptionAmount()F")
-        ),
-        at = @At(value = "STORE"),
-        index = 13 // there are too many ints in this method, so we just take the variable index from the bytecode
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHealthBar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;IIIIFIIIZ)V")
     )
-    private float preventHealthRender(float maxHealth) {
+    private boolean preventHealthRender(InGameHud instance, DrawContext context, PlayerEntity player, int x, int y, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking) {
         assert client.player != null;
         if (RemnantComponent.get(client.player).isIncorporeal()) {
-            return 0;
+            return false;
         }
-        return maxHealth;
-    }
-
-    @ModifyVariable(
-        method = "renderStatusBars",
-        // precise slice makes it more likely to detect errors from wrong variable index
-        slice = @Slice(
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAbsorptionAmount()F"),
-            to = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 2)
-        ),
-        at = @At(value = "STORE"),
-        index = 14 // there are too many ints in this method, so we just take the variable index from the bytecode
-    )
-    private int preventAbsorptionRender(int absorption) {
-        assert client.player != null;
-        if (RemnantComponent.get(client.player).isIncorporeal()) {
-            return 0;
-        }
-        return absorption;
+        return true;
     }
 
     @ModifyVariable(

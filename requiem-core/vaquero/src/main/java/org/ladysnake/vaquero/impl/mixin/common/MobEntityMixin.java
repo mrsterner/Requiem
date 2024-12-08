@@ -40,7 +40,7 @@ public abstract class MobEntityMixin extends LivingEntityMixin {
     /**
      *  Warning: this injector is very fragile, as it gets overridden in every rideable entity - redundant WrapOperations are done in important places
      */
-    @Inject(method = "getPrimaryPassenger", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getControllingPassenger", at = @At("RETURN"), cancellable = true)
     private void getPrimaryPassenger(CallbackInfoReturnable<LivingEntity> cir) {
         if (cir.getReturnValue() == null) {
             LivingEntity actualRider = PossessionRidingHelper.getRider((Entity) (Object) this, cir.getReturnValue());

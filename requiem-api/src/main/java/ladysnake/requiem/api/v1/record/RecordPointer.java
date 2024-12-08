@@ -20,7 +20,7 @@ package ladysnake.requiem.api.v1.record;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.UuidUtil;
+import net.minecraft.util.Uuids;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +29,7 @@ public record RecordPointer(UUID uuid) {
     public RecordPointer(GlobalRecord record) {
         this(record.getUuid());
     }
-    public static final Codec<RecordPointer> CODEC = UuidUtil.INT_STREAM_CODEC.xmap(RecordPointer::new, RecordPointer::uuid);
+    public static final Codec<RecordPointer> CODEC = Uuids.INT_STREAM_CODEC.xmap(RecordPointer::new, RecordPointer::uuid);
 
     public Optional<GlobalRecord> resolve(MinecraftServer server) {
         return GlobalRecordKeeper.get(server).getRecord(this.uuid());

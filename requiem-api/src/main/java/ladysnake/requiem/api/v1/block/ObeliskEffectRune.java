@@ -19,6 +19,7 @@ package ladysnake.requiem.api.v1.block;
 
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apiguardian.api.API;
 
@@ -27,7 +28,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.EXPERIMENTAL)
 public interface ObeliskEffectRune extends ObeliskRune {
-    StatusEffect getEffect();
+    RegistryEntry<StatusEffect> getEffect();
 
     @Override
     default void applyEffect(ServerPlayerEntity target, int runeLevel, int obeliskWidth) {

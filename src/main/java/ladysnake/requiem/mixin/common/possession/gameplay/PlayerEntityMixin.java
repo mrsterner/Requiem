@@ -35,6 +35,7 @@
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
+import ladysnake.requiem.common.VanillaRequiemPlugin;
 import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -59,7 +60,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         if (cir.getReturnValue().isEmpty()) {
             MobEntity host = PossessionComponent.getHost(this);
             if (host != null && host.getType().isIn(RequiemEntityTypeTags.ARROW_GENERATORS)) {
-                weapon.getOrCreateNbt().putBoolean("requiem:infinity_shot", true);
+                weapon.set(VanillaRequiemPlugin.INFINITY_SHOT_TAG, true);
                 cir.setReturnValue(new ItemStack(Items.ARROW));
             }
         }
