@@ -34,16 +34,17 @@
  */
 package ladysnake.requiem.common.gamerule;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.TransientComponent;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import ladysnake.requiem.Requiem;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.TransientComponent;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 public class RequiemSyncedGamerules implements AutoSyncedComponent, TransientComponent {
     public static final ComponentKey<RequiemSyncedGamerules> KEY = ComponentRegistry.getOrCreate(Requiem.id("synced_gamerules"), RequiemSyncedGamerules.class);
@@ -69,13 +70,13 @@ public class RequiemSyncedGamerules implements AutoSyncedComponent, TransientCom
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeBoolean(this.shouldShowPossessorNametag());
         buf.writeEnumConstant(this.getStartingRemnantType());
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         this.showPossessorNametag = buf.readBoolean();
         this.startingRemnantType = buf.readEnumConstant(StartingRemnantType.class);
     }

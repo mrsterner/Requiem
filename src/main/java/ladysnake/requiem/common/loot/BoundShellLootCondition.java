@@ -38,28 +38,36 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.record.EntityPointer;
 import ladysnake.requiem.common.RequiemRecordTypes;
 import ladysnake.requiem.common.remnant.PlayerBodyTracker;
+import net.minecraft.loot.condition.EntityPropertiesLootCondition;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.condition.LootConditionType;
+import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.provider.number.LootNumberProviderTypes;
+import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.JsonHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class BoundShellLootCondition implements LootCondition {
-    private final LootContext.EntityTarget entity;
-    private final EntityRefPredicate predicate;
+public record BoundShellLootCondition(LootContext.EntityTarget entity, EntityRefPredicate predicate) implements LootCondition {
 
-    public BoundShellLootCondition(LootContext.EntityTarget entity, EntityRefPredicate predicate) {
-        this.entity = entity;
-        this.predicate = predicate;
-    }
+    public static final MapCodec<BoundShellLootCondition> CODEC = RecordCodecBuilder.mapCodec(
+        instance -> instance.group(
+                LootContext.EntityTarget.CODEC.fieldOf("entity").forGetter(BoundShellLootCondition::entity),
+                EntityRefPredicate.CODEC.fieldOf("predicate").forGetter(BoundShellLootCondition::predicate)
+            )
+            .apply(instance, BoundShellLootCondition::new)
+    );
 
     @Override
     public LootConditionType getType() {
@@ -81,21 +89,5 @@ public class BoundShellLootCondition implements LootCondition {
             .orElse(null);
 
         return this.predicate.test(lootContext.getWorld(), lootContext.get(LootContextParameters.ORIGIN), shellPointer);
-    }
-
-    public static class Serializer implements JsonSerializer<BoundShellLootCondition> {
-        @Override
-        public void toJson(JsonObject jsonObject, BoundShellLootCondition condition, JsonSerializationContext ctx) {
-            jsonObject.add("entity", ctx.serialize(condition.entity));
-            jsonObject.add("predicate", condition.predicate.toJson());
-        }
-
-        @Override
-        public BoundShellLootCondition fromJson(JsonObject jsonObject, JsonDeserializationContext ctx) {
-            return new BoundShellLootCondition(
-                JsonHelper.deserialize(jsonObject, "entity", ctx, LootContext.EntityTarget.class),
-                EntityRefPredicate.fromJson(jsonObject.get("predicate"))
-            );
-        }
     }
 }

@@ -34,21 +34,32 @@
  */
 package ladysnake.requiem.common.enchantment;
 
+import com.sammy.malum.MalumMod;
 import ladysnake.requiem.Requiem;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryEntryLookup;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 public class RequiemEnchantments {
-    public static final Identifier HUMANITY_ID = Requiem.id("humanity");
-    public static final Enchantment HUMANITY = new HumanityEnchantment(
-        Enchantment.Rarity.RARE, EnchantmentTarget.WEAPON, new EquipmentSlot[]{EquipmentSlot.MAINHAND}
-    );
+    public static final RegistryKey<Enchantment> HUMANITY = keyOf("humanity");
+
+    static RegistryKey<Enchantment> keyOf(String id) {
+        return RegistryKey.of(RegistryKeys.ENCHANTMENT, MalumMod.malumPath(id));
+    }
+
+    public static int getEnchantmentLevel(World level, RegistryKey<Enchantment> key, ItemStack stack) {
+        RegistryEntryLookup<Enchantment> enchantmentLookup = level.getRegistryManager().createRegistryLookup().getOrThrow(RegistryKeys.ENCHANTMENT);
+        var opt = enchantmentLookup.getOptional(key);
+        return opt.map(enchantmentReference -> stack.get(DataComponentTypes.ENCHANTMENTS).getLevel(enchantmentReference)).orElse(0);
+    }
 
     public static void init() {
-        Registry.register(Registries.ENCHANTMENT, HUMANITY_ID, HUMANITY);
+
     }
 }

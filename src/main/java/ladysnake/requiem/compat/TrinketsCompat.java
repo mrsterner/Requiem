@@ -47,7 +47,7 @@ import net.minecraft.util.Util;
 import java.util.function.Supplier;
 
 public final class TrinketsCompat {
-    private static final Supplier<ComponentKey<?>> TRINKETS = Suppliers.memoize(() -> ComponentRegistry.get(new Identifier("trinkets:trinkets")));
+    private static final Supplier<ComponentKey<?>> TRINKETS = Suppliers.memoize(() -> ComponentRegistry.get(Identifier.of("trinkets:trinkets")));
 
     @CalledThroughReflection
     public static void init() {

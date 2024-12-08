@@ -35,19 +35,19 @@
 package ladysnake.requiem.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormats;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.client.RequiemClient;
-import ladysnake.satin.api.managed.ManagedFramebuffer;
-import ladysnake.satin.api.managed.ManagedShaderEffect;
-import ladysnake.satin.api.managed.ShaderEffectManager;
-import ladysnake.satin.api.util.RenderLayerHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderPhase;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import org.ladysnake.satin.api.managed.ManagedFramebuffer;
+import org.ladysnake.satin.api.managed.ManagedShaderEffect;
+import org.ladysnake.satin.api.managed.ShaderEffectManager;
+import org.ladysnake.satin.api.util.RenderLayerHelper;
 
 public final class RequiemRenderPhases extends RenderLayer {
     public static final ManagedShaderEffect GHOST_PARTICLE_SHADER = ShaderEffectManager.getInstance().manage(Requiem.id("shaders/post/ghost_particles.json"));
@@ -61,7 +61,7 @@ public final class RequiemRenderPhases extends RenderLayer {
         true,
         MultiPhaseParameters.builder()
             .texture(new Texture(SpriteAtlasTexture.PARTICLE_ATLAS_TEXTURE, false, false))
-            .shader(new Shader(GameRenderer::getParticleShader))
+            .program(new ShaderProgram(GameRenderer::getParticleProgram))
             .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
             .lightmap(RenderPhase.ENABLE_LIGHTMAP)
             .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)

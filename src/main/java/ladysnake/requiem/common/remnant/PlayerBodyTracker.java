@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.common.remnant;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.record.GlobalRecord;
 import ladysnake.requiem.api.v1.record.GlobalRecordKeeper;
@@ -45,7 +42,11 @@ import ladysnake.requiem.common.network.RequiemNetworking;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,14 +88,14 @@ public final class PlayerBodyTracker implements ServerTickingComponent {
     }
 
     @Override
-    public void writeToNbt(@Nonnull NbtCompound tag) {
+    public void writeToNbt(@Nonnull NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (this.anchorUuid != null) {
             tag.putUuid("AnchorUuid", this.anchorUuid);
         }
     }
 
     @Override
-    public void readFromNbt(@Nonnull NbtCompound tag) {
+    public void readFromNbt(@Nonnull NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (tag.containsUuid("AnchorUuid")) {
             this.anchorUuid = tag.getUuid("AnchorUuid");
         }

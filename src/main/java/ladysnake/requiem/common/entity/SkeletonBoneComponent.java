@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.common.entity;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.common.advancement.criterion.RequiemCriteria;
@@ -51,7 +48,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.ladysnake.cca.api.v3.component.Component;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 
 public final class SkeletonBoneComponent implements Component {
     public static final ComponentKey<SkeletonBoneComponent> KEY = ComponentRegistry.getOrCreate(Requiem.id("skeleton_bones"), SkeletonBoneComponent.class);
@@ -109,16 +110,17 @@ public final class SkeletonBoneComponent implements Component {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (tag.contains("replaced_bones")) {
             this.replacedBones = tag.getInt("replaced_bones");
         }
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (this.replacedBones > 0) {
             tag.putInt("replaced_bones", this.replacedBones);
         }
     }
+
 }

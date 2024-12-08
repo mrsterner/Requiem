@@ -17,10 +17,6 @@
  */
 package org.ladysnake.vaquero.api;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
-import dev.onyxstudios.cca.api.v3.component.ComponentFactory;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import net.minecraft.entity.JumpingMount;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -30,6 +26,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.apiguardian.api.API;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.Component;
+import org.ladysnake.cca.api.v3.component.ComponentFactory;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.vaquero.impl.jump.DummyJumpingMount;
 
 import java.util.function.Function;
@@ -41,7 +41,7 @@ import java.util.function.Function;
  */
 @API(status = API.Status.EXPERIMENTAL, since = "2.0.0")
 public interface ExternalJumpingMount extends JumpingMount, Component {
-    ComponentKey<ExternalJumpingMount> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "charged_jump"), ExternalJumpingMount.class);
+    ComponentKey<ExternalJumpingMount> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "charged_jump"), ExternalJumpingMount.class);
 
     static <E extends LivingEntity> ComponentFactory<E, ExternalJumpingMount> simple(float baseJumpStrength, SoundEvent stepSound, Function<LivingEntity, @Nullable PlayerEntity> getPlayer) {
         return e -> new DummyJumpingMount(e, baseJumpStrength, stepSound, getPlayer);

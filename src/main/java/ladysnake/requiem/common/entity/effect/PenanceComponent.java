@@ -36,11 +36,6 @@ package ladysnake.requiem.common.entity.effect;
 
 import com.demonwav.mcdev.annotations.CheckEnv;
 import com.demonwav.mcdev.annotations.Env;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.ClientTickingComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.client.RequiemClient;
@@ -49,9 +44,16 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
+import org.ladysnake.cca.api.v3.component.tick.ClientTickingComponent;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 public final class PenanceComponent implements ServerTickingComponent, ClientTickingComponent, AutoSyncedComponent {
     public static final ComponentKey<PenanceComponent> KEY = ComponentRegistry.getOrCreate(Requiem.id("penance"), PenanceComponent.class);
@@ -159,17 +161,13 @@ public final class PenanceComponent implements ServerTickingComponent, ClientTic
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeByte(DATA_SYNC);
         buf.writeVarInt(this.timeWithPenance);
     }
 
-    private void writeFxPacket(PacketByteBuf buf, ServerPlayerEntity player) {
-        buf.writeByte(FX_SYNC);
-    }
-
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         byte op = buf.readByte();
         switch (op) {
             case DATA_SYNC -> this.timeWithPenance = buf.readVarInt();
@@ -177,13 +175,17 @@ public final class PenanceComponent implements ServerTickingComponent, ClientTic
         }
     }
 
+    private void writeFxPacket(PacketByteBuf buf, ServerPlayerEntity player) {
+        buf.writeByte(FX_SYNC);
+    }
+
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         this.timeWithPenance = tag.getInt("countdown");
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         tag.putInt("countdown", this.timeWithPenance);
     }
 }

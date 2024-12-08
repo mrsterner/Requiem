@@ -35,17 +35,26 @@
 package ladysnake.requiem.common.dialogue;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.remnant.DeathSuspender;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
 import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.jetbrains.annotations.Nullable;
 import org.ladysnake.blabber.DialogueAction;
+import org.ladysnake.blabber.api.DialogueActionV2;
 
-public record RemnantChoiceDialogueAction(RemnantType chosenType) implements DialogueAction {
-    public static final Codec<RemnantChoiceDialogueAction> CODEC = RequiemRegistries.REMNANT_STATES.getCodec().xmap(RemnantChoiceDialogueAction::new, RemnantChoiceDialogueAction::chosenType);
+public record RemnantChoiceDialogueAction(RemnantType chosenType) implements DialogueActionV2 {
+
+    public static final MapCodec<RemnantChoiceDialogueAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+        RequiemRegistries.REMNANT_STATES.getCodec().fieldOf("chosenType").forGetter(RemnantChoiceDialogueAction::chosenType)
+    ).apply(instance, RemnantChoiceDialogueAction::new));
+
 
     public static void makeRemnantChoice(ServerPlayerEntity player, RemnantType chosenType) {
         RemnantComponent remnantComponent = RemnantComponent.get(player);
@@ -59,10 +68,10 @@ public record RemnantChoiceDialogueAction(RemnantType chosenType) implements Dia
     }
 
     @Override
-    public void handle(ServerPlayerEntity player) {
-        makeRemnantChoice(player, chosenType);
+    public void handle(ServerPlayerEntity serverPlayerEntity, @Nullable Entity entity) {
+        makeRemnantChoice(serverPlayerEntity, chosenType);
 
-        DeathSuspender deathSuspender = DeathSuspender.get(player);
+        DeathSuspender deathSuspender = DeathSuspender.get(serverPlayerEntity);
         if (deathSuspender.isLifeTransient()) {
             deathSuspender.resumeDeath();
         }

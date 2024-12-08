@@ -69,7 +69,10 @@ import ladysnake.requiem.compat.RequiemCompatibilityManager;
 import ladysnake.requiem.core.remnant.VagrantInteractionRegistryImpl;
 import ladysnake.requiem.core.resurrection.ResurrectionDataLoader;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -114,10 +117,12 @@ public final class Requiem implements ModInitializer {
         Blabber.registerAction(id("remnant_choice"), RemnantChoiceDialogueAction.CODEC);
         CommandRegistrationCallback.EVENT.register((dispatcher, ctx, dedicated) -> RequiemCommand.register(dispatcher));
         // Quilt's ServerArgumentType.register seems to break somehow
-        ArgumentTypeInfosAccessor.callRegister(Registries.COMMAND_ARGUMENT_TYPE, "requiem:remnant", RemnantArgumentType.class, SingletonArgumentInfo.contextFree(RemnantArgumentType::remnantType));
-        ResourceLoader resourceLoader = ResourceLoader.get(ResourceType.SERVER_DATA);
-        resourceLoader.registerReloader(ResurrectionDataLoader.INSTANCE);
-        resourceLoader.addReloaderOrdering(ResourceReloaderKeys.Server.TAGS, ResurrectionDataLoader.INSTANCE.getQuiltId());
+        ArgumentTypeRegistry.registerArgumentType(
+            id("remnant"),
+            RemnantArgumentType.class,
+            ConstantArgumentSerializer.of(RemnantArgumentType::remnantType)
+            );
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new ResurrectionDataLoader());
         SyncServerResourcesCallback.EVENT.register(player -> RequiemNetworking.sendTo(player, RequiemNetworking.createDataSyncMessage(SubDataManagerHelper.getServerHelper())));
         ApiInitializer.setPluginCallback(this::registerPlugin);
         RequiemCompatibilityManager.init();

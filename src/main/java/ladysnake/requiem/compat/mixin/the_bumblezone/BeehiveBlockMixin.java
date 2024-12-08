@@ -43,9 +43,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -56,14 +58,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BeehiveBlock.class)
 public abstract class BeehiveBlockMixin {
-    @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
-    private void onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+
+    @Inject(method = "onUseWithItem", at = @At("HEAD"), cancellable = true)
+    private void onUse(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ItemActionResult> cir) {
         try {
             MobEntity possessedEntity = PossessionComponent.getHost(player);
             if (player instanceof ServerPlayerEntity spe && possessedEntity instanceof BeeEntity && player.getWorld().getRegistryKey() != BumblezoneCompat.BZ_WORLD_KEY) {
                 BumblezoneAPI.triggerEnderPearlAdvancement(spe);
                 BumblezoneAPI.queueEntityForTeleportingToBumblezone(player);
-                cir.setReturnValue(ActionResult.SUCCESS);
+                cir.setReturnValue(ItemActionResult.SUCCESS);
             }
         } catch (Throwable t) {
             Requiem.LOGGER.error("[Requiem] Bumblezone compatibility feature failed: ", t);

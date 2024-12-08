@@ -59,7 +59,7 @@ public abstract class LecternScreenMixin extends BookScreen {
         ItemStack book = this.handler.getBookItem();
         Item bookItem = book.getItem();
         if (bookItem instanceof OpusDemoniumItem) {
-            this.setPageProvider(new WritableBookContents(book));
+            this.setPageProvider(BookScreen.Contents.create(book));
             ci.cancel();
         } else if (bookItem instanceof DemonSoulVesselItem) {
             this.setPageProvider(new WrittenOpusContents((DemonSoulVesselItem) bookItem));

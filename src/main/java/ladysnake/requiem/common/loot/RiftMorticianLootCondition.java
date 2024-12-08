@@ -38,22 +38,24 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.common.entity.MorticianEntity;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.condition.LootConditionType;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.JsonSerializer;
 
 import java.util.Set;
 
-public class RiftMorticianLootCondition implements LootCondition {
-    private final LootContext.EntityTarget entity;
+public record RiftMorticianLootCondition(
+    LootContext.EntityTarget entity
+) implements LootCondition {
 
-    public RiftMorticianLootCondition(LootContext.EntityTarget entity) {
-        this.entity = entity;
-    }
+    public static final MapCodec<RiftMorticianLootCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+        LootContext.EntityTarget.CODEC.fieldOf("entity").forGetter(RiftMorticianLootCondition::entity)
+    ).apply(instance, RiftMorticianLootCondition::new));
 
     @Override
     public LootConditionType getType() {
@@ -68,19 +70,5 @@ public class RiftMorticianLootCondition implements LootCondition {
     @Override
     public boolean test(LootContext lootContext) {
         return lootContext.get(this.entity.getParameter()) instanceof MorticianEntity mortician && mortician.isObeliskProjection();
-    }
-
-    public static class Serializer implements JsonSerializer<RiftMorticianLootCondition> {
-        @Override
-        public void toJson(JsonObject jsonObject, RiftMorticianLootCondition condition, JsonSerializationContext ctx) {
-            jsonObject.add("entity", ctx.serialize(condition.entity));
-        }
-
-        @Override
-        public RiftMorticianLootCondition fromJson(JsonObject jsonObject, JsonDeserializationContext ctx) {
-            return new RiftMorticianLootCondition(
-                JsonHelper.deserialize(jsonObject, "entity", ctx, LootContext.EntityTarget.class)
-            );
-        }
     }
 }

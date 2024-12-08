@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.core.entity;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import ladysnake.requiem.core.RequiemCore;
@@ -48,8 +45,13 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import java.util.Map;
 import java.util.Objects;
@@ -107,12 +109,12 @@ public class EntityAiToggle implements AutoSyncedComponent {
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeBoolean(this.disabled);
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         this.disabled = buf.readBoolean();
     }
 
@@ -121,7 +123,7 @@ public class EntityAiToggle implements AutoSyncedComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         tag.getList("inhibitors", NbtElement.STRING_TYPE)
             .stream()
             .map(NbtElement::asString)
@@ -132,7 +134,7 @@ public class EntityAiToggle implements AutoSyncedComponent {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         tag.put("inhibitors", this.aiInhibitors.object2BooleanEntrySet().stream()
             .filter(Object2BooleanMap.Entry::getBooleanValue)
             .map(Map.Entry::getKey)

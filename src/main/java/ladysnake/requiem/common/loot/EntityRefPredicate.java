@@ -37,8 +37,11 @@ package ladysnake.requiem.common.loot;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.record.EntityPointer;
 import net.minecraft.entity.Entity;
+import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.DistancePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LocationPredicate;
@@ -46,60 +49,48 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
-
-public record EntityRefPredicate(DistancePredicate distance, LocationPredicate location, EntityPredicate entity) {
-    public static final EntityRefPredicate ANY = new EntityRefPredicate(
-        DistancePredicate.ANY,
-        LocationPredicate.ANY,
-        EntityPredicate.ANY
+public record EntityRefPredicate(
+    DistancePredicate distance,
+    LocationPredicate location,
+    EntityPredicate entity
+) {
+    public static final Codec<EntityRefPredicate> CODEC = RecordCodecBuilder.create(
+        instance -> instance.group(
+                DistancePredicate.CODEC.optionalFieldOf("distance", new DistancePredicate(
+                    NumberRange.DoubleRange.ANY, NumberRange.DoubleRange.ANY, NumberRange.DoubleRange.ANY,
+                    NumberRange.DoubleRange.ANY, NumberRange.DoubleRange.ANY
+                )).forGetter(EntityRefPredicate::distance),
+                LocationPredicate.CODEC.optionalFieldOf("location", new LocationPredicate.Builder().build()).forGetter(EntityRefPredicate::location),
+                EntityPredicate.CODEC.optionalFieldOf("entity", EntityPredicate.Builder.create().build()).forGetter(EntityRefPredicate::entity)
+            )
+            .apply(instance, EntityRefPredicate::new)
     );
 
     public boolean test(ServerWorld world, @Nullable Vec3d origin, @Nullable EntityPointer entityPointer) {
-        if (this == ANY) {
-            return true;
-        } else if (entityPointer == null) {
+        if (entityPointer == null) {
             return false;
-        } else {
-            Vec3d location = entityPointer.pos();
+        }
 
-            if (origin == null) {
-                if (this.distance != DistancePredicate.ANY) {
-                    return false;
-                }
-            } else if (!this.distance.test(origin.getX(), origin.getY(), origin.getZ(), location.x, location.y, location.z)) {
+        Vec3d location = entityPointer.pos();
+        if (origin == null) {
+            if (distance != null && !distance.equals(new DistancePredicate(
+                NumberRange.DoubleRange.ANY, NumberRange.DoubleRange.ANY, NumberRange.DoubleRange.ANY,
+                NumberRange.DoubleRange.ANY, NumberRange.DoubleRange.ANY
+            ))) {
                 return false;
             }
-
-            if (!this.location.test(world, location.x, location.y, location.z)) {
-                return false;
-            }
-
-            @Nullable Entity entity = entityPointer.resolve(world.getServer()).orElse(null);
-            return this.entity.test(world, origin, entity);
+        } else if (!distance.test(origin.getX(), origin.getY(), origin.getZ(), location.x, location.y, location.z)) {
+            return false;
         }
-    }
 
-    public JsonElement toJson() {
-        if (this == ANY) {
-            return JsonNull.INSTANCE;
-        } else {
-            JsonObject json = new JsonObject();
-            json.add("distance", this.distance.toJson());
-            json.add("location", this.location.toJson());
-            json.add("entity", this.entity.toJson());
-            return json;
+        /*TODO
+        if (!location.(world, location.x, location.y, location.z)) {
+            return false;
         }
-    }
 
-    public static EntityRefPredicate fromJson(@Nullable JsonElement json) {
-        if (json == null || json.isJsonNull()) {
-            return ANY;
-        } else {
-            JsonObject jsonObject = JsonHelper.asObject(json, "entity_ref");
-            DistancePredicate distance = DistancePredicate.fromJson(jsonObject.get("distance"));
-            LocationPredicate location = LocationPredicate.fromJson(jsonObject.get("location"));
-            EntityPredicate entity = EntityPredicate.method_8913(jsonObject.get("entity"));
-            return new EntityRefPredicate(distance, location, entity);
-        }
+         */
+
+        @Nullable Entity entity = entityPointer.resolve(world.getServer()).orElse(null);
+        return this.entity.test(world, origin, entity);
     }
 }

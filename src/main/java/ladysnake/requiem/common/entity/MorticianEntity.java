@@ -99,6 +99,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
+import net.minecraft.village.TradedItem;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
@@ -113,15 +114,16 @@ import java.util.UUID;
 public class MorticianEntity extends MerchantEntity implements Angerable {
     public static final int MAX_LINK_DISTANCE = 20;
     public static final TradeOffers.Factory[] TRADES = new TradeOffers.Factory[]{
-        (entity, random) -> new RemnantTradeOffer(
-            new TradeOffer(new ItemStack(Items.GOLD_INGOT, 32), new ItemStack(Items.NETHERITE_INGOT), new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL), 1, 1, 0.05F),
-            new TradeOffer(new ItemStack(RequiemItems.EMPTY_SOUL_VESSEL), new ItemStack(Items.NETHERITE_INGOT, 1), new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL), 1, 1, 0.05F), true),
-        (entity, random) -> new TradeOffer(new ItemStack(RequiemItems.SHATTERED_SOUL_VESSEL), new ItemStack(Items.GOLD_INGOT), new ItemStack(RequiemItems.EMPTY_SOUL_VESSEL), 10, 1, 0.05F),
-        (entity, random) -> new TradeOffer(EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(RequiemEnchantments.HUMANITY, 1)), new ItemStack(Items.GOLD_INGOT, 20), EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(RequiemEnchantments.HUMANITY, 2)), 5, 1, 0.05F),
-        (entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(entity.getWorld().getDimension().ultraWarm() ? EntityType.PIGLIN : EntityType.VILLAGER), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_EMANCIPATION), 10, 1, 0.05F),
-        (entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.AXOLOTL), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_RECLAMATION), 10, 1, 0.05F),
-        (entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.GHAST), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_ATTRITION), 10, 1, 0.05F),
-        (entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.PILLAGER), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_PENANCE), 10, 1, 0.05F)
+        //TODO
+        //(entity, random) -> new RemnantTradeOffer(
+        //    new TradeOffer(new ItemStack(Items.GOLD_INGOT, 32), new ItemStack(Items.NETHERITE_INGOT), new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL), 1, 1, 0.05F),
+        //    new TradeOffer(new ItemStack(RequiemItems.EMPTY_SOUL_VESSEL), new ItemStack(Items.NETHERITE_INGOT, 1), new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL), 1, 1, 0.05F), true),
+        //(entity, random) -> new TradeOffer(new ItemStack(RequiemItems.SHATTERED_SOUL_VESSEL), new ItemStack(Items.GOLD_INGOT), new ItemStack(RequiemItems.EMPTY_SOUL_VESSEL), 10, 1, 0.05F),
+        //(entity, random) -> new TradeOffer(EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(RequiemEnchantments.HUMANITY, 1)), new ItemStack(Items.GOLD_INGOT, 20), EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(RequiemEnchantments.HUMANITY, 2)), 5, 1, 0.05F),
+        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(entity.getWorld().getDimension().ultraWarm() ? EntityType.PIGLIN : EntityType.VILLAGER), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_EMANCIPATION), 10, 1, 0.05F),
+        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.AXOLOTL), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_RECLAMATION), 10, 1, 0.05F),
+        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.GHAST), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_ATTRITION), 10, 1, 0.05F),
+        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.PILLAGER), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_PENANCE), 10, 1, 0.05F)
     };
     private static final UniformIntProvider ANGER_TIME_RANGE = TimeHelper.betweenSeconds(20, 39);
     public static final TrackedData<Boolean> OBELISK_PROJECTION = DataTracker.registerData(MorticianEntity.class, TrackedDataHandlerRegistry.BOOLEAN);

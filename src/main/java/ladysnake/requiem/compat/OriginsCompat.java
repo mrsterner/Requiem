@@ -59,12 +59,12 @@ import ladysnake.requiem.api.v1.remnant.RemnantType;
 import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.common.gamerule.RequiemSyncedGamerules;
 import ladysnake.requiem.common.gamerule.StartingRemnantType;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 
 import java.util.Collections;
 import java.util.List;
@@ -108,8 +108,8 @@ public final class OriginsCompat {
         ComponentRegistry.getOrCreate(Requiem.id("apoli_power_holder"), ((Class<ComponentDataHolder<PowerHolderComponent>>) (Class<?>) ComponentDataHolder.class));
 
     public static final Identifier SOUL_TYPE_LAYER_ID = Requiem.id("soul_type");
-    public static final Identifier ORIGIN_MANAGER_RESOURCE_ID = new Identifier("origins", "origins");
-    public static final Identifier ORIGIN_LAYERS_RESOURCE_ID = new Identifier("origins", "origin_layers");
+    public static final Identifier ORIGIN_MANAGER_RESOURCE_ID =  Identifier.of("origins", "origins");
+    public static final Identifier ORIGIN_LAYERS_RESOURCE_ID = Identifier.of("origins", "origin_layers");
     public static final Identifier VAGRANT_ORIGIN_ID = Requiem.id("vagrant");
 
     private static void applyVagrantOrigin(PlayerEntity player) {
@@ -151,7 +151,8 @@ public final class OriginsCompat {
             }
         });
         // Fix for Requiem#571, ensure layers are loaded after origins, ensuring in turn that origins are loaded during the callback
-        ResourceLoader.get(ResourceType.SERVER_DATA).addReloaderOrdering(ORIGIN_MANAGER_RESOURCE_ID, ORIGIN_LAYERS_RESOURCE_ID);
+        //ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener();
+        //TODO ResourceLoader.get(ResourceType.SERVER_DATA).addReloaderOrdering(ORIGIN_MANAGER_RESOURCE_ID, ORIGIN_LAYERS_RESOURCE_ID);
         OriginDataLoadedCallback.EVENT.register(client -> OriginRegistry.get(VAGRANT_ORIGIN_ID).setSpecial());
         RequiemCompatibilityManager.registerShellDataCallbacks(OriginsCompat.ORIGIN_HOLDER_KEY);
         RequiemCompatibilityManager.registerShellDataCallbacks(OriginsCompat.APOLI_HOLDER_KEY);

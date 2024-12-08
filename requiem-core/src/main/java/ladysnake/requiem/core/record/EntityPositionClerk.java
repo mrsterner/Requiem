@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.core.record;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
 import ladysnake.requiem.api.v1.event.minecraft.MobConversionCallback;
 import ladysnake.requiem.api.v1.event.requiem.EntityRecordUpdateCallback;
 import ladysnake.requiem.api.v1.record.EntityPointer;
@@ -48,8 +45,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryWrapper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -152,7 +153,7 @@ public final class EntityPositionClerk implements ServerTickingComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (tag.containsUuid("record")) {
             this.recordKeeper.getRecord(tag.getUuid("record")).ifPresent(this::linkWith);
         } else if (tag.getType("refs") == NbtElement.LIST_TYPE) {
@@ -167,7 +168,7 @@ public final class EntityPositionClerk implements ServerTickingComponent {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (this.recordId != null) {
             tag.putUuid("record", this.recordId);
         }

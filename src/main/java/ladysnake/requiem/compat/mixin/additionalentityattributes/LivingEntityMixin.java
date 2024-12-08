@@ -58,7 +58,7 @@ public abstract class LivingEntityMixin extends Entity {
         MobEntity host = PossessionComponent.getHost(this);
         if (host != null) {
             // Fixes the attribute being way higher than it should be for the possessing player
-            Objects.requireNonNull(host.getAttributeInstance(AdditionalEntityAttributes.WATER_SPEED)).setBaseValue(original);
+            //TODO Objects.requireNonNull(host.getAttributeInstance(AdditionalEntityAttributes.WATER_SPEED)).setBaseValue(original);
         }
         return original;
     }

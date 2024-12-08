@@ -17,13 +17,13 @@
  */
 package ladysnake.requiem.api.v1.record;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.CommonTickingComponent;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  * (To be reimplemented if needed)
  */
 public interface GlobalRecordKeeper extends CommonTickingComponent {
-    ComponentKey<GlobalRecordKeeper> KEY = ComponentRegistry.getOrCreate(new Identifier("requiem", "global_record_keeper"), GlobalRecordKeeper.class);
+    ComponentKey<GlobalRecordKeeper> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "global_record_keeper"), GlobalRecordKeeper.class);
 
     static GlobalRecordKeeper get(World world) {
         return KEY.get(world.getScoreboard());

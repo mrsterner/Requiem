@@ -35,9 +35,9 @@
 package ladysnake.requiem.common.loot;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.entity.LivingEntity;
@@ -47,21 +47,21 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.predicate.entity.EntityPredicate;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.JsonSerializer;
+import net.minecraft.util.StringIdentifiable;
 
 import java.util.Set;
 
-public class HostLootCondition implements LootCondition {
-    private final CheckedEntity checkedEntity;
-    private final LootContext.EntityTarget entity;
-    private final EntityPredicate predicate;
+public record HostLootCondition(
+    CheckedEntity checkedEntity,
+    LootContext.EntityTarget entity,
+    EntityPredicate predicate
+) implements LootCondition {
 
-    public HostLootCondition(CheckedEntity checkedEntity, LootContext.EntityTarget entity, EntityPredicate predicate) {
-        this.checkedEntity = checkedEntity;
-        this.entity = entity;
-        this.predicate = predicate;
-    }
+    public static final MapCodec<HostLootCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+        CheckedEntity.CODEC.fieldOf("checkedEntity").forGetter(HostLootCondition::checkedEntity),
+        LootContext.EntityTarget.CODEC.fieldOf("entity").forGetter(HostLootCondition::entity),
+        EntityPredicate.CODEC.fieldOf("predicate").forGetter(HostLootCondition::predicate)
+    ).apply(instance, HostLootCondition::new));
 
     @Override
     public LootConditionType getType() {
@@ -85,30 +85,21 @@ public class HostLootCondition implements LootCondition {
         );
     }
 
-    public static class Serializer implements JsonSerializer<HostLootCondition> {
-        private final CheckedEntity checkedEntity;
+    public enum CheckedEntity implements StringIdentifiable {
+        HOST("host"),
+        POSSESSOR("possessor");
 
-        public Serializer(CheckedEntity checkedEntity) {
-            this.checkedEntity = checkedEntity;
+        public static final Codec<CheckedEntity> CODEC = StringIdentifiable.createCodec(CheckedEntity::values);
+
+        private final String name;
+
+        CheckedEntity(String name) {
+            this.name = name;
         }
 
         @Override
-        public void toJson(JsonObject jsonObject, HostLootCondition condition, JsonSerializationContext ctx) {
-            jsonObject.add("entity", ctx.serialize(condition.entity));
-            jsonObject.add("predicate", condition.predicate.toJson());
+        public String asString() {
+            return this.name;
         }
-
-        @Override
-        public HostLootCondition fromJson(JsonObject jsonObject, JsonDeserializationContext ctx) {
-            return new HostLootCondition(
-                checkedEntity,
-                JsonHelper.deserialize(jsonObject, "entity", ctx, LootContext.EntityTarget.class),
-                EntityPredicate.method_8913(jsonObject.get("predicate"))
-            );
-        }
-    }
-
-    public enum CheckedEntity {
-        HOST, POSSESSOR
     }
 }

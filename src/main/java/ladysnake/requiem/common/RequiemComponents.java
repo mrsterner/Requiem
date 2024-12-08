@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.common;
 
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
-import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import ladysnake.requiem.api.v1.entity.CurableEntityComponent;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
@@ -79,11 +76,15 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.FrogEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
+import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
+import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
 import org.ladysnake.cca.api.v3.scoreboard.ScoreboardComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.scoreboard.ScoreboardComponentInitializer;
 import org.ladysnake.vaquero.api.ExternalJumpingMount;
@@ -119,7 +120,7 @@ public final class RequiemComponents implements EntityComponentInitializer, Scor
         Function<LivingEntity, @Nullable PlayerEntity> getPossessor = e -> ((Possessable) e).getPossessor();
         registry.registerFor(FrogEntity.class, ExternalJumpingMount.KEY, ExternalJumpingMount.simple(0.6F, SoundEvents.ENTITY_FROG_STEP, getPossessor));
         registry.registerFor(GoatEntity.class, ExternalJumpingMount.KEY, ExternalJumpingMount.simple(1F, SoundEvents.ENTITY_GOAT_STEP, getPossessor));
-        registry.registerFor(HorseBaseEntity.class, ExternalJumpingMount.KEY, e -> new DummyHorseJumpingMount(e, SoundEvents.ENTITY_HORSE_STEP, getPossessor));
+        registry.registerFor(AbstractHorseEntity.class, ExternalJumpingMount.KEY, e -> new DummyHorseJumpingMount(e, SoundEvents.ENTITY_HORSE_STEP, getPossessor));
         registry.registerForPlayers(RiftTracker.KEY, PlayerRiftTracker::new, RespawnCopyStrategy.ALWAYS_COPY);
         registry.registerForPlayers(DroppedVesselTracker.KEY, DroppedVesselTracker::new, RespawnCopyStrategy.LOSSLESS_ONLY);
     }

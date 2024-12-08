@@ -18,7 +18,7 @@
 package org.ladysnake.vaquero.impl.jump;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import org.jetbrains.annotations.Nullable;
@@ -26,12 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 public class DummyHorseJumpingMount extends DummyJumpingMount {
-    public DummyHorseJumpingMount(HorseBaseEntity mob, SoundEvent stepSound, Function<LivingEntity, @Nullable PlayerEntity> getPlayer) {
+    public DummyHorseJumpingMount(AbstractHorseEntity mob, SoundEvent stepSound, Function<LivingEntity, @Nullable PlayerEntity> getPlayer) {
         super(mob, -1, stepSound, getPlayer);
     }
 
     @Override
     protected double getBaseJumpingStrength() {
-        return ((HorseBaseEntity) this.mob).getJumpStrength();
+        return ((AbstractHorseEntity) this.mob).getJumpBoostVelocityModifier();
     }
 }

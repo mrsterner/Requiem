@@ -139,6 +139,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.impersonate.Impersonate;
 import org.ladysnake.impersonate.Impersonator;
 import org.ladysnake.locki.DefaultInventoryNodes;
 import org.ladysnake.locki.ModdedInventoryNodes;
@@ -217,7 +218,8 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
 
             return success;
         });
-        HumanityCheckCallback.EVENT.register(possessedEntity -> EnchantmentHelper.getEquipmentLevel(RequiemEnchantments.HUMANITY, possessedEntity));
+        HumanityCheckCallback.EVENT.register(possessedEntity
+            -> RequiemEnchantments.getEnchantmentLevel(possessedEntity.getWorld(), RequiemEnchantments.HUMANITY, possessedEntity.getMainHandStack()));
         ConsumableItemEvents.POST_CONSUMED.register(RequiemCriteria.USED_TOTEM::trigger);
         SoulCaptureEvents.BEFORE_ATTEMPT.register((stealer, target, captureType) -> Optional.ofNullable(stealer.getStatusEffect(RequiemStatusEffects.ATTRITION)).map(StatusEffectInstance::getAmplifier).orElse(-1) < 3);
         SoulCaptureEvents.BEFORE_ATTEMPT.register((stealer, target, captureType) -> !SoulHolderComponent.isSoulless(target));

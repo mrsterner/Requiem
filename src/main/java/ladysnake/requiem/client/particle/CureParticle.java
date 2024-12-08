@@ -40,7 +40,7 @@ import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.MathHelper;
 
 public class CureParticle extends SpriteBillboardParticle {
@@ -117,7 +117,7 @@ public class CureParticle extends SpriteBillboardParticle {
         return u | v << 16;
     }
 
-    public static class Factory implements ParticleFactory<DefaultParticleType> {
+    public static class Factory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public Factory(SpriteProvider spriteProvider) {
@@ -125,7 +125,7 @@ public class CureParticle extends SpriteBillboardParticle {
         }
 
         @Override
-        public Particle createParticle(DefaultParticleType parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        public Particle createParticle(SimpleParticleType parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
             CureParticle particle = new CureParticle(world, x, y, z, velocityX, velocityY, velocityZ);
             particle.setSpriteForAge(spriteProvider);
             return particle;

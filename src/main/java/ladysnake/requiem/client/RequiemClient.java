@@ -66,6 +66,7 @@ import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.particle.PortalParticle;
@@ -85,7 +86,12 @@ import java.util.Map;
 
 public final class RequiemClient {
 
-    public static final Identifier CRAFTING_BUTTON_TEXTURE = Requiem.id("textures/gui/crafting_button.png");
+    public static final ButtonTextures CRAFTING_BUTTON_TEXTURE = new ButtonTextures(
+        Requiem.id("textures/gui/crafting_button.png"),
+        Requiem.id("textures/gui/crafting_button.png"),
+        Requiem.id("textures/gui/crafting_button.png"),
+        Requiem.id("textures/gui/crafting_button.png")
+    );
     public static final Identifier SOULBOUND_BACKGROUND = Requiem.id("textures/gui/soulbound_background.png");
 
     private static final RequiemClient INSTANCE = new RequiemClient();
@@ -199,7 +205,7 @@ public final class RequiemClient {
     }
 
     private void registerSprites() {
-        this.statusEffectSpriteManager().registerAltSprites(RequiemStatusEffects.ATTRITION, 4);
+        this.statusEffectSpriteManager().registerAltSprites(RequiemStatusEffects.ATTRITION.value(), 4);
     }
 
     private void registerEntityModels() {

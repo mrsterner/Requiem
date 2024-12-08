@@ -45,6 +45,7 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -67,9 +68,9 @@ public abstract class InGameHudMixin {
     private StatusEffectInstance renderedEffect;
 
     // ModifyVariable is only used to capture the local variable more easily
-    @ModifyArg(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V"))
+    @ModifyArg(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
     private Identifier customizeDrawnBackground(Identifier texture, @Local StatusEffectInstance statusEffectInstance) {
-        if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType())) {
+        if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType().value())) {
             assert this.client != null;
             //RenderSystem.setShaderTexture(0, RequiemClient.SOULBOUND_BACKGROUND);
             return RequiemClient.SOULBOUND_BACKGROUND;
@@ -89,8 +90,8 @@ public abstract class InGameHudMixin {
 
  */
 
-    @WrapOperation(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/StatusEffectSpriteManager;getSprite(Lnet/minecraft/entity/effect/StatusEffect;)Lnet/minecraft/client/texture/Sprite;"))
-    private Sprite customizeDrawnSprite(StatusEffectSpriteManager instance, StatusEffect effect, Operation<Sprite> original) {
+    @WrapOperation(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/StatusEffectSpriteManager;getSprite(Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/client/texture/Sprite;"))
+    private Sprite customizeDrawnSprite(StatusEffectSpriteManager instance, RegistryEntry<StatusEffect> effect, Operation<Sprite> original) {
         return RequiemClient.instance().statusEffectSpriteManager().substituteSprite(original.call(instance, effect), renderedEffect);
     }
 }

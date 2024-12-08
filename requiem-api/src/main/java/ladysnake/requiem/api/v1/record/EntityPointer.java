@@ -20,9 +20,10 @@ package ladysnake.requiem.api.v1.record;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.Entity;
+import net.minecraft.registry.RegistryCodecs;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.UuidUtil;
+import net.minecraft.util.Uuids;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -38,7 +39,7 @@ import java.util.UUID;
  */
 public record EntityPointer(UUID uuid, RegistryKey<World> world, Vec3d pos) {
     public static final Codec<EntityPointer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        UuidUtil.INT_STREAM_CODEC.fieldOf("uuid").forGetter(EntityPointer::uuid),
+        Uuids.INT_STREAM_CODEC.fieldOf("uuid").forGetter(EntityPointer::uuid),
         World.CODEC.fieldOf("world").forGetter(EntityPointer::world),
         RecordCodecBuilder.<Vec3d>create(instance2 -> instance2.group(
             Codec.DOUBLE.fieldOf("x").forGetter(Vec3d::getX),

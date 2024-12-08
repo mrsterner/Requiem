@@ -59,11 +59,8 @@ public final class RequiemCompatibilityManager {
     public static void init() {
         try {
             load("eldritch_mobs", EldritchMobsCompat.class);
-            load("golemsgalore", GolemsGaloreCompat.class);
-            load("bewitchment", BewitchmentCompat.class);
             load("malum", MalumCompat.class);
             load("origins", OriginsCompat.class);
-            load("snowmercy", SnowMercyCompat.class);
             load("the_bumblezone", BumblezoneCompat.class);
             load("trinkets", TrinketsCompat.class);
         } catch (Throwable t) {
@@ -89,11 +86,7 @@ public final class RequiemCompatibilityManager {
             registry.beginRegistration(PlayerShellEntity.class, OriginsCompat.APOLI_HOLDER_KEY).end(shell -> new ComponentDataHolder<>(OriginsCompat.APOLI_POWER_KEY, OriginsCompat.APOLI_HOLDER_KEY));
             registry.beginRegistration(PlayerShellEntity.class, OriginsCompat.ORIGIN_HOLDER_KEY).after(OriginsCompat.APOLI_HOLDER_KEY).end(shell -> new OriginsCompat.OriginDataHolder(OriginsCompat.ORIGIN_KEY, OriginsCompat.ORIGIN_HOLDER_KEY));
         }
-        if (QuiltLoader.isModLoaded("bewitchment")) {
-            registry.registerForPlayers(BewitchmentCompat.HOLDER_KEY, p -> new ComponentDataHolder<>(BewitchmentCompat.TRANSFORMATION_KEY, BewitchmentCompat.HOLDER_KEY), RespawnCopyStrategy.ALWAYS_COPY);
-            registry.registerFor(PlayerShellEntity.class, BewitchmentCompat.HOLDER_KEY, shell -> new ComponentDataHolder<>(BewitchmentCompat.TRANSFORMATION_KEY, BewitchmentCompat.HOLDER_KEY));
-        }
-    }
+           }
 
     static <T extends Entity> void findEntityType(Identifier id, Consumer<EntityType<T>> action) {
         @SuppressWarnings("unchecked") Optional<EntityType<T>> maybe = (Optional<EntityType<T>>) (Optional<?>) Registries.ENTITY_TYPE.getOrEmpty(id);

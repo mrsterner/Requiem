@@ -71,13 +71,10 @@ public abstract class CraftingScreenMixin extends HandledScreen<CraftingScreenHa
                 this.height / 2 - 30,
                 20,
                 18,
-                0,
-                0,
-                19,
                 RequiemClient.CRAFTING_BUTTON_TEXTURE,
                 (buttonWidget) -> {
                     assert this.client != null;
-                    this.closeScreen();
+                    this.close();
                     this.client.setScreen(new InventoryScreen(this.client.player));
                 })
             );

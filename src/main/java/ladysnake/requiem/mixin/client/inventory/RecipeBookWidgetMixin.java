@@ -36,10 +36,10 @@ package ladysnake.requiem.mixin.client.inventory;
 
 import ladysnake.requiem.Requiem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screen.recipe.book.RecipeBookResults;
-import net.minecraft.client.gui.screen.recipe.book.RecipeBookWidget;
-import net.minecraft.client.gui.screen.recipe.book.RecipeGroupButtonWidget;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
+import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import org.spongepowered.asm.mixin.Final;
@@ -54,7 +54,7 @@ import java.util.List;
 @Mixin(RecipeBookWidget.class)
 public abstract class RecipeBookWidgetMixin {
     @Shadow
-    public abstract void render(GuiGraphics graphics, int mouseX, int mouseY, float delta);
+    public abstract void render(DrawContext graphics, int mouseX, int mouseY, float delta);
 
     @Shadow
     protected MinecraftClient client;
@@ -71,7 +71,7 @@ public abstract class RecipeBookWidgetMixin {
     private static final ThreadLocal<Boolean> REQUIEM$REENTRANT = ThreadLocal.withInitial(() -> false);
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void requiem$tryDebugNpe(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void requiem$tryDebugNpe(DrawContext graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (!REQUIEM$REENTRANT.get()) {
             REQUIEM$REENTRANT.set(true);
             try {

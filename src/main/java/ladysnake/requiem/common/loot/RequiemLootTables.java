@@ -38,11 +38,14 @@ import ladysnake.requiem.Requiem;
 import ladysnake.requiem.common.enchantment.RequiemEnchantments;
 import ladysnake.requiem.mixin.common.access.LootContextTypesAccessor;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.loot.v2.LootTableSource;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.LootConditionType;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.context.LootContext;
@@ -54,7 +57,11 @@ import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public final class RequiemLootTables {
@@ -62,10 +69,11 @@ public final class RequiemLootTables {
         "requiem:possession",
         builder -> builder.require(LootContextParameters.THIS_ENTITY).require(LootContextParameters.ORIGIN)
     );
-    public static final LootConditionType BOUND_SHELL_CONDITION = new LootConditionType(new BoundShellLootCondition.Serializer());
-    public static final LootConditionType HOST_CONDITION = new LootConditionType(new HostLootCondition.Serializer(HostLootCondition.CheckedEntity.HOST));
-    public static final LootConditionType POSSESSOR_CONDITION = new LootConditionType(new HostLootCondition.Serializer(HostLootCondition.CheckedEntity.POSSESSOR));
-    public static final LootConditionType RIFT_MORTICIAN_CONDITION = new LootConditionType(new RiftMorticianLootCondition.Serializer());
+    public static final LootConditionType BOUND_SHELL_CONDITION = new LootConditionType(BoundShellLootCondition.CODEC);
+    public static final LootConditionType HOST_CONDITION = new LootConditionType(HostLootCondition.CODEC);
+    public static final LootConditionType POSSESSOR_CONDITION = new LootConditionType(HostLootCondition.CODEC);
+
+    public static final LootConditionType RIFT_MORTICIAN_CONDITION = new LootConditionType(RiftMorticianLootCondition.CODEC);
 
     private static final Pattern NETHER_CHEST = Pattern.compile("chests/.*nether.*");
     /** The chance that a nether chest gets a Humanity enchanted book */
@@ -79,9 +87,29 @@ public final class RequiemLootTables {
         Registry.register(Registries.LOOT_CONDITION_TYPE, Requiem.id("host"), HOST_CONDITION);
         Registry.register(Registries.LOOT_CONDITION_TYPE, Requiem.id("possessor"), POSSESSOR_CONDITION);
 
-        LootTableEvents.MODIFY.register((resourceManager, lootManager, identifier, fabricLootSupplierBuilder, lootTableSetter) -> {
-            if (NETHER_CHEST.matcher(identifier.getPath()).matches()) {
-                fabricLootSupplierBuilder.pool(new LootPool.Builder()
+        /*
+        public TradeOffer create(Entity entity, Random random) {
+			Optional<RegistryEntry<Enchantment>> optional = entity.getWorld()
+				.getRegistryManager()
+				.get(RegistryKeys.ENCHANTMENT)
+				.getRandomEntry(this.possibleEnchantments, random);
+			int l;
+			ItemStack itemStack;
+			if (!optional.isEmpty()) {
+				RegistryEntry<Enchantment> registryEntry = (RegistryEntry<Enchantment>)optional.get();
+				Enchantment enchantment = registryEntry.value();
+				int i = Math.max(enchantment.getMinLevel(), this.minLevel);
+				int j = Math.min(enchantment.getMaxLevel(), this.maxLevel);
+				int k = MathHelper.nextInt(random, i, j);
+				itemStack = EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(registryEntry, k));
+				l = 2 + random.nextInt(5 + k * 10) + 3 * k;
+				if (registryEntry.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE)) {
+					l *= 2;
+				}
+         */
+        LootTableEvents.MODIFY.register((lootTableRegistryKey, builder, source) -> {
+            if (NETHER_CHEST.matcher(lootTableRegistryKey.toString()).matches()) {
+                builder.pool(new LootPool.Builder()
                     .rolls(ConstantLootNumberProvider.create(1))
                     .with(ItemEntry.builder(Items.BOOK).apply(() -> new LootFunction() {
                         @Override
@@ -91,8 +119,13 @@ public final class RequiemLootTables {
 
                         @Override
                         public ItemStack apply(ItemStack itemStack, LootContext lootContext) {
+                            Optional<RegistryEntry.Reference<Enchantment>> optional = lootContext.getWorld()
+                                .getRegistryManager()
+                                .get(RegistryKeys.ENCHANTMENT)
+                                .getEntry(RequiemEnchantments.HUMANITY);
+
                             boolean betterHumanity = lootContext.getRandom().nextFloat() * (1 + lootContext.getLuck()) > BASIC_HUMANITY_CHANCE;
-                            EnchantmentLevelEntry enchantment = new EnchantmentLevelEntry(RequiemEnchantments.HUMANITY, betterHumanity ? 2 : 1);
+                            EnchantmentLevelEntry enchantment = new EnchantmentLevelEntry(optional.get(), betterHumanity ? 2 : 1);
                             return EnchantedBookItem.forEnchantment(enchantment);
                         }
                     }).build())

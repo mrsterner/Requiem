@@ -44,6 +44,8 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.ladysnake.blabber.Blabber;
 
@@ -107,17 +109,20 @@ public final class RevivingDeathSuspender implements DeathSuspender {
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity player) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         buf.writeBoolean(this.isLifeTransient());
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        this.setLifeTransient(buf.readBoolean());
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
+        this.setLifeTransient(tag.getBoolean("lifeTransient"));
+        if (tag.contains("deathCause") && this.player instanceof ServerPlayerEntity serverPlayer) {
+            this.deathCause = DamageSourceSerialization.fromTag(tag.getCompound("deathCause"), serverPlayer.getServerWorld());
+        }
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         tag.putBoolean("lifeTransient", this.lifeTransient);
         if (this.deathCause != null) {
             tag.put("deathCause", DamageSourceSerialization.toTag(this.deathCause));
@@ -125,10 +130,7 @@ public final class RevivingDeathSuspender implements DeathSuspender {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
-        this.setLifeTransient(tag.getBoolean("lifeTransient"));
-        if (tag.contains("deathCause") && this.player instanceof ServerPlayerEntity serverPlayer) {
-            this.deathCause = DamageSourceSerialization.fromTag(tag.getCompound("deathCause"), serverPlayer.getServerWorld());
-        }
+    public void applySyncPacket(RegistryByteBuf buf) {
+        this.setLifeTransient(buf.readBoolean());
     }
 }
