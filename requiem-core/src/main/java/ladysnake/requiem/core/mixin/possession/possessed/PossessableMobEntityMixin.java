@@ -156,7 +156,7 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
     private <T extends MobEntity> void possessConvertedZombie(EntityType<T> type, boolean bl, CallbackInfoReturnable<T> ci, T converted) {
         MobConversionCallback.EVENT.invoker().onMobConverted((MobEntity) (Object) this, converted);
     }
-
+/* TODO
     @Inject(method = "interact", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/MobEntity;getHoldingEntity()Lnet/minecraft/entity/Entity;"), cancellable = true)
     private void detachFromPossessedEntity(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         Entity holdingEntity = this.getHoldingEntity();
@@ -175,4 +175,6 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
         }
         return original;
     }
+
+ */
 }

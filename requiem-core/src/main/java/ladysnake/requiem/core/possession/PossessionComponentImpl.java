@@ -126,7 +126,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
                 InventoryHelper.transferEquipment(host, player);
             }
             for (StatusEffectInstance effect : player.getStatusEffects()) {
-                if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType().value())) {
+                if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType())) {
                     host.addStatusEffect(new StatusEffectInstance(effect));
                 }
             }
@@ -199,7 +199,7 @@ public final class PossessionComponentImpl implements PossessionComponent {
                 // move soulbound effects from the host to the soul
                 // careful with ConcurrentModificationException
                 for (StatusEffectInstance effect : host.getStatusEffects().toArray(new StatusEffectInstance[0])) {
-                    if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType().value())) {
+                    if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType())) {
                         host.removeStatusEffect(effect.getEffectType());
                         player.addStatusEffect(new StatusEffectInstance(effect));
                     }

@@ -40,7 +40,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
-
+/*
 public class LazyEntityPredicate extends LazyDataPredicate<EntityPredicate> {
     public static final LazyEntityPredicate ANY = new LazyEntityPredicate(null);
 
@@ -59,7 +59,7 @@ public class LazyEntityPredicate extends LazyDataPredicate<EntityPredicate> {
             // We still need to have some idea of whether this test can succeed clientside
             // Thankfully, most tests will never use the server world, so we can just pass null and pray
             try {
-                return this.get(entity.getWorld()).test(null/*Possible NPE*/, null, entity);
+                return this.get(entity.getWorld()).test(null, null, entity);
             } catch (NullPointerException npe) {
                 // We will have to check this serverside
                 return true;
@@ -72,3 +72,4 @@ public class LazyEntityPredicate extends LazyDataPredicate<EntityPredicate> {
         return EntityPredicate.method_8913(json);
     }
 }
+*/

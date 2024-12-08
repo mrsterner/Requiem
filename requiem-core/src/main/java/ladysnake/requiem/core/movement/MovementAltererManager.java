@@ -105,7 +105,7 @@ public final class MovementAltererManager implements SubDataManager<Map<EntityTy
             Map<EntityType<?>, SerializableMovementConfig> ret = new HashMap<>();
             try {
                 for (Resource resource : manager.getAllResources(LOCATION)) {
-                    try (InputStreamReader in = new InputStreamReader(resource.open())) {
+                    try (InputStreamReader in = new InputStreamReader(resource.getInputStream())) {
                         JsonObject map = JsonHelper.deserialize(in);
                         for (Map.Entry<String, JsonElement> entry : map.entrySet()) {
                             Optional<EntityType<?>> type = EntityType.get(entry.getKey());

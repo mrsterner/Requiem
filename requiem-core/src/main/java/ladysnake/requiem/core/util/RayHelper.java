@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.core.util;
 
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.hit.BlockHitResult;
@@ -118,9 +117,9 @@ public final class RayHelper {
                     Vec3d toTarget = pos.subtract(entityPos);
                     if (pos.y - (int) pos.y >= 0.5D) {
                         BlockPos testPos = switch (result.getSide()) {
-                            case EAST -> BlockPos.create(pos.x - 1, pos.y + 1, pos.z);
-                            case WEST, NORTH -> BlockPos.create(pos.x, pos.y + 1, pos.z);
-                            case SOUTH -> BlockPos.create(pos.x, pos.y + 1, pos.z - 1);
+                            case EAST -> BlockPos.ofFloored(pos.x - 1, pos.y + 1, pos.z);
+                            case WEST, NORTH -> BlockPos.ofFloored(pos.x, pos.y + 1, pos.z);
+                            case SOUTH -> BlockPos.ofFloored(pos.x, pos.y + 1, pos.z - 1);
                             default -> //should never happen, but better safe than sorry
                                 throw new RaytraceException("hit result had wrong value: " + result.getSide());
                         };
@@ -159,7 +158,7 @@ public final class RayHelper {
 
     @Nullable
     public static EntityHitResult raycast(LivingEntity watcher) {
-        return raycast(watcher, ReachEntityAttributes.getAttackRange(watcher, 3));
+        return raycast(watcher, 3);
     }
 
     @Nullable
@@ -168,7 +167,7 @@ public final class RayHelper {
         Vec3d vec3d2 = watcher.getRotationVec(1.0F);
         Vec3d vec3d3 = eyes.add(vec3d2.x * distance, vec3d2.y * distance, vec3d2.z * distance);
         Box box = watcher.getBoundingBox().stretch(vec3d2.multiply(distance)).expand(1.0D, 1.0D, 1.0D);
-        return raycast(watcher, eyes, vec3d3, box, e -> !e.isSpectator() && e.collides(), distance * distance);
+        return raycast(watcher, eyes, vec3d3, box, e -> !e.isSpectator() && e.canHit(), distance * distance);
     }
 
     /**

@@ -38,7 +38,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import ladysnake.requiem.api.v1.entity.InventoryLimiter;
 import ladysnake.requiem.api.v1.entity.InventoryShape;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -76,8 +76,8 @@ public class PossessionInventoryScreen extends AbstractInventoryScreen<PlayerScr
         if (this.client.interactionManager.hasCreativeInventory()) {
             this.client.setScreen(new CreativeInventoryScreen(
                 this.client.player,
-                this.client.player.networkHandler.getEnabledFlags(),
-                this.client.options.getOperatorItemsTab().get()
+                this.client.player.networkHandler.getEnabledFeatures(),
+                this.client.options.getOperatorItemsTab().getValue()
             ));
             return true;
         } else if (InventoryLimiter.instance().getInventoryShape(this.player) != InventoryShape.ALT_LARGE) {
@@ -88,20 +88,20 @@ public class PossessionInventoryScreen extends AbstractInventoryScreen<PlayerScr
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(graphics);
+    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        this.renderBackground(graphics, mouseX, mouseY, delta);
         super.render(graphics, mouseX, mouseY, delta);
     }
 
     @Override
-    protected void drawForeground(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void drawForeground(DrawContext graphics, int mouseX, int mouseY) {
         MobEntity possessedEntity = PossessionComponent.getHost(this.player);
         Text title = possessedEntity != null ? possessedEntity.getName() : this.title;
         graphics.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 0x404040, false);
     }
 
     @Override
-    protected void drawBackground(GuiGraphics graphics, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext graphics, float delta, int mouseX, int mouseY) {
         assert this.client != null;
         assert this.client.player != null;
 
@@ -115,9 +115,12 @@ public class PossessionInventoryScreen extends AbstractInventoryScreen<PlayerScr
             graphics,
             (int) shape.shiftEntityX(x + 51),
             (int) shape.shiftEntityY(y + 75),
+            shape.shiftEntityX((int)(x + 51) - mouseX),
+            (int) shape.shiftEntityY((int)(y + 75 - 50) - mouseY),
             30,
-            shape.shiftEntityX((float)(x + 51) - mouseX),
-            shape.shiftEntityY((float)(y + 75 - 50) - mouseY),
+            1f,
+            mouseX,
+            mouseY,
             this.client.player
         );
         shape.tearDownEntityCrop();

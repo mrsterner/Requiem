@@ -52,7 +52,7 @@ import java.util.function.Predicate;
 public abstract class EntitySelectorOptionsMixin {
     @Shadow
     private static native void putOption(String id, EntitySelectorOptions.SelectorHandler handler, Predicate<EntitySelectorReader> condition, Text description);
-
+/*
     @Inject(
         method = "register",
         at = @At(
@@ -77,6 +77,8 @@ public abstract class EntitySelectorOptionsMixin {
             });
         }, (reader) -> true, Text.translatable("requiem:argument.entity.options.possessor.description"));
     }
+
+ */
 
     @ModifyArg(
         method = "suggestOptions",

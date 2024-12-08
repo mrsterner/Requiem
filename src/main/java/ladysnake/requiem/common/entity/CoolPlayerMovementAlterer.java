@@ -34,12 +34,12 @@
  */
 package ladysnake.requiem.common.entity;
 
-import com.demonwav.mcdev.annotations.CheckEnv;
-import com.demonwav.mcdev.annotations.Env;
 import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.movement.PlayerMovementAlterer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.Vec3d;
 
 public class CoolPlayerMovementAlterer extends PlayerMovementAlterer {
@@ -47,7 +47,6 @@ public class CoolPlayerMovementAlterer extends PlayerMovementAlterer {
         super(player);
     }
 
-    @CheckEnv(Env.CLIENT)
     @Override
     protected void playPhaseEffects() {
         for (int i = 0; i < 10; i++) {
@@ -66,4 +65,13 @@ public class CoolPlayerMovementAlterer extends PlayerMovementAlterer {
         this.player.playSound(RequiemSoundEvents.EFFECT_PHASE, 3f, 0.6F + this.player.getRandom().nextFloat() * 0.4F);
     }
 
+    @Override
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
+    }
 }

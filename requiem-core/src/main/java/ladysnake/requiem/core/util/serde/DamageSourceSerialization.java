@@ -47,7 +47,7 @@ import java.util.Optional;
 public final class DamageSourceSerialization {
     public static NbtCompound toTag(DamageSource damage) {
         NbtCompound tag = new NbtCompound();
-        tag.putString("id", damage.getTypeHolder().getKey().orElseThrow().getValue().toString());
+        tag.putString("id", damage.getTypeRegistryEntry().getKey().orElseThrow().getValue().toString());
         if (damage.getSource() != null) {
             tag.putUuid("sourceUuid", damage.getSource().getUuid());
         }

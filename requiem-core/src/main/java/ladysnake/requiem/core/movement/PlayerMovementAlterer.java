@@ -408,12 +408,10 @@ public abstract class PlayerMovementAlterer implements MovementAlterer {
         return velocity.multiply(1 - inertia).add(this.lastVelocity.multiply(inertia));
     }
 
-    @Override
     public void readFromNbt(NbtCompound tag) {
         // NO-OP
     }
 
-    @Override
     public void writeToNbt(NbtCompound tag) {
         // NO-OP
     }

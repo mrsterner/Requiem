@@ -45,6 +45,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayDeque;
@@ -114,7 +115,7 @@ public class CommonRecordKeeper implements GlobalRecordKeeper {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         tag.getList("records", NbtElement.COMPOUND_TYPE).stream()
             .mapMulti(MoreStreams.instanceOf(NbtCompound.class))
             .forEach(nbt -> DataResults.ifPresentOrElse(
@@ -157,7 +158,7 @@ public class CommonRecordKeeper implements GlobalRecordKeeper {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         NbtList list = new NbtList();
         for (GlobalRecord anchor : this.records.values()) {
             list.add(anchor.toTag());

@@ -36,20 +36,22 @@ package ladysnake.requiem.core.remnant;
 
 import ladysnake.requiem.api.v1.remnant.SoulbindingRegistry;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class SoulbindingRegistryImpl implements SoulbindingRegistry {
-    private final Set<StatusEffect> soulboundEffects = new LinkedHashSet<>();
+    private final Set<RegistryEntry<StatusEffect>> soulboundEffects = new LinkedHashSet<>();
+
 
     @Override
-    public void registerSoulbound(StatusEffect effect) {
+    public void registerSoulbound(RegistryEntry<StatusEffect> effect) {
         soulboundEffects.add(effect);
     }
 
     @Override
-    public boolean isSoulbound(StatusEffect effect) {
+    public boolean isSoulbound(RegistryEntry<StatusEffect> effect) {
         return soulboundEffects.contains(effect);
     }
 }

@@ -42,7 +42,7 @@ import ladysnake.requiem.api.v1.event.minecraft.client.UpdateTargetedEntityCallb
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.core.ability.PlayerAbilityController;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.Identifier;
@@ -112,7 +112,7 @@ public final class RequiemTargetHandler implements UpdateTargetedEntityCallback,
     }
 
     @Override
-    public void onCrosshairRender(GuiGraphics graphics, int scaledWidth, int scaledHeight) {
+    public void onCrosshairRender(DrawContext graphics) {
         if (this.client.player != null && RemnantComponent.isVagrant(this.client.player) && this.client.currentScreen == null) {
             PlayerAbilityController abilityController = PlayerAbilityController.get(this.client.player);
             AbilityType renderedType = AbilityType.ATTACK;
@@ -123,22 +123,23 @@ public final class RequiemTargetHandler implements UpdateTargetedEntityCallback,
                 && this.client.crosshairTarget instanceof BlockHitResult bhr) {
                 VagrantTargetableBlock targetable = VagrantTargetableBlock.LOOKUP.find(this.client.world, bhr.getBlockPos(), null);
                 if (targetable != null) {
-                    drawCrosshairIcon(graphics, scaledWidth, scaledHeight, targetable.getTargetedIcon(), targetable.canBeUsedByVagrant(client.player) ? 1 : 0);
+                    drawCrosshairIcon(graphics, targetable.getTargetedIcon(), targetable.canBeUsedByVagrant(client.player) ? 1 : 0);
                     return;
                 }
             }
 
             if (f < 1 || abilityController.getTargetedEntity(renderedType) != null) {
-                drawCrosshairIcon(graphics, scaledWidth, scaledHeight, abilityController.getIconTexture(renderedType), f);
+                drawCrosshairIcon(graphics, abilityController.getIconTexture(renderedType), f);
             }
         }
     }
 
-    static void drawCrosshairIcon(GuiGraphics graphics, int scaledWidth, int scaledHeight, Identifier abilityIcon, float progress) {
-        int x = (scaledWidth - 32) / 2 + 8;
-        int y = (scaledHeight - 16) / 2 + 16;
+    static void drawCrosshairIcon(DrawContext graphics, Identifier abilityIcon, float progress) {
+        int x = (graphics.getScaledWindowWidth() - 32) / 2 + 8;
+        int y = (graphics.getScaledWindowHeight() - 16) / 2 + 16;
         int height = (int)(progress * 8.0F);
         graphics.drawTexture(abilityIcon, x, y, 16, 8, 0, 0, 16, 8, 16, 16);
         graphics.drawTexture(abilityIcon, x, y + 8 - height, 16, height, 0, 16 - height, 16, height, 16, 16);
     }
+
 }

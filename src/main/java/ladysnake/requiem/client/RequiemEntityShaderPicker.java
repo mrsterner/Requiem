@@ -37,10 +37,9 @@ package ladysnake.requiem.client;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
-import ladysnake.satin.api.event.PickEntityShaderCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderEffect;
+import net.minecraft.client.gl.PostEffectProcessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.WaterCreatureEntity;
 import net.minecraft.entity.passive.BeeEntity;
@@ -48,6 +47,7 @@ import net.minecraft.entity.passive.DolphinEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.satin.api.event.PickEntityShaderCallback;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -57,7 +57,7 @@ public final class RequiemEntityShaderPicker implements PickEntityShaderCallback
 
     public static final Identifier DICHROMATIC_SHADER_ID = shader("dichromatic");
     public static final Identifier TETRACHROMATIC_SHADER_ID = shader("tetrachromatic");
-    public static final Identifier VAMPIRE_SHADER_ID = new Identifier("haema", "shaders/post/vampirevision.json");
+    public static final Identifier VAMPIRE_SHADER_ID = Identifier.of("haema", "shaders/post/vampirevision.json");
 
     public static final Identifier BEE_SHADER_ID = shader("bee");
     public static final Identifier DOLPHIN_SHADER_ID = shader("dolphin");
@@ -70,7 +70,7 @@ public final class RequiemEntityShaderPicker implements PickEntityShaderCallback
     }
 
     @Override
-    public void pickEntityShader(@Nullable Entity camera, Consumer<Identifier> loadShaderFunc, Supplier<ShaderEffect> appliedShaderGetter) {
+    public void pickEntityShader(@Nullable Entity camera, Consumer<Identifier> loadShaderFunc, Supplier<PostEffectProcessor> appliedShaderGetter) {
         if (camera == null) return;
         // make players use their possessed entity's shader
         Entity possessed = PossessionComponent.getHost(camera);

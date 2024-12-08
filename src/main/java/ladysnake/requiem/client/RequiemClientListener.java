@@ -47,7 +47,6 @@ import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.client.particle.GhostParticle;
 import ladysnake.requiem.client.screen.RiftScreen;
 import ladysnake.requiem.common.entity.RequiemEntities;
-import ladysnake.requiem.common.possession.item.PossessionItemOverrideWrapper;
 import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
 import ladysnake.requiem.core.util.ItemUtil;
@@ -181,7 +180,7 @@ public final class RequiemClientListener implements
                 return;
             }
 
-            lines.addAll(PossessionItemOverrideWrapper.buildTooltip(player.getWorld(), player, possessed, item));
+            //TODO lines.addAll(PossessionItemOverrideWrapper.buildTooltip(player.getWorld(), player, possessed, item));
 
             String key;
             if (possessed.getType().isIn(RequiemEntityTypeTags.ARROW_GENERATORS) && item.getItem() instanceof RangedWeaponItem) {

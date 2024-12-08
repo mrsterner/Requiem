@@ -35,17 +35,17 @@
 package ladysnake.requiem.core;
 
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.PlayerLookup;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
 import static io.netty.buffer.Unpooled.buffer;
 
@@ -59,20 +59,20 @@ public final class RequiemCoreNetworking {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeEnumConstant(type);
         buf.writeVarInt(entity.getId());
-        ClientPlayNetworking.send(USE_DIRECT_ABILITY, buf);
+        //TODO ClientPlayNetworking.send(USE_DIRECT_ABILITY, buf);
     }
 
     public static void sendHugWallMessage(boolean hugging) {
         PacketByteBuf buf = new PacketByteBuf(buffer());
         buf.writeBoolean(hugging);
-        ClientPlayNetworking.send(HUGGING_WALL, buf);
+        //TODO ClientPlayNetworking.send(HUGGING_WALL, buf);
     }
 
     public static void sendItemConsumptionPacket(Entity user, ItemStack stack) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeVarInt(user.getId());
-        buf.writeItemStack(stack);
-        sendToAllTrackingIncluding(user, new CustomPayloadS2CPacket(CONSUME_RESURRECTION_ITEM, buf));
+        //TODO buf.writeItemStack(stack);
+        //TODO sendToAllTrackingIncluding(user, new CustomPayloadS2CPacket(CONSUME_RESURRECTION_ITEM, buf));
     }
 
     public static void sendToAllTrackingIncluding(Entity tracked, Packet<?> message) {

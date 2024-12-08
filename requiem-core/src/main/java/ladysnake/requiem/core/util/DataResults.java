@@ -40,7 +40,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 public final class DataResults {
-    public static <T> void ifPresentOrElse(DataResult<T> dataResult, Consumer<T> action, Consumer<DataResult.PartialResult<T>> emptyAction) {
+    public static <T> void ifPresentOrElse(DataResult<T> dataResult, Consumer<T> action, Consumer<DataResult.Error<T>> emptyAction) {
         dataResult.result().ifPresentOrElse(
             action,
             () -> dataResult.error().ifPresent(emptyAction)

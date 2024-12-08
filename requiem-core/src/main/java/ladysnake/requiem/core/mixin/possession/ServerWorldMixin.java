@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.core.mixin.possession;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -45,12 +46,13 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin {
-    @ModifyVariable(method = "emitGameEvent", at = @At("HEAD"), argsOnly = true)
-    private GameEvent.Context updatePossessorContext(GameEvent.Context ctx) {
+
+    @ModifyExpressionValue(method = "emitGameEvent", at = @At("HEAD"))
+    private GameEvent.Emitter updatePossessorContext(GameEvent.Emitter ctx) {
         if (ctx.sourceEntity() instanceof ServerPlayerEntity player) {
             MobEntity host = PossessionComponent.get(player).getHost();
             if (host != null) {
-                return GameEvent.Context.create(host, ctx.affectedState());
+                return GameEvent.Emitter.of(host, ctx.affectedState());
             }
         }
         return ctx;

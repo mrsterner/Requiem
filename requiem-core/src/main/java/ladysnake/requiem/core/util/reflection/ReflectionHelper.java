@@ -34,11 +34,11 @@
  */
 package ladysnake.requiem.core.util.reflection;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.launch.common.FabricLauncherBase;
 import org.apiguardian.api.API;
 import org.objectweb.asm.Type;
-import org.quiltmc.loader.api.MappingResolver;
-import org.quiltmc.loader.api.QuiltLoader;
 
 import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaMetafactory;
@@ -199,6 +199,6 @@ public class ReflectionHelper {
     }
 
     private static MappingResolver getMappingResolver() {
-        return QuiltLoader.getMappingResolver();
+        return FabricLoader.getInstance().getMappingResolver();
     }
 }

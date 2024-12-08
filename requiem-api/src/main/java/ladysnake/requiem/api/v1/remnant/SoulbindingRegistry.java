@@ -28,7 +28,7 @@ public interface SoulbindingRegistry {
 
     /**
      * Registers a {@code StatusEffect} as soulbound.
-     * @see #isSoulbound(StatusEffect)
+     * @see #isSoulbound(RegistryEntry<StatusEffect>)
      */
     void registerSoulbound(RegistryEntry<StatusEffect> effect);
 
@@ -44,5 +44,5 @@ public interface SoulbindingRegistry {
      * @return {@code true} if {@code effect} is soulbound
      * @see #registerSoulbound(RegistryEntry<StatusEffect>)
      */
-    boolean isSoulbound(StatusEffect effect);
+    boolean isSoulbound(RegistryEntry<StatusEffect> effect);
 }

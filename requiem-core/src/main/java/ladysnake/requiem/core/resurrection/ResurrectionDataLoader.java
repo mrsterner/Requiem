@@ -128,7 +128,7 @@ public final class ResurrectionDataLoader implements IdentifiableResourceReloadL
             this.resurrectionData.clear();
             for (Pair<Identifier, JsonObject> datum : rawData) {
                 try {
-                    this.resurrectionData.add(ResurrectionData.deserialize(datum.getRight()));
+                    //TODO this.resurrectionData.add(ResurrectionData.deserialize(datum.getRight()));
                 } catch (JsonParseException e) {
                     RequiemCore.LOGGER.error("[Requiem] Could not read resurrection data from {}", datum.getLeft(), e);
                 }

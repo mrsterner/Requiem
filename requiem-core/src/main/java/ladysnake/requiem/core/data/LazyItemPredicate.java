@@ -40,7 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
+/*
 public class LazyItemPredicate extends LazyDataPredicate<ItemPredicate> {
     public static final LazyItemPredicate ANY = new LazyItemPredicate(null);
 
@@ -58,6 +58,8 @@ public class LazyItemPredicate extends LazyDataPredicate<ItemPredicate> {
 
     @Override
     protected ItemPredicate deserialize(@Nullable JsonElement json) {
-        return ItemPredicate.fromJson(json);
+        return ItemPredicate.'(json);
     }
 }
+
+ */

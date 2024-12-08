@@ -77,7 +77,7 @@ public final class DamageHelper {
     @Nullable
     public static DamageSource createProxiedDamage(DamageSource source, Entity newAttacker) {
         if (source.getAttacker() != null) {
-            return newAttacker.getDamageSources().create(source.getTypeHolder().getKey().orElseThrow(), source.getSource(), source.getAttacker());
+            return newAttacker.getDamageSources().create(source.getTypeRegistryEntry().getKey().orElseThrow(), source.getSource(), source.getAttacker());
         }
         return null;
     }

@@ -160,7 +160,7 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
         if (tag.contains("inventory_size", NbtType.NUMBER)) {
             NbtList items = tag.getList("inventory", NbtType.COMPOUND);
             this.inventory = new OrderedInventory(tag.getInt("inventory_size"));
-            this.inventory.readNbtList(items);
+            this.inventory.readNbtList(items, wrapperLookup);
         }
 
         this.selectedSlot = tag.getInt("selected_slot");
@@ -179,7 +179,7 @@ public abstract class PossessedDataBase implements PossessedData, AutoSyncedComp
         }
         if (this.inventory != null) {
             tag.putInt("inventory_size", this.inventory.size());
-            tag.put("inventory", this.inventory.toNbtList());
+            tag.put("inventory", this.inventory.toNbtList(wrapperLookup));
         }
 
         tag.putInt("selected_slot", this.selectedSlot);

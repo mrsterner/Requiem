@@ -36,7 +36,7 @@ package ladysnake.requiem.core.data;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.item.FoodComponent;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.util.JsonHelper;
@@ -44,42 +44,25 @@ import org.jetbrains.annotations.Nullable;
 
 public record FoodComponentPredicate(
     NumberRange.IntRange hunger,
-    NumberRange.FloatRange saturationModifier,
+    NumberRange.DoubleRange saturationModifier,
     @Nullable Boolean meat,
     @Nullable Boolean alwaysEdible,
     @Nullable Boolean snack
 ) {
-    public static final FoodComponentPredicate ANY = new FoodComponentPredicate(NumberRange.IntRange.ANY, NumberRange.FloatRange.ANY, null, null, null);
+    public static final FoodComponentPredicate ANY = new FoodComponentPredicate(NumberRange.IntRange.ANY, NumberRange.DoubleRange.ANY, null, null, null);
 
-    public static FoodComponentPredicate fromJson(@Nullable JsonElement json) {
-        if (json != null && !json.isJsonNull()) {
-            JsonObject jsonObject = JsonHelper.asObject(json, "requiem:food");
-            return new FoodComponentPredicate(
-                NumberRange.IntRange.fromJson(jsonObject.get("hunger")),
-                NumberRange.FloatRange.fromJson(jsonObject.get("saturation")),
-                jsonObject.has("meat") ? JsonHelper.getBoolean(jsonObject, "meat") : null,
-                jsonObject.has("always_edible") ? JsonHelper.getBoolean(jsonObject, "always_edible") : null,
-                jsonObject.has("snack") ? JsonHelper.getBoolean(jsonObject, "snack") : null
-            );
-        }
-        return ANY;
-    }
 
     public boolean test(ItemStack stack) {
         if (this == ANY) return true;
 
-        FoodComponent foodComponent = stack.getItem().getFoodComponent();
+        var foodComponent = stack.get(DataComponentTypes.FOOD);
         if (foodComponent == null) {
             return false;
-        } else if (!this.hunger.test(foodComponent.getHunger())) {
+        } else if (!this.hunger.test(foodComponent.nutrition())) {
             return false;
-        } else if (!this.saturationModifier.test(foodComponent.getSaturationModifier())) {
+        } else if (!this.saturationModifier.test(foodComponent.saturation())) {
             return false;
-        } else if (this.meat != null && this.meat != foodComponent.isMeat()) {
-            return false;
-        } else if (this.alwaysEdible != null && this.alwaysEdible != foodComponent.isAlwaysEdible()) {
-            return false;
-        } else if (this.snack != null && this.snack != foodComponent.isSnack()) {
+        } else if (this.alwaysEdible != null && this.alwaysEdible != foodComponent.canAlwaysEat()) {
             return false;
         }
         return true;

@@ -40,8 +40,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.api.v1.util.MoreCodecs;
 import ladysnake.requiem.common.RequiemRegistries;
-import ladysnake.requiem.core.data.LazyEntityPredicate;
-import ladysnake.requiem.core.util.serde.PolymorphicCodecBuilder;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -58,7 +56,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
+/*
 public record PossessionItemOverrideWrapper(
     int priority,
     boolean enabled,
@@ -181,3 +179,5 @@ public record PossessionItemOverrideWrapper(
         return o.priority - this.priority;
     }
 }
+
+ */

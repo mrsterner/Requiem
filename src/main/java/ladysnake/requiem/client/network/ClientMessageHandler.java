@@ -47,6 +47,7 @@ import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.RequiemCoreNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -61,7 +62,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.thread.ThreadExecutor;
 import net.minecraft.world.World;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 
 import java.util.Map;
 import java.util.Objects;
@@ -78,7 +78,7 @@ public class ClientMessageHandler {
         this.rc = requiemClient;
     }
 
-    public void init() {
+    public void init() {/*
         ClientPlayNetworking.registerGlobalReceiver(ANCHOR_DAMAGE, (client, handler, buf, responseSender) -> {
             boolean dead = buf.readBoolean();
             client.execute(() -> RequiemClient.instance().fxRenderer().playEtherealPulseAnimation(
@@ -163,6 +163,7 @@ public class ClientMessageHandler {
 
             client.execute(() -> client.getToastManager().add(new RiftWitnessedToast(riftName)));
         });
+        */
     }
 
     private static <T> void syncSubDataManager(PacketByteBuf buffer, SubDataManager<T> subManager, ThreadExecutor<?> taskQueue) {

@@ -35,15 +35,20 @@
 package ladysnake.requiem.core.data;
 
 import com.google.gson.JsonElement;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class LazyDataPredicate<T> {
     private final @Nullable JsonElement json;
     private @Nullable T predicate;
+    private final Codec<T> codec;
 
-    protected LazyDataPredicate(@Nullable JsonElement json) {
+    protected LazyDataPredicate(@Nullable JsonElement json, Codec<T> codec) {
         this.json = json;
+        this.codec = codec;
     }
 
     public T get(World world) {
@@ -54,7 +59,12 @@ public abstract class LazyDataPredicate<T> {
     }
 
     public void initNow() {
-        this.predicate = this.deserialize(this.json);
+        if (this.json != null) {
+            DataResult<T> result = this.codec.parse(JsonOps.INSTANCE, this.json);
+            this.predicate = result.result().orElseThrow(() -> new IllegalStateException("Failed to deserialize JSON"));
+        } else {
+            throw new IllegalStateException("JSON data is not available for deserialization");
+        }
     }
 
     protected abstract T deserialize(@Nullable JsonElement json);

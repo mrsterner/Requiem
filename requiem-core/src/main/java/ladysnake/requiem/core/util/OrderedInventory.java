@@ -35,9 +35,11 @@
 package ladysnake.requiem.core.util;
 
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryWrapper;
 
 public class OrderedInventory extends SimpleInventory {
     public OrderedInventory(int size) {
@@ -45,7 +47,7 @@ public class OrderedInventory extends SimpleInventory {
     }
 
     @Override
-    public void readNbtList(NbtList tags) {
+    public void readNbtList(NbtList tags, RegistryWrapper.WrapperLookup registries) {
         for (int slot = 0; slot < this.size(); ++slot) {
             this.setStack(slot, ItemStack.EMPTY);
         }
@@ -54,13 +56,13 @@ public class OrderedInventory extends SimpleInventory {
             NbtCompound compoundTag = tags.getCompound(i);
             int slot = compoundTag.getByte("Slot") & 255;
             if (slot >= 0 && slot < this.size()) {
-                this.setStack(slot, ItemStack.fromNbt(compoundTag));
+                this.setStack(slot, ItemStack.fromNbt(registries, compoundTag).get());
             }
         }
     }
 
     @Override
-    public NbtList toNbtList() {
+    public NbtList toNbtList(RegistryWrapper.WrapperLookup registries) {
         NbtList listTag = new NbtList();
 
         for (int slot = 0; slot < this.size(); ++slot) {
@@ -68,7 +70,7 @@ public class OrderedInventory extends SimpleInventory {
             if (!itemStack.isEmpty()) {
                 NbtCompound compoundTag = new NbtCompound();
                 compoundTag.putByte("Slot", (byte) slot);
-                itemStack.writeNbt(compoundTag);
+                itemStack.encode(registries);
                 listTag.add(compoundTag);
             }
         }
