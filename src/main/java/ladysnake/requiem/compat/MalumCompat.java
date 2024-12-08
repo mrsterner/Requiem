@@ -48,12 +48,14 @@ public class MalumCompat implements RequiemPlugin {
     @CalledThroughReflection
     public static void init() {
          PossessionStartCallback.EVENT.register(MalumMod.malumPath("soulless"), (target, possessor, simulate) -> {
+             /*
              Optional<MalumLivingEntityDataComponent> optionalComponent = MalumComponents.MALUM_LIVING_ENTITY_COMPONENT.maybeGet(target);
              if (optionalComponent.isPresent() && optionalComponent.get().soulData.soulless) {
                  return PossessionStartCallback.Result.ALLOW;
              }
+
+              */
              return PossessionStartCallback.Result.PASS;
         });
-
     }
 }

@@ -44,6 +44,7 @@ import net.minecraft.block.EntityShapeContext;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -60,18 +61,18 @@ public class RunestoneBlock extends InertRunestoneBlock implements ObeliskEffect
             Registries.BLOCK.getOrEmpty(Identifier.of(i.getNamespace(), "tachylite/runic/" + i.getPath())));
     }
 
-    private final Supplier<StatusEffect> effect;
+    private final RegistryEntry<StatusEffect> effect;
     private final int maxLevel;
 
-    public RunestoneBlock(Settings settings, Supplier<StatusEffect> effect, int maxLevel) {
+    public RunestoneBlock(Settings settings, RegistryEntry<StatusEffect> effect, int maxLevel) {
         super(settings);
         this.effect = effect;
         this.maxLevel = maxLevel;
     }
 
     @Override
-    public StatusEffect getEffect() {
-        return effect.get();
+    public RegistryEntry<StatusEffect> getEffect() {
+        return effect;
     }
 
     @Override

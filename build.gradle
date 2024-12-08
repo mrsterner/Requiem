@@ -196,8 +196,6 @@ dependencies {
     modCompileOnly (compatLibs.trinkets) { transitive = false }
     modCompileOnly (compatLibs.pehkui) { transitive = false }
 
-    modCompileOnly (compatLibs.bundles.origins) { transitive = false }
-    modLocalRuntime (compatLibs.bundles.origins) { transitive = false }
     modLocalImplementation (compatLibs.additionalEntityAttributes) {
         exclude group: "net.fabricmc"
         exclude group: "net.fabricmc.fabric-api"

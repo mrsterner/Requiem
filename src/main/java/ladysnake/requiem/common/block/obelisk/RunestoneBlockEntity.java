@@ -52,6 +52,7 @@ import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -135,7 +136,7 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
         Preconditions.checkState(this.obeliskCoreHeight > 0);
 
         double range = this.obeliskCoreWidth * 10 + 10;
-        Box box = (new Box(pos, pos.add(this.obeliskCoreWidth - 1, obeliskCoreHeight - 1, this.obeliskCoreWidth - 1))).expand(range);
+        Box box = (new Box(pos.toCenterPos(), pos.toCenterPos().add(this.obeliskCoreWidth - 1, obeliskCoreHeight - 1, this.obeliskCoreWidth - 1))).expand(range);
 
         List<PlayerEntity> players = world.getNonSpectatingEntities(PlayerEntity.class, box);
 
@@ -228,7 +229,8 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
                             this.getPos(),
                             this.obeliskCoreWidth,
                             this.obeliskCoreHeight,
-                            customName.or(this::generateName)
+                            Optional.of("")
+                            //TODO customName.or(this::generateName)
                         ));
                         record.put(RequiemRecordTypes.RIFT_OBELISK, Unit.INSTANCE);
                         this.recordUuid = record.getUuid();
@@ -263,8 +265,8 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup wrapperLookup) {
+        super.readNbt(nbt, wrapperLookup);
 
         if (nbt.containsUuid("linked_record")) {
             this.recordUuid = nbt.getUuid("linked_record");
@@ -272,8 +274,8 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup wrapperLookup) {
+        super.writeNbt(nbt, wrapperLookup);
 
         if (this.recordUuid != null) {
             nbt.putUuid("linked_record", this.recordUuid);

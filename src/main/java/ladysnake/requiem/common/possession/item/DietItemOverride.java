@@ -40,7 +40,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.util.MoreCodecs;
 import ladysnake.requiem.common.VanillaRequiemPlugin;
-import ladysnake.requiem.core.data.LazyItemPredicate;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,7 +50,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.Optional;
-
+/*
 public class DietItemOverride implements PossessionItemOverride, InstancedItemOverride {
     public static final Identifier ID = Requiem.id("diet");
 
@@ -120,3 +119,5 @@ public class DietItemOverride implements PossessionItemOverride, InstancedItemOv
         }
     }
 }
+
+ */

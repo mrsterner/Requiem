@@ -168,9 +168,9 @@ public final class RequiemNetworking {
         }
     }
 
-    public static void sendRiftWitnessedMessage(ServerPlayerEntity player, Text obeliskName) {
+    public static void sendRiftWitnessedMessage(ServerPlayerEntity player, String obeliskName) {
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeText(obeliskName);
+        //TODO buf.writeText(obeliskName);
         ServerPlayNetworking.send(player, new SimplePayload(RIFT_WITNESSED, buf));
     }
 }

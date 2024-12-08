@@ -40,8 +40,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.possession.item.PossessionItemAction;
 import ladysnake.requiem.common.RequiemRegistries;
-import ladysnake.requiem.core.data.LazyEntityPredicate;
-import ladysnake.requiem.core.data.LazyItemPredicate;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -53,7 +51,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.Optional;
-
+/*
 public record OldPossessionItemOverride(
     OldPossessionItemOverride.Requirements requirements,
     int useTime,
@@ -69,9 +67,7 @@ public record OldPossessionItemOverride(
         ).apply(instance, OldPossessionItemOverride::new));
     }
 
-    /**
-     * Initializes this object's lazy fields
-     */
+
     @Override
     public void initNow() {
         this.requirements.initNow();
@@ -148,6 +144,8 @@ public record OldPossessionItemOverride(
 
     }
 
+
+
     public static class Result {
         public static final Codec<Result> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             RequiemRegistries.MOB_ACTIONS.getCodec().fieldOf("action").forGetter(Result::getAction),
@@ -183,3 +181,4 @@ public record OldPossessionItemOverride(
         }
     }
 }
+*/

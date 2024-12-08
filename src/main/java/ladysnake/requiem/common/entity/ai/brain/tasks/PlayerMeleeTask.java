@@ -36,11 +36,9 @@ package ladysnake.requiem.common.entity.ai.brain.tasks;
 
 import baritone.api.fakeplayer.FakeServerPlayerEntity;
 import com.google.common.collect.ImmutableMap;
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import ladysnake.requiem.core.util.RayHelper;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -62,7 +60,7 @@ public class PlayerMeleeTask extends MultiTickTask<FakeServerPlayerEntity> {
     }
 
     public static double getAttackRange(LivingEntity attacker) {
-        return ReachEntityAttributes.getAttackRange(attacker, 3.);
+        return 3.;
     }
 
     @Override
@@ -104,11 +102,11 @@ public class PlayerMeleeTask extends MultiTickTask<FakeServerPlayerEntity> {
      */
     public static float estimateDamage(PlayerEntity player, Entity target) {
         float baseDamage = (float) player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-        float enchantmentBonus;
+        float enchantmentBonus = 0;
         if (target instanceof LivingEntity) {
-            enchantmentBonus = EnchantmentHelper.getAttackDamage(player.getMainHandStack(), ((LivingEntity) target).getGroup());
+            //TODO enchantmentBonus = EnchantmentHelper.getAttackDamage(player.getMainHandStack(), ((LivingEntity) target).getGroup());
         } else {
-            enchantmentBonus = EnchantmentHelper.getAttackDamage(player.getMainHandStack(), EntityGroup.DEFAULT);
+            //TODO enchantmentBonus = EnchantmentHelper.getAttackDamage(player.getMainHandStack(), EntityGroup.DEFAULT);
         }
 
         float i = player.getAttackCooldownProgress(0.5F);

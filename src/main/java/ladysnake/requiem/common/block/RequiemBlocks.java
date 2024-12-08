@@ -59,7 +59,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.int_provider.UniformIntProvider;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -81,12 +81,12 @@ public final class RequiemBlocks {
     public static final StairsBlock TACHYLITE_STAIRS = makeStairs(TACHYLITE);
     public static final Block SCRAPED_TACHYLITE = makeVariant(TACHYLITE, "tachylite/scraped");
     public static final InertRunestoneBlock TACHYLITE_RUNESTONE = make(() -> new InertRunestoneBlock(AbstractBlock.Settings.copy(TACHYLITE)), "tachylite/runestone", ItemGroups.BUILDING_BLOCKS);
-    public static final ExperienceDroppingBlock DERELICT_TACHYLITE = make(() -> new ExperienceDroppingBlock(AbstractBlock.Settings.copy(TACHYLITE), UniformIntProvider.create(7, 14)), "tachylite/derelict", ItemGroups.NATURAL_BLOCKS);
+    public static final ExperienceDroppingBlock DERELICT_TACHYLITE = make(() -> new ExperienceDroppingBlock(UniformIntProvider.create(7, 14), AbstractBlock.Settings.copy(TACHYLITE)), "tachylite/derelict", ItemGroups.NATURAL);
     public static final RunestoneBlock RUNIC_TACHYLITE_ATTRITION = makeRunic("attrition", 3);
     public static final RunestoneBlock RUNIC_TACHYLITE_EMANCIPATION = makeRunic("emancipation", 1);
     public static final RunestoneBlock RUNIC_TACHYLITE_PENANCE = makeRunic("penance", 3);
-    public static final ReclamationRunestoneBlock RUNIC_TACHYLITE_RECLAMATION = make(() -> new ReclamationRunestoneBlock(AbstractBlock.Settings.copy(TACHYLITE_RUNESTONE), () -> RequiemStatusEffects.RECLAMATION, 1), "tachylite/runic/reclamation", ItemGroups.FUNCTIONAL_BLOCKS);
-    public static final RiftRunestoneBlock RIFT_RUNE = make(() -> new RiftRunestoneBlock(AbstractBlock.Settings.copy(TACHYLITE_RUNESTONE)), "tachylite/runic/rift", ItemGroups.FUNCTIONAL_BLOCKS);
+    public static final ReclamationRunestoneBlock RUNIC_TACHYLITE_RECLAMATION = make(() -> new ReclamationRunestoneBlock(AbstractBlock.Settings.copy(TACHYLITE_RUNESTONE), RequiemStatusEffects.RECLAMATION, 1), "tachylite/runic/reclamation", ItemGroups.FUNCTIONAL);
+    public static final RiftRunestoneBlock RIFT_RUNE = make(() -> new RiftRunestoneBlock(AbstractBlock.Settings.copy(TACHYLITE_RUNESTONE)), "tachylite/runic/rift", ItemGroups.FUNCTIONAL);
 
     private static Block makeVariant(Block base, String id) {
         return make(() -> new Block(AbstractBlock.Settings.copy(base)), id, ItemGroups.BUILDING_BLOCKS);
@@ -107,9 +107,9 @@ public final class RequiemBlocks {
     private static RunestoneBlock makeRunic(String effectName, int maxLevel) {
         return make(() -> new RunestoneBlock(
             AbstractBlock.Settings.copy(TACHYLITE),
-            Suppliers.memoize(() -> Registries.STATUS_EFFECT.getOrEmpty(Requiem.id(effectName)).orElseThrow()),
+            Registries.STATUS_EFFECT.getEntry(Requiem.id(effectName)).get(),
             maxLevel
-        ), "tachylite/runic/" + effectName, ItemGroups.FUNCTIONAL_BLOCKS);
+        ), "tachylite/runic/" + effectName, ItemGroups.FUNCTIONAL);
     }
 
     private static <B extends Block> B make(Supplier<B> factory, String name, RegistryKey<ItemGroup> itemGroup) {

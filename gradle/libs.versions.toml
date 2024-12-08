@@ -1,9 +1,8 @@
 [versions]
-automatone = "0.12.0"
+automatone = "0.12.3"
 blabber = "1.7.1"
 cca = "6.1.2"
 chenille = "0.13.0"
-chime = "cec3bcbaed508eb5f564deac8c33923dcccfdf7e"
 cloth = "15.0.140"
 fiberToCloth = "v3-SNAPSHOT"
 fiber = "0.23.0-2"
@@ -13,7 +12,6 @@ locki = "0.14.0"
 loom = "1.8.+"
 modmenu = "11.0.3"
 pal = "1.11.0"
-rea = "2.4.0"
 satin = "2.0.0"
 
 [libraries]
@@ -23,7 +21,6 @@ cca-base = { group = "org.ladysnake.cardinal-components-api", name="cardinal-com
 cca-entity = { group = "org.ladysnake.cardinal-components-api", name="cardinal-components-entity", version.ref = "cca" }
 cca-scoreboard = { group = "org.ladysnake.cardinal-components-api", name="cardinal-components-scoreboard", version.ref = "cca" }
 cca-world = { group = "org.ladysnake.cardinal-components-api", name="cardinal-components-world", version.ref = "cca" }
-chime = { group = "com.github.emilyploszaj", name = "chime", version.ref = "chime" }
 clothConfig = { group = "me.shedaniel.cloth", name = "cloth-config-fabric", version.ref = "cloth" }
 fabricPermissionsApi = { group = "me.lucko", name = "fabric-permissions-api", version.ref = "fpa" }
 fiber = { group = "me.zeroeightsix", name = "fiber", version.ref = "fiber" }
@@ -32,14 +29,12 @@ impersonate = { group = "org.ladysnake", name = "impersonate", version.ref = "im
 locki = { group = "org.ladysnake", name = "locki", version.ref = "locki" }
 modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modmenu" }
 playerAbilityLib = { group = "io.github.ladysnake", name = "PlayerAbilityLib", version.ref = "pal" }
-reachEntityAttributes = { group = "com.jamieswhiteshirt", name = "reach-entity-attributes", version.ref = "rea" }
 satin = { group = "org.ladysnake", name = "satin", version.ref = "satin" }
 
 [bundles]
 requiredLibraries = [
     "automatone",
     "blabber",
-    "chime",
     "cca-base",
     "cca-entity",
     "cca-scoreboard",
@@ -49,7 +44,6 @@ requiredLibraries = [
     "impersonate",
     "locki",
     "playerAbilityLib",
-    "reachEntityAttributes",
     "satin",
 ]
 cloth = ["clothConfig", "fiberToCloth"]

@@ -65,9 +65,9 @@ public class DebugItem extends Item {
                 case 0 -> {
                     if (world.isClient) {
                         if (DeathSuspender.get(player).isLifeTransient()) {
-                            BlabberClient.sendDialogueActionMessage(0);
-                            BlabberClient.sendDialogueActionMessage(1);
-                            BlabberClient.sendDialogueActionMessage(0);
+                            //TODO BlabberClient.sendDialogueActionMessage(0);
+                            //BlabberClient.sendDialogueActionMessage(1);
+                            //BlabberClient.sendDialogueActionMessage(0);
                             DeathSuspender.get(player).setLifeTransient(false);
                         } else {
                             DeathSuspender.get(player).setLifeTransient(true);

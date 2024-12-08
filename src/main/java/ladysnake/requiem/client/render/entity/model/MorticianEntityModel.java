@@ -38,7 +38,6 @@
 
 package ladysnake.requiem.client.render.entity.model;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.common.entity.MorticianEntity;
 import net.minecraft.client.model.Dilation;
@@ -49,6 +48,7 @@ import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.render.entity.model.ModelWithHead;
@@ -57,6 +57,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.util.math.MathHelper;
+
+import java.awt.*;
 
 public class MorticianEntityModel<T extends Entity> extends SinglePartEntityModel<T> implements ModelWithHead {
     public static final EntityModelLayer MODEL_LAYER = new EntityModelLayer(Requiem.id("mortician"), "main");
@@ -131,8 +133,8 @@ public class MorticianEntityModel<T extends Entity> extends SinglePartEntityMode
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-        super.render(matrices, vertices, light, overlay, red, green, blue, alpha * this.baseAlpha);
+    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
+        super.render(matrices, vertices, light, overlay, color); // TODO  * this.baseAlpha
     }
 
     @Override

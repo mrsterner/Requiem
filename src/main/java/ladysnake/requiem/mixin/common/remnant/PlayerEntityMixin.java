@@ -119,7 +119,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
             cir.setReturnValue(REQUIEM$SOUL_SNEAKING_SIZE);
         }
     }
-
+/*
     // 1.27 is the sneaking eye height
     @Inject(method = "getStandingEyeHeight", at = @At(value = "CONSTANT", args = "floatValue=1.27"), cancellable = true)
     private void adjustSoulSneakingEyeHeight(EntityPose pose, EntityDimensions size, CallbackInfoReturnable<Float> cir) {
@@ -127,6 +127,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
             cir.setReturnValue(0.4f);
         }
     }
+    
+ */
 
     protected PlayerEntityMixin(EntityType<? extends PlayerEntity> type, World world) {
         super(type, world);

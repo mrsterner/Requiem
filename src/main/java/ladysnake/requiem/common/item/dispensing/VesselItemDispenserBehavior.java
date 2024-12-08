@@ -58,9 +58,12 @@ public class VesselItemDispenserBehavior extends FallibleItemDispenserBehavior {
         if (inputStack.isEmpty()) {
             return outputStack.copy();
         } else {
+            /*
             if (pointer.<DispenserBlockEntity>getBlockEntity().addToFirstFreeSlot(outputStack.copy()) < 0) {
                 fallbackBehavior.dispense(pointer, outputStack.copy());
             }
+
+             */
 
             return inputStack;
         }
@@ -69,13 +72,16 @@ public class VesselItemDispenserBehavior extends FallibleItemDispenserBehavior {
     @Override
     public ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
         this.setSuccess(false);
+        /*TODO
         BlockPos targetPos = pointer.getPos().offset(pointer.getBlockState().get(DispenserBlock.FACING));
         TypedActionResult<ItemStack> result = action.apply(pointer.getWorld(), targetPos, stack);
         if (result.getResult().isAccepted()) {
             this.setSuccess(true);
             return this.tryPutStack(pointer, stack, result.getValue());
         } else {
-            return super.dispenseSilently(pointer, stack);
-        }
+
+         */
+        return super.dispenseSilently(pointer, stack);
+
     }
 }

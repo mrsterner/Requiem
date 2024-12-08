@@ -61,7 +61,7 @@ public abstract class BowItemMixin extends RangedWeaponItem {
     public BowItemMixin(Settings settings) {
         super(settings);
     }
-
+/*
     @ModifyExpressionValue(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getProjectileType(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;"))
     private boolean giveSkeletonInfinity(boolean infinity, ItemStack item, World world, LivingEntity user, int charge) {
         //TODO move to playerEntity getProjectile
@@ -83,4 +83,6 @@ public abstract class BowItemMixin extends RangedWeaponItem {
         }
         return original.call(instance, world, stack, shooter);
     }
+
+ */
 }

@@ -46,7 +46,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin {
-
+/*TODO 
     @ModifyExpressionValue(method = "emitGameEvent", at = @At("HEAD"))
     private GameEvent.Emitter updatePossessorContext(GameEvent.Emitter ctx) {
         if (ctx.sourceEntity() instanceof ServerPlayerEntity player) {
@@ -57,4 +57,6 @@ public abstract class ServerWorldMixin {
         }
         return ctx;
     }
+
+ */
 }

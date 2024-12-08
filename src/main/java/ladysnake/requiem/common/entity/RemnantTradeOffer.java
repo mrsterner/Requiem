@@ -36,6 +36,7 @@ package ladysnake.requiem.common.entity;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradedItem;
 
@@ -46,7 +47,7 @@ public class RemnantTradeOffer extends TradeOffer {
     private final boolean exorcism;
     private boolean tempDisabled;
     boolean demonCustomer;
-
+/*
     public static RemnantTradeOffer fromNbt(NbtCompound compound) {
         TradeOffer vanillaOffer = new TradeOffer(compound.getCompound("vanilla_offer"));
         TradeOffer demonOffer = new TradeOffer(compound.getCompound("demon_offer"));
@@ -58,8 +59,10 @@ public class RemnantTradeOffer extends TradeOffer {
         return offer;
     }
 
+ */
+
     public RemnantTradeOffer(TradeOffer vanillaOffer, TradeOffer demonOffer, boolean exorcism) {
-        super(vanillaOffer.getOriginalFirstBuyItem(), vanillaOffer.getSecondBuyItem(), vanillaOffer.getSellItem(), vanillaOffer.getUses(), vanillaOffer.getMaxUses(), vanillaOffer.getMerchantExperience(), vanillaOffer.getPriceMultiplier(), vanillaOffer.getDemandBonus());
+        super(new TradedItem(vanillaOffer.getOriginalFirstBuyItem().getItem()), vanillaOffer.getSecondBuyItem(), vanillaOffer.getSellItem(), vanillaOffer.getUses(), vanillaOffer.getMaxUses(), vanillaOffer.getMerchantExperience(), vanillaOffer.getPriceMultiplier(), vanillaOffer.getDemandBonus());
         this.vanillaOffer = vanillaOffer;
         this.demonOffer = demonOffer;
         this.exorcism = exorcism;
@@ -177,9 +180,9 @@ public class RemnantTradeOffer extends TradeOffer {
     public boolean shouldRewardPlayerExperience() {
         return getDelegate().shouldRewardPlayerExperience();
     }
-
+/*
     @Override
-    public NbtCompound toNbt() {
+    public NbtCompound toNbt(RegistryWrapper.WrapperLookup wrapperLookup) {
         NbtCompound whole = new NbtCompound();
         whole.putBoolean("requiem:demon_trade", true);
         whole.put("demon_offer", this.demonOffer.toNbt());
@@ -189,6 +192,8 @@ public class RemnantTradeOffer extends TradeOffer {
         if (this.tempDisabled) whole.putBoolean("temp_disabled", true);
         return whole;
     }
+
+ */
 
     @Override
     public boolean matchesBuyItems(ItemStack first, ItemStack second) {

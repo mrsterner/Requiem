@@ -74,11 +74,11 @@ public class FrogCatchAbility extends DirectAbilityBase<FrogEntity, Entity> {
         super.update();
 
         if (!this.owner.getWorld().isClient) {
-            Optional<Entity> target = this.owner.getTargetEntity();
+            Optional<Entity> target = this.owner.getFrogTarget();
 
             if (target.isPresent()) {
                 if (this.eatAnimationTicks >= 10) {
-                    this.owner.clearTargetEntity();
+                    this.owner.clearFrogTarget();
                     this.owner.setPose(EntityPose.STANDING);
                     this.eatAnimationTicks = -1;
                 } else if (this.eatAnimationTicks == 6) {
@@ -100,7 +100,7 @@ public class FrogCatchAbility extends DirectAbilityBase<FrogEntity, Entity> {
             EntityAttributeInstance attackDamage = Objects.requireNonNull(frog.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE));
             double baseAttackValue = attackDamage.getBaseValue();
 
-            if (!(entity instanceof LivingEntity living && FrogEntity.canEat(living))) {
+            if (!(entity instanceof LivingEntity living && FrogEntity.isValidFrogFood(living))) {
                 attackDamage.setBaseValue(1);
             }
 

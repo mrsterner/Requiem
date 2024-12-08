@@ -97,11 +97,14 @@ public class SimpleCurableEntityComponent implements CurableEntityComponent {
             for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
                 ItemStack itemStack = this.entity.getEquippedStack(equipmentSlot);
                 if (!itemStack.isEmpty()) {
+                    /*TODO
                     if (EnchantmentHelper.hasBindingCurse(itemStack)) {
                         cured.getStackReference(equipmentSlot.getEntitySlotId() + 300).set(itemStack);
                     } else {
                         this.entity.dropStack(itemStack);
                     }
+
+                     */
                 }
             }
             cured.initialize(((ServerWorld) this.entity.getWorld()), this.entity.getWorld().getLocalDifficulty(cured.getBlockPos()), SpawnReason.CONVERSION, null);

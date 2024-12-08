@@ -54,6 +54,7 @@ import static ladysnake.requiem.common.network.RequiemNetworking.*;
 public final class ServerMessageHandling {
 
     public static void init() {
+        /*TODO
         ServerPlayNetworking.registerGlobalReceiver(RequiemCoreNetworking.USE_DIRECT_ABILITY, (server, player, handler, buf, responseSender) -> {
             AbilityType type = buf.readEnumConstant(AbilityType.class);
             int entityId = buf.readVarInt();
@@ -97,5 +98,7 @@ public final class ServerMessageHandling {
                 }
             });
         });
+
+         */
     }
 }

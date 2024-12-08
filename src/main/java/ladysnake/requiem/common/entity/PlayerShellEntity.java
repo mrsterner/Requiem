@@ -101,7 +101,6 @@ public class PlayerShellEntity extends FakeServerPlayerEntity {
 
     private final ShellPathfindingProcess pathfindingProcess;
 
-    @CheckEnv(Env.SERVER)
     @API(status = MAINTAINED)
     public PlayerShellEntity(EntityType<? extends PlayerEntity> type, ServerWorld world) {
         super(type, world);

@@ -40,13 +40,25 @@ import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.ladysnake.satin.api.event.ShaderEffectRenderCallback;
+import org.ladysnake.satin.api.managed.ManagedCoreShader;
+import org.ladysnake.satin.api.managed.ManagedFramebuffer;
+import org.ladysnake.satin.api.managed.ManagedShaderEffect;
+import org.ladysnake.satin.api.managed.ShaderEffectManager;
+import org.ladysnake.satin.api.managed.uniform.Uniform1f;
+import org.ladysnake.satin.api.managed.uniform.Uniform3f;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -58,7 +70,7 @@ public final class RequiemFx implements ShaderEffectRenderCallback, ClientTickEv
 
     public static final Identifier SPECTRE_SHADER_ID = Requiem.id("shaders/post/spectre.json");
     public static final Identifier ZOOM_SHADER_ID = Requiem.id("shaders/post/zoom.json");
-    private static final Identifier PENANCE_OVERLAY = new Identifier("textures/misc/nausea.png");
+    private static final Identifier PENANCE_OVERLAY = Identifier.of("textures/misc/nausea.png");
 
     private static final float[] ETHEREAL_COLOR = {0.0f, 0.7f, 1.0f};
 
@@ -214,23 +226,22 @@ public final class RequiemFx implements ShaderEffectRenderCallback, ClientTickEv
         float b = ((rgb & 0xFF) / 255f) * intensity;
         double effectWidth = (double)windowWidth * stretch;
         double effectHeight = (double)windowHeight * stretch;
-        double left = ((double)windowWidth - effectWidth) / 2.0;
-        double top = ((double)windowHeight - effectHeight) / 2.0;
+        float left = (float)(windowWidth - effectWidth) / 2.0f;
+        float top = (float)(windowHeight - effectHeight) / 2.0f;
         RenderSystem.disableDepthTest();
         RenderSystem.depthMask(false);
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE);
         RenderSystem.setShaderColor(r, g, b, 1.0F);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, PENANCE_OVERLAY);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBufferBuilder();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        bufferBuilder.vertex(left, top + effectHeight, -90.0).uv(0.0F, 1.0F).next();
-        bufferBuilder.vertex(left + effectWidth, top + effectHeight, -90.0).uv(1.0F, 1.0F).next();
-        bufferBuilder.vertex(left + effectWidth, top, -90.0).uv(1.0F, 0.0F).next();
-        bufferBuilder.vertex(left, top, -90.0).uv(0.0F, 0.0F).next();
-        tessellator.draw();
+        BufferBuilder bufferBuilder =tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        bufferBuilder.vertex(left, (float) (top + effectHeight), -90.0f).texture(0.0F, 1.0F);
+        bufferBuilder.vertex((float) (left + effectWidth), (float) (top + effectHeight), -90.0f).texture(1.0F, 1.0F);
+        bufferBuilder.vertex((float) (left + effectWidth), top, -90.0f).texture(1.0F, 0.0F);
+        bufferBuilder.vertex(left, top, -90.0f).texture(0.0F, 0.0F);
+        BufferRenderer.draw(bufferBuilder.end());
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();

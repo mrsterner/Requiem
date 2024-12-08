@@ -17,11 +17,11 @@
 package ladysnake.requiem.client.model.lib;
 
 import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.Baker;
 import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.ModelBaker;
 import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.resource.Material;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,13 +42,14 @@ public class SimpleUnbakedModel implements UnbakedModel {
     }
 
     @Override
-    public void resolveParents(Function<Identifier, UnbakedModel> models) {
+    public void setParents(Function<Identifier, UnbakedModel> modelLoader) {
 
     }
 
     @Nullable
     @Override
-    public BakedModel bake(ModelBaker modelBaker, Function<Material, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
-        return baker.apply(ModelBuilder.prepare(textureGetter));
+    public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer) {
+        return null;//TODO baker.apply(ModelBuilder.prepare(textureGetter));
     }
+
 }

@@ -39,6 +39,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -86,20 +87,20 @@ public abstract class BaseRunestoneBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup wrapperLookup) {
+        super.readNbt(nbt, wrapperLookup);
 
         if (nbt.contains("custom_name", NbtElement.STRING_TYPE)) {
-            this.customName = Text.Serializer.fromJson(nbt.getString("custom_name"));
+            //TODO this.customName = Text.Serializer.fromJson(nbt.getString("custom_name"));
         }
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup wrapperLookup) {
+        super.writeNbt(nbt, wrapperLookup);
 
         if (this.customName != null) {
-            nbt.putString("custom_name", Text.Serializer.toJson(this.customName));
+            //TODO nbt.putString("custom_name", Text.Serializer.toJson(this.customName));
         }
     }
 }

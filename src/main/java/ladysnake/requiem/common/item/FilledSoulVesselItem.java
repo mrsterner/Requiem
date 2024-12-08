@@ -40,7 +40,6 @@ import ladysnake.requiem.common.entity.ReleasedSoulEntity;
 import ladysnake.requiem.common.entity.RequiemEntities;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.entity.SoulHolderComponent;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -64,7 +63,7 @@ public class FilledSoulVesselItem extends Item {
 
     public static ItemStack forEntityType(EntityType<?> type) {
         ItemStack result = new ItemStack(RequiemItems.FILLED_SOUL_VESSEL);
-        result.getOrCreateSubNbt(SOUL_FRAGMENT_NBT).putString("type", EntityType.getId(type).toString());
+        //TODO result.getOrCreateSubNbt(SOUL_FRAGMENT_NBT).putString("type", EntityType.getId(type).toString());
         return result;
     }
 
@@ -82,7 +81,7 @@ public class FilledSoulVesselItem extends Item {
                 linkedRecord.invalidate();
             }));
     }
-
+/*TODO
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         Optional.ofNullable(stack.getSubNbt(SOUL_FRAGMENT_NBT))
@@ -104,9 +103,12 @@ public class FilledSoulVesselItem extends Item {
         return TypedActionResult.success(stack);
     }
 
-    public ItemStack getEmptiedStack() {
-        return new ItemStack(this.emptySoulVessel);
-    }
+
+
+ */
+public ItemStack getEmptiedStack() {
+    return new ItemStack(this.emptySoulVessel);
+}
 
     public static void releaseSoul(LivingEntity user, @Nullable UUID ownerRecord) {
         ReleasedSoulEntity releasedSoul = new ReleasedSoulEntity(RequiemEntities.RELEASED_SOUL, user.getWorld(), ownerRecord);

@@ -108,11 +108,6 @@ public class AttritionStatusEffect extends StatusEffect implements StickyStatusE
     }
 
     @Override
-    public double adjustModifierAmount(int amplifier, EntityAttributeModifier entityAttributeModifier) {
-        return super.adjustModifierAmount(Math.min(amplifier, MAX_LEVEL), entityAttributeModifier);
-    }
-
-    @Override
     public boolean shouldStick(LivingEntity entity) {
         // If a remnant cannot regenerate a player body (like wandering spirits), it means they should always be considered as "outside a congruent body"
         return RemnantComponent.KEY.maybeGet(entity).map(rc -> rc.isVagrant() || !rc.canRegenerateBody()).orElse(false);

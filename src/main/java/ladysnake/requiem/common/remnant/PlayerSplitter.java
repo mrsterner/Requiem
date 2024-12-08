@@ -35,9 +35,6 @@
 package ladysnake.requiem.common.remnant;
 
 import com.mojang.authlib.GameProfile;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
-import dev.onyxstudios.cca.internal.base.AbstractComponentContainer;
 import ladysnake.requiem.api.v1.entity.InventoryLimiter;
 import ladysnake.requiem.api.v1.event.requiem.PlayerShellEvents;
 import ladysnake.requiem.api.v1.event.requiem.PossessionEvents;
@@ -63,6 +60,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
 import org.ladysnake.impersonate.Impersonator;
 
 import java.util.EnumSet;
@@ -118,7 +117,7 @@ public final class PlayerSplitter {
         RemnantComponent.get(shell).become(RemnantTypes.MORTAL, true);
         InventoryLimiter.instance().disable(shell);
         for (StatusEffectInstance effect : List.copyOf(shell.getStatusEffects())) {
-            if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType().value())) {
+            if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType())) {
                 shell.removeStatusEffect(effect.getEffectType());
             }
         }
@@ -203,6 +202,7 @@ public final class PlayerSplitter {
     }
 
     private static void deduplicateComponents(NbtCompound leftoverData, Set<ComponentKey<?>> keys) {
+        /*TODO
         NbtCompound leftoverComponents = leftoverData.getCompound(AbstractComponentContainer.NBT_KEY);
 
         for (ComponentKey<?> key : keys) {
@@ -212,6 +212,8 @@ public final class PlayerSplitter {
                 leftoverComponents.remove(keyId);
             }
         }
+
+         */
     }
 
     private static void deduplicateVanillaData(NbtCompound leftoverData) {

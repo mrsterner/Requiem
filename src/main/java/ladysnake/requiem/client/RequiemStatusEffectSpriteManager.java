@@ -54,13 +54,13 @@ public final class RequiemStatusEffectSpriteManager {
         if (baseId == null) throw new IllegalStateException("Unregistered status effect " + effect);
         Identifier[] altSprites = new Identifier[altSpriteCount];
         for (int amplifier = 0; amplifier < altSpriteCount; amplifier++) {
-            altSprites[amplifier] = new Identifier(baseId.getNamespace(), "mob_effect/" + baseId.getPath() + '_' + (amplifier + 1));
+            altSprites[amplifier] = Identifier.of(baseId.getNamespace(), "mob_effect/" + baseId.getPath() + '_' + (amplifier + 1));
         }
-        spriteMappings.put(new Identifier(baseId.getNamespace(), "mob_effect/" + baseId.getPath()), altSprites);
+        spriteMappings.put(Identifier.of(baseId.getNamespace(), "mob_effect/" + baseId.getPath()), altSprites);
     }
 
     public Sprite substituteSprite(Sprite baseSprite, StatusEffectInstance renderedEffect) {
-        Identifier[] altSprites = spriteMappings.get(baseSprite.getId());
+        Identifier[] altSprites = spriteMappings.get(baseSprite.getAtlasId());
         if (altSprites != null) {
             int amplifier = renderedEffect.getAmplifier();
             return ((SpriteAtlasHolderAccessor) MinecraftClient.getInstance().getStatusEffectSpriteManager())

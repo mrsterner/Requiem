@@ -34,19 +34,19 @@
  */
 package ladysnake.requiem.client.render.entity;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.client.render.entity.model.WillOWispModel;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 
 public class SoulEntityRenderer<E extends Entity> extends EntityRenderer<E> {
     public static final Identifier TEXTURE = Requiem.id("textures/entity/soul.png");
@@ -60,12 +60,12 @@ public class SoulEntityRenderer<E extends Entity> extends EntityRenderer<E> {
     @Override
     public void render(E entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         matrices.push();
-        matrices.multiply(Axis.Y_POSITIVE.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevYaw, entity.getYaw()) - 180));
-        matrices.multiply(Axis.X_POSITIVE.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevPitch, entity.getPitch())));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevYaw, entity.getYaw()) - 180));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevPitch, entity.getPitch())));
         matrices.scale(0.5F, -0.5F, 0.5F);
         matrices.translate(0, -1, 0);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(this.model.getLayer(this.getTexture(entity)));
-        this.model.render(matrices, vertexConsumer, 0x00f0_00f0, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, getAlpha(entity));
+        this.model.render(matrices, vertexConsumer, 0x00f0_00f0, OverlayTexture.DEFAULT_UV, 1); //TODO , 1.0F, 1.0F, getAlpha(entity)
         matrices.pop();
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }

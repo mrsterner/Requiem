@@ -48,6 +48,7 @@ import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -102,7 +103,7 @@ public class LootingPossessedData extends PossessedDataBase {
 
     private RegistryKey<LootTable> getLootTable() {
         Identifier identifier = Registries.ENTITY_TYPE.getId(this.holder.getType());
-        return new Identifier(identifier.getNamespace(), "requiem/possession/" + identifier.getPath());
+        return RegistryKey.of(RegistryKeys.LOOT_TABLE,Identifier.of(identifier.getNamespace(), "requiem/possession/" + identifier.getPath()));
     }
 
     @Override

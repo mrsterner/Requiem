@@ -37,8 +37,8 @@ package ladysnake.requiem.common.item.dispensing;
 import ladysnake.requiem.common.entity.ReleasedSoulEntity;
 import ladysnake.requiem.common.entity.RequiemEntities;
 import ladysnake.requiem.common.item.FilledSoulVesselItem;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.DispenserBehavior;
-import net.minecraft.block.dispenser.DispenserBlock;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.item.ItemStack;
@@ -61,9 +61,12 @@ public class FilledVesselItemDispenserBehavior implements DispenserBehavior {
         if (inputStack.isEmpty()) {
             return outputStack.copy();
         } else {
+            /*TODO
             if (pointer.<DispenserBlockEntity>getBlockEntity().addToFirstFreeSlot(outputStack.copy()) < 0) {
                 fallbackBehavior.dispense(pointer, outputStack.copy());
             }
+
+             */
 
             return inputStack;
         }
@@ -71,19 +74,24 @@ public class FilledVesselItemDispenserBehavior implements DispenserBehavior {
 
     @Override
     public ItemStack dispense(BlockPointer pointer, ItemStack stack) {
-        Direction direction = pointer.getBlockState().get(DispenserBlock.FACING);
-        Vec3d targetPos = Vec3d.ofCenter(pointer.getPos().offset(direction));
+        Direction direction = pointer.state().get(DispenserBlock.FACING);
+        Vec3d targetPos = Vec3d.ofCenter(pointer.pos().offset(direction));
+        /*TODO
         @Nullable UUID ownerRecord = Optional.ofNullable(stack.getSubNbt(FilledSoulVesselItem.SOUL_FRAGMENT_NBT))
             .filter(data -> data.containsUuid("uuid"))
             .map(data -> data.getUuid("uuid"))
             .orElse(null);
-        ReleasedSoulEntity releasedSoul = new ReleasedSoulEntity(RequiemEntities.RELEASED_SOUL, pointer.getWorld(), ownerRecord);
+        ReleasedSoulEntity releasedSoul = new ReleasedSoulEntity(RequiemEntities.RELEASED_SOUL, pointer.world(), ownerRecord);
         releasedSoul.setPosition(targetPos.getX(), targetPos.getY(), targetPos.getZ());
         releasedSoul.setVelocity(new Vec3d(direction.getUnitVector()).multiply(0.15f));
-        releasedSoul.setYaw(pointer.getWorld().random.nextFloat());
-        releasedSoul.setPitch(pointer.getWorld().random.nextFloat());
-        pointer.getWorld().spawnEntity(releasedSoul);
+        releasedSoul.setYaw(pointer.world().random.nextFloat());
+        releasedSoul.setPitch(pointer.world().random.nextFloat());
+        pointer.world().spawnEntity(releasedSoul);
+
+
+         */
         ItemStack result = ((FilledSoulVesselItem) stack.getItem()).getEmptiedStack();
+
         return this.tryPutStack(pointer, stack, result);
     }
 }

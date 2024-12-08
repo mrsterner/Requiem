@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.common.block.obelisk;
 
+import com.mojang.serialization.MapCodec;
 import ladysnake.requiem.api.v1.event.minecraft.BlockReplacedCallback;
 import ladysnake.requiem.common.block.RequiemBlockEntities;
 import ladysnake.requiem.common.item.RequiemItems;
@@ -56,7 +57,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,6 +68,11 @@ public class InertRunestoneBlock extends BlockWithEntity {
     public InertRunestoneBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(ACTIVATED, false).with(HEAD, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return createCodec(InertRunestoneBlock::new);
     }
 
     public static void registerCallbacks() {
@@ -127,8 +133,8 @@ public class InertRunestoneBlock extends BlockWithEntity {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (player.getStackInHand(hand).getItem() == RequiemItems.DEBUG_ITEM) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (player.getMainHandStack().getItem() == RequiemItems.DEBUG_ITEM) {
             if (!world.isClient && ObeliskMatcher.findObeliskOrigin(world, pos).map(world::getBlockEntity).orElse(null) instanceof RunestoneBlockEntity controller) {
                 player.sendMessage(Text.literal("Width: %d, Height: %d".formatted(controller.getCoreWidth(), controller.getCoreHeight())), true);
             }
@@ -163,7 +169,7 @@ public class InertRunestoneBlock extends BlockWithEntity {
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, RandomGenerator random) {
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         tryActivateObelisk(world, pos, true);
     }
 
@@ -180,7 +186,7 @@ public class InertRunestoneBlock extends BlockWithEntity {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         if (world.isClient() || !state.get(HEAD)) return null;
-        return checkType(type, RequiemBlockEntities.RUNIC_OBSIDIAN, RunestoneBlockEntity::tick);
+        return validateTicker(type, RequiemBlockEntities.RUNIC_OBSIDIAN, RunestoneBlockEntity::tick);
     }
 
     @Override

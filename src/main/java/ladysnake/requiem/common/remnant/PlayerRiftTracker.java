@@ -71,8 +71,8 @@ public class PlayerRiftTracker implements RiftTracker {
         Preconditions.checkArgument(riftRecord.has(RequiemRecordTypes.OBELISK_REF));
 
         if (this.riftRecordUuids.add(riftRecord.getUuid()) && this.player instanceof ServerPlayerEntity sp) {
-            Optional<Text> obeliskName = riftRecord.get(RequiemRecordTypes.OBELISK_REF).flatMap(ObeliskDescriptor::name);
-            RequiemNetworking.sendRiftWitnessedMessage(sp, obeliskName.orElse(Text.empty()));
+            Optional<String> obeliskName = riftRecord.get(RequiemRecordTypes.OBELISK_REF).flatMap(ObeliskDescriptor::name);
+            RequiemNetworking.sendRiftWitnessedMessage(sp, obeliskName.orElse(""));
         }
     }
 

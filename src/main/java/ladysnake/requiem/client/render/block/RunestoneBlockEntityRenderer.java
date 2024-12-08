@@ -34,18 +34,16 @@
  */
 package ladysnake.requiem.client.render.block;
 
-import com.mojang.blaze3d.vertex.VertexFormats;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.common.block.RequiemBlocks;
 import ladysnake.requiem.common.block.obelisk.InertRunestoneBlock;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlockEntity;
-import ladysnake.satin.api.managed.ManagedCoreShader;
-import ladysnake.satin.api.managed.ShaderEffectManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
@@ -53,7 +51,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.util.math.random.Random;
+import org.ladysnake.satin.api.managed.ManagedCoreShader;
+import org.ladysnake.satin.api.managed.ShaderEffectManager;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -76,7 +76,7 @@ public class RunestoneBlockEntityRenderer implements BlockEntityRenderer<Runesto
         if (runestoneId.equals(Registries.BLOCK.getId(RequiemBlocks.TACHYLITE_RUNESTONE))) {
             return Requiem.id("tachylite_rune/neutral");
         }
-        return new Identifier(
+        return Identifier.of(
             runestoneId.getNamespace(),
             "tachylite_rune/" + runestoneId.getPath().substring(runestoneId.getPath().lastIndexOf('/') + 1));
     }
@@ -97,7 +97,7 @@ public class RunestoneBlockEntityRenderer implements BlockEntityRenderer<Runesto
                 matrices,
                 vertexConsumers.getBuffer(SHADER.getRenderLayer(RenderLayer.getCutoutMipped())),
                 false,
-                RandomGenerator.createLegacy(),
+                Random.create(),
                 blockState.getRenderingSeed(pos),
                 OverlayTexture.packUv(powerRate, 0)
             );

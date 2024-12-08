@@ -202,10 +202,10 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 
     @ModifyArg(
         method = "drawBackground",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/entity/LivingEntity;)V"),
-        index = 5
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/DrawContext;IIIIIFFFLnet/minecraft/entity/LivingEntity;)V"),
+        index = 4
     )
-    private float shiftPossessedEntityLookY(float y) {
-        return InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityY(y);
+    private int shiftPossessedEntityLookY(int x1) {
+        return (int) InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityY(y);
     }
 }

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "requiem",
+  "version": "${version}",
+  "name": "Requiem",
+  "description": "Death revamped and ethereal powers",
+  "authors": [
+    "Pyrofab",
+    "doctor4t",
+    "sekoia",
+    "UpcraftLP",
+    "SciRave"
+  ],
+  "contact": {
+    "homepage": "https://ladysnake.github.io/wiki/requiem",
+    "sources": "https://github.com/Ladysnake/Requiem",
+    "issues": "https://github.com/Ladysnake/Requiem/issues",
+    "discord": "ladysnake.glitch.me/discord"
+  },
+  "license": "GPL-2.0-or-later",
+  "icon": "assets/requiem/skull_logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ladysnake.requiem.Requiem"
+    ],
+    "client": [
+      "ladysnake.requiem.client.RequiemClient::onInitializeClient"
+    ],
+    "cardinal-components": [
+      "ladysnake.requiem.common.RequiemComponents"
+    ],
+    "cardinal-components-entity": [
+      "ladysnake.requiem.compat.RequiemCompatibilityManager"
+    ],
+    "modmenu": [
+      "ladysnake.requiem.compat.ModMenuCompat"
+    ]
+  },
+  "mixins": [
+    "mixins.requiem.client.json",
+    "mixins.requiem.common.json",
+    "mixins.requiem.compat.json"
+  ],
+  "depends": {
+    "minecraft": ">=1.19",
+    "fabricloader": "*",
+    "requiem-api": "${version}",
+    "requiem-core": "${version}",
+    "cardinal-components-base": "*",
+    "cloth-config2": "*",
+    "satin": "*",
+    "automatone": "*",
+    "impersonate": "*",
+    "fabric-permissions-api-v0": "*",
+    "locki": "*",
+    "playerabilitylib": "*"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_8109": [
+        "ladysnake/requiem/common/damage/DamageSourcesExt"
+      ]
+    }
+  }
+}

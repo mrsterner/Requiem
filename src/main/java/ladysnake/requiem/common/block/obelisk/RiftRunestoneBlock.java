@@ -77,7 +77,7 @@ public class RiftRunestoneBlock extends InertRunestoneBlock implements ObeliskRu
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (!state.get(ACTIVATED) || !RemnantComponent.get(player).getRemnantType().isDemon()) {
             return ActionResult.PASS;
         }
@@ -140,11 +140,14 @@ public class RiftRunestoneBlock extends InertRunestoneBlock implements ObeliskRu
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        /*TODO
         if (itemStack.hasCustomName()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof RunestoneBlockEntity runestone) {
                 runestone.setCustomName(itemStack.getName());
             }
         }
+
+         */
     }
 }

@@ -36,11 +36,6 @@ package ladysnake.requiem.client.particle;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tessellator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormats;
-import ladysnake.requiem.common.particle.RequiemEntityParticleEffect;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -48,7 +43,11 @@ import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleTextureSheet;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.world.ClientWorld;
@@ -79,10 +78,10 @@ public class EntityDustParticle extends BillboardParticle {
         this.sheet = TextureSheet.get(getTexture(src));
         this.target = target;
         this.gravityStrength = 1.0F;
-        this.colorRed = 0.6F;
-        this.colorGreen = 0.6F;
-        this.colorBlue = 0.6F;
-        this.colorAlpha = this.random.nextFloat() * 0.3F + 0.3F;
+        this.red = 0.6F;
+        this.green = 0.6F;
+        this.blue = 0.6F;
+        this.alpha = this.random.nextFloat() * 0.3F + 0.3F;
 
         this.scale /= 2.0F;
         this.sampleU = this.random.nextFloat() * 31.0F;
@@ -111,7 +110,7 @@ public class EntityDustParticle extends BillboardParticle {
 
     private boolean reachedNextStep(Vec3d nextStep) {
         if (nextStep.squaredDistanceTo(this.x, this.y, this.z) < 0.1) {
-            this.exploredBlocks.add(BlockPos.fromPosition(nextStep));
+            this.exploredBlocks.add(BlockPos.ofFloored(nextStep));
             return true;
         }
         return false;
@@ -195,7 +194,7 @@ public class EntityDustParticle extends BillboardParticle {
     protected float getMaxV() {
         return this.sampleV * 4.0f / 128.0f;
     }
-
+/*TODO
     @Environment(EnvType.CLIENT)
     public static class Factory implements ParticleFactory<RequiemEntityParticleEffect> {
         @Override
@@ -208,6 +207,8 @@ public class EntityDustParticle extends BillboardParticle {
         }
     }
 
+ */
+
     public record TextureSheet(Identifier texture) implements ParticleTextureSheet {
         private static final Map<Identifier, ParticleTextureSheet> CACHE = new HashMap<>();
 
@@ -216,23 +217,20 @@ public class EntityDustParticle extends BillboardParticle {
         }
 
         @Override
-        public void begin(BufferBuilder bufferBuilder, TextureManager textureManager) {
+        public BufferBuilder begin(Tessellator tessellator, TextureManager textureManager) {
             RenderSystem.depthMask(true);
-            RenderSystem.setShader(GameRenderer::getParticleShader);
+            RenderSystem.setShader(GameRenderer::getParticleProgram);
             RenderSystem.setShaderTexture(0, texture);
             RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR_LIGHT);
-        }
-
-        @Override
-        public void draw(Tessellator tessellator) {
-            tessellator.draw();
+            RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+            return tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR_LIGHT);
         }
 
         @Override
         public String toString() {
             return "EntityDustParticleTextureSheet[%s]".formatted(texture);
         }
+
+
     }
 }

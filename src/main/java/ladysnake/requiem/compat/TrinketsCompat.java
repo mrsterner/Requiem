@@ -35,14 +35,15 @@
 package ladysnake.requiem.compat;
 
 import com.google.common.base.Suppliers;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.entity.PlayerCopyCallback;
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
 import ladysnake.requiem.api.v1.remnant.MobResurrectable;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 
 import java.util.function.Supplier;
 
@@ -51,10 +52,12 @@ public final class TrinketsCompat {
 
     @CalledThroughReflection
     public static void init() {
-        PlayerCopyCallback.EVENT.register((original, clone, lossless) -> {
+
+        ServerPlayerEvents.COPY_FROM.register((original, clone, lossless) -> {
             ComponentKey<?> trinketsKey = TRINKETS.get();
             if (trinketsKey != null && ((MobResurrectable) original).hasResurrectionEntity()) {
-                trinketsKey.get(clone).readFromNbt(Util.make(new NbtCompound(), trinketsKey.get(original)::writeToNbt));
+                var lookup = original.getWorld().getRegistryManager();
+                trinketsKey.get(clone).readFromNbt(Util.make(new NbtCompound(), (w) -> trinketsKey.get(original).writeToNbt(w, lookup)), lookup);
             }
         });
     }

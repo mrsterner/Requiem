@@ -22,9 +22,9 @@ import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
-import net.minecraft.client.resource.Material;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
@@ -35,9 +35,9 @@ public final class ModelBuilder {
 
     private static ModelBuilder instance;
 
-    private static Function<Material, Sprite> spriteFunc;
+    private static Function<SpriteIdentifier, Sprite> spriteFunc;
 
-    public static ModelBuilder prepare(Function<Material, Sprite> spriteFuncIn) {
+    public static ModelBuilder prepare(Function<SpriteIdentifier, Sprite> spriteFuncIn) {
         if(instance == null) {
             instance = new ModelBuilder(Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()));
         }
@@ -59,7 +59,7 @@ public final class ModelBuilder {
     }
 
     public Sprite getSprite(String spriteName) {
-        return spriteFunc.apply(new Material(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, new Identifier(spriteName)));
+        return spriteFunc.apply(new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, Identifier.of(spriteName)));
     }
 
     public void box(

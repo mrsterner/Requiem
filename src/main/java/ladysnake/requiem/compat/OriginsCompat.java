@@ -34,24 +34,6 @@
  */
 package ladysnake.requiem.compat;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import io.github.apace100.apoli.component.PowerHolderComponent;
-import io.github.apace100.apoli.data.ApoliDataTypes;
-import io.github.apace100.apoli.power.Active;
-import io.github.apace100.apoli.power.PowerType;
-import io.github.apace100.apoli.power.factory.PowerFactory;
-import io.github.apace100.apoli.power.factory.condition.ConditionFactory;
-import io.github.apace100.apoli.registry.ApoliRegistries;
-import io.github.apace100.calio.data.SerializableData;
-import io.github.apace100.calio.data.SerializableDataType;
-import io.github.apace100.origins.component.OriginComponent;
-import io.github.apace100.origins.integration.OriginDataLoadedCallback;
-import io.github.apace100.origins.origin.Origin;
-import io.github.apace100.origins.origin.OriginLayer;
-import io.github.apace100.origins.origin.OriginLayers;
-import io.github.apace100.origins.origin.OriginRegistry;
-import io.github.apace100.origins.registry.ModComponents;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
 import ladysnake.requiem.api.v1.event.requiem.RemnantStateChangeCallback;
@@ -65,10 +47,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 
 import java.util.Collections;
 import java.util.List;
-
+/*
 public final class OriginsCompat {
     public static final ComponentKey<OriginComponent> ORIGIN_KEY = ModComponents.ORIGIN;
     public static final ComponentKey<PowerHolderComponent> APOLI_POWER_KEY = PowerHolderComponent.KEY;
@@ -164,3 +148,5 @@ public final class OriginsCompat {
         }
     }
 }
+
+ */

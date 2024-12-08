@@ -34,22 +34,22 @@
  */
 package ladysnake.requiem.client;
 
-import com.mojang.blaze3d.framebuffer.Framebuffer;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.client.render.RequiemRenderPhases;
 import ladysnake.requiem.mixin.client.access.FramebufferAccessor;
-import ladysnake.satin.api.event.EntitiesPreRenderCallback;
-import ladysnake.satin.api.event.ShaderEffectRenderCallback;
-import ladysnake.satin.api.managed.ManagedFramebuffer;
-import ladysnake.satin.api.managed.ManagedShaderEffect;
-import ladysnake.satin.api.managed.ShaderEffectManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
+import org.ladysnake.satin.api.event.EntitiesPreRenderCallback;
+import org.ladysnake.satin.api.event.ShaderEffectRenderCallback;
+import org.ladysnake.satin.api.managed.ManagedFramebuffer;
+import org.ladysnake.satin.api.managed.ManagedShaderEffect;
+import org.ladysnake.satin.api.managed.ShaderEffectManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 

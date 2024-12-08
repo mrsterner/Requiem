@@ -49,6 +49,7 @@ import java.util.ArrayList;
 
 @Mixin(TradeOfferList.class)
 public class TradeOfferListMixin extends ArrayList<TradeOffer> {
+    /*TODO
     @Inject(method = "<init>(Lnet/minecraft/nbt/NbtCompound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/TradeOfferList;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     private void swapDemonTrades(NbtCompound nbtCompound, CallbackInfo ci, NbtList offers, int i) {
         NbtCompound offerNbt = offers.getCompound(i);
@@ -56,4 +57,6 @@ public class TradeOfferListMixin extends ArrayList<TradeOffer> {
             this.set(i, RemnantTradeOffer.fromNbt(offerNbt));
         }
     }
+
+     */
 }

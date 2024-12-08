@@ -34,22 +34,22 @@
  */
 package ladysnake.requiem.compat;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
 import ladysnake.requiem.api.v1.event.requiem.PlayerShellEvents;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.entity.PlayerShellEntity;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import org.quiltmc.loader.api.QuiltLoader;
+import org.ladysnake.cca.api.v3.component.Component;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
+import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -60,7 +60,6 @@ public final class RequiemCompatibilityManager {
         try {
             load("eldritch_mobs", EldritchMobsCompat.class);
             load("malum", MalumCompat.class);
-            load("origins", OriginsCompat.class);
             load("the_bumblezone", BumblezoneCompat.class);
             load("trinkets", TrinketsCompat.class);
         } catch (Throwable t) {
@@ -70,7 +69,7 @@ public final class RequiemCompatibilityManager {
 
     public static void load(String modId, Class<?> action) {
         try {
-            if (QuiltLoader.isModLoaded(modId)) {
+            if (FabricLoader.getInstance().isModLoaded(modId)) {
                 action.getMethod("init").invoke(null);
             }
         } catch (Throwable t) {
@@ -80,13 +79,8 @@ public final class RequiemCompatibilityManager {
 
     @CalledThroughReflection
     public static void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        if (QuiltLoader.isModLoaded("origins")) {
-            registry.beginRegistration(PlayerEntity.class, OriginsCompat.APOLI_HOLDER_KEY).respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY).end(p -> new ComponentDataHolder<>(OriginsCompat.APOLI_POWER_KEY, OriginsCompat.APOLI_HOLDER_KEY));
-            registry.beginRegistration(PlayerEntity.class, OriginsCompat.ORIGIN_HOLDER_KEY).after(OriginsCompat.APOLI_HOLDER_KEY).respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY).end(p -> new OriginsCompat.OriginDataHolder(OriginsCompat.ORIGIN_KEY, OriginsCompat.ORIGIN_HOLDER_KEY));
-            registry.beginRegistration(PlayerShellEntity.class, OriginsCompat.APOLI_HOLDER_KEY).end(shell -> new ComponentDataHolder<>(OriginsCompat.APOLI_POWER_KEY, OriginsCompat.APOLI_HOLDER_KEY));
-            registry.beginRegistration(PlayerShellEntity.class, OriginsCompat.ORIGIN_HOLDER_KEY).after(OriginsCompat.APOLI_HOLDER_KEY).end(shell -> new OriginsCompat.OriginDataHolder(OriginsCompat.ORIGIN_KEY, OriginsCompat.ORIGIN_HOLDER_KEY));
-        }
-           }
+
+    }
 
     static <T extends Entity> void findEntityType(Identifier id, Consumer<EntityType<T>> action) {
         @SuppressWarnings("unchecked") Optional<EntityType<T>> maybe = (Optional<EntityType<T>>) (Optional<?>) Registries.ENTITY_TYPE.getOrEmpty(id);
@@ -105,12 +99,12 @@ public final class RequiemCompatibilityManager {
     public static <C extends Component> void registerShellDataCallbacks(ComponentKey<? extends ComponentDataHolder<C>> holderKey) {
         PlayerShellEvents.DATA_TRANSFER.register((from, to, merge) -> {
             if (RemnantComponent.isVagrant(from)) {    // can happen with /requiem shell create
-                holderKey.get(from).restoreDataToPlayer(to, false);
+                holderKey.get(from).restoreDataToPlayer(to, false, from.getRegistryManager());
             } else {
                 ComponentDataHolder<C> holder = holderKey.get(from); // who we get it from does not really matter
-                holder.copyDataBetween(from, to);
+                holder.copyDataBetween(from, to, from.getRegistryManager());
             }
         });
-        PlayerShellEvents.RESET_IDENTITY.register((player, previousIdentity) -> holderKey.get(player).restoreDataToPlayer(player, false));
+        PlayerShellEvents.RESET_IDENTITY.register((player, previousIdentity) -> holderKey.get(player).restoreDataToPlayer(player, false, player.getRegistryManager()));
     }
 }

@@ -38,7 +38,6 @@ import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.possession.item.PossessionItemAction;
 import ladysnake.requiem.api.v1.remnant.RemnantState;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
-import ladysnake.requiem.common.possession.item.PossessionItemOverrideWrapper;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
@@ -67,7 +66,7 @@ public final class RequiemRegistries {
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
 
-    public static final RegistryKey<Registry<PossessionItemOverrideWrapper>> MOB_ITEM_OVERRIDE_KEY = RegistryKey.ofRegistry(Requiem.id("mob_items"));
+    //TODO public static final RegistryKey<Registry<PossessionItemOverrideWrapper>> MOB_ITEM_OVERRIDE_KEY = RegistryKey.ofRegistry(Requiem.id("mob_items"));
 
     public static void init() {
         Registry.register(REMNANT_STATES, Identifier.of(RemnantState.NULL_STATE_ID), RemnantTypes.MORTAL);

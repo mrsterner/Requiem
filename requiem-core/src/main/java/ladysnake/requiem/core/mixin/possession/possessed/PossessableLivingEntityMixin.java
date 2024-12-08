@@ -202,7 +202,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
         Entity overrides
     * * * * * * * * * * */
 
-    @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isServer()Z", ordinal = 1))
+    @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isLogicalSideForUpdatingMovement()Z", ordinal = 0))
     private void requiem$mobTick(CallbackInfo ci) {
         if (this.isBeingPossessed() && !this.getWorld().isClient) {
             this.requiem$mobTick();
@@ -275,7 +275,7 @@ public abstract class PossessableLivingEntityMixin extends Entity implements Pos
         }
     }
 
-    @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
+    @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/damage/DamageSource;)V"))
     private void onDeath(DamageSource deathCause, CallbackInfo ci) {
         ServerPlayerEntity possessor = (ServerPlayerEntity) this.getPossessor();
         if (possessor != null) {

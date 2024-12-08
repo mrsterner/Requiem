@@ -86,7 +86,7 @@ public abstract class AbstractInventoryScreenMixin<T extends ScreenHandler> exte
 
     @ModifyArg(method = "drawStatusEffectBackgrounds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
     private Identifier customizeDrawnBackground(Identifier texture, @Local StatusEffectInstance statusEffectInstance){
-        if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType().value())) {
+        if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType())) {
             assert client != null;
             //boundSpecialBackground = true;
             return RequiemClient.SOULBOUND_BACKGROUND;

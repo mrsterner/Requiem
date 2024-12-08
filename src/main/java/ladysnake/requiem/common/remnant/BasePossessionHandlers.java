@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.common.remnant;
 
-import dev.onyxstudios.cca.api.v3.entity.TrackingStartCallback;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.event.minecraft.MobConversionCallback;
 import ladysnake.requiem.api.v1.event.requiem.PossessionEvents;
@@ -63,6 +62,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
+import org.ladysnake.cca.api.v3.entity.TrackingStartCallback;
 
 public final class BasePossessionHandlers {
 

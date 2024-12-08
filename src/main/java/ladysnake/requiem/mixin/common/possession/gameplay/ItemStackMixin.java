@@ -37,7 +37,6 @@ package ladysnake.requiem.mixin.common.possession.gameplay;
 import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.common.possession.item.OverridableItemStack;
-import ladysnake.requiem.common.possession.item.PossessionItemOverrideWrapper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -60,8 +59,11 @@ public abstract class ItemStackMixin implements OverridableItemStack {
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void use(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+        /*TODO
         PossessionItemOverrideWrapper.tryUseOverride(world, player, (ItemStack) (Object) this, hand)
             .ifPresent(cir::setReturnValue);
+
+         */
     }
 
     @Override
@@ -82,9 +84,11 @@ public abstract class ItemStackMixin implements OverridableItemStack {
     @Inject(method = "finishUsing", at = @At("HEAD"), cancellable = true)
     private void overridePossessedUseEnd(World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         if (!(user instanceof PlayerEntity)) return;
-
+/*TODO
         PossessionItemOverrideWrapper.tryFinishUsingOverride(world, (PlayerEntity) user, (ItemStack) (Object) this, user.getActiveHand())
             .map(TypedActionResult::getValue).ifPresent(cir::setReturnValue);
+
+ */
     }
 
     @Inject(method = "useOnEntity", at = @At("RETURN"), cancellable = true)

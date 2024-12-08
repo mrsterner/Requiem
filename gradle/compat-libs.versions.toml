@@ -1,8 +1,8 @@
 [versions]
 aea = "2.0.0+1.21.1"
-apoli = "2.11.11"
+apoli = "2.12.0-alpha.13"
 bumblezone = "5930884" # v4.3.1
-calio = "1.11.0"
+calio = "1.13.3"
 collective = "5840217" # 7.61
 eldritchMobs = "1.16.3"
 malum="5441759"
@@ -11,16 +11,11 @@ pehkui = "3.8.3"
 trinkets = "3.10.0"
 
 [libraries]
-apoli =         { group = "com.github.apace100",     name = "apoli", version.ref = "apoli" }
 additionalEntityAttributes = { group = "maven.modrinth", name = "AdditionalEntityAttributes", version.ref = "aea" }
 bumblezone =    { group = "curse.maven",             name = "the-bumblezone-fabric-363949", version.ref = "bumblezone" }
-calio =         { group = "com.github.apace100",     name = "calio", version.ref = "calio" }
 collective =    { group = "curse.maven", name = "collective-342584", version.ref="collective"}
 eldritchMobs =  { group = "maven.modrinth",   name = "eldritch-mobs", version.ref = "eldritchMobs" }
 malum =         { group = "curse.maven", name = "malum-484064", version.ref = "malum"}
-origins =       { group = "maven.modrinth",     name = "origins", version.ref = "origins" }
 pehkui =        { module= "com.github.Virtuoel:Pehkui", version.ref = "pehkui" }
 trinkets =      { module = "dev.emi:trinkets", version.ref = "trinkets" }
 
-[bundles]
-origins = ["apoli", "calio", "origins"]

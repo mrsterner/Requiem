@@ -34,23 +34,20 @@
  */
 package ladysnake.requiem.client.particle.wisp;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import ladysnake.requiem.common.particle.WispTrailParticleEffect;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.Random;
-
+/*TODO
 public final class WispTrailParticle extends SpriteBillboardParticle {
     private final float redEvolution;
     private final float greenEvolution;
@@ -58,9 +55,9 @@ public final class WispTrailParticle extends SpriteBillboardParticle {
 
     private WispTrailParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, WispTrailParticleEffect wispTrailParticleEffect, SpriteProvider spriteProvider) {
         super(world, x, y, z, velocityX, velocityY, velocityZ);
-        this.colorRed = wispTrailParticleEffect.red();
-        this.colorGreen = wispTrailParticleEffect.green();
-        this.colorBlue = wispTrailParticleEffect.blue();
+        this.red = wispTrailParticleEffect.red();
+        this.red = wispTrailParticleEffect.green();
+        this.red = wispTrailParticleEffect.blue();
         this.redEvolution = wispTrailParticleEffect.redEvolution();
         this.greenEvolution = wispTrailParticleEffect.greenEvolution();
         this.blueEvolution = wispTrailParticleEffect.blueEvolution();
@@ -83,9 +80,9 @@ public final class WispTrailParticle extends SpriteBillboardParticle {
 
         // fade and die
         if (this.age++ >= this.maxAge) {
-            colorAlpha -= 0.05f;
+            alpha -= 0.05f;
         }
-        if (colorAlpha < 0f || this.scale <= 0f) {
+        if (alpha < 0f || this.scale <= 0f) {
             this.markDead();
         }
 
@@ -96,9 +93,9 @@ public final class WispTrailParticle extends SpriteBillboardParticle {
 //        green = MathHelper.clamp(green+greenEv, 0, 1);
 //        blue = MathHelper.clamp(blue+blueEv, 0, 1);
 
-        colorRed = MathHelper.clamp(colorRed + redEvolution, 0, 1);
-        colorGreen = MathHelper.clamp(colorGreen + greenEvolution, 0, 1);
-        colorBlue = MathHelper.clamp(colorBlue + blueEvolution, 0, 1);
+        red = MathHelper.clamp(red + redEvolution, 0, 1);
+        green = MathHelper.clamp(green + greenEvolution, 0, 1);
+        blue = MathHelper.clamp(blue + blueEvolution, 0, 1);
 
         this.velocityY -= 0.001;
         this.velocityX = 0;
@@ -119,7 +116,7 @@ public final class WispTrailParticle extends SpriteBillboardParticle {
         } else {
             quaternion2 = new Quaternionf(camera.getRotation());
             float i = MathHelper.lerp(tickDelta, this.prevAngle, this.angle);
-            quaternion2.mul(Axis.Z_POSITIVE.rotation(i));
+            quaternion2.mul(RotationAxis.POSITIVE_Z.rotation(i));
         }
 
         Vector3f[] Vec3fs = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
@@ -138,12 +135,12 @@ public final class WispTrailParticle extends SpriteBillboardParticle {
         float maxV = this.getMaxV();
         int l = 15728880;
 
-        vertexConsumer.vertex(Vec3fs[0].x(), Vec3fs[0].y(), Vec3fs[0].z()).uv(maxU, maxV).color(colorRed, colorGreen, colorBlue, colorAlpha).light(l).next();
-        vertexConsumer.vertex(Vec3fs[1].x(), Vec3fs[1].y(), Vec3fs[1].z()).uv(maxU, minV).color(colorRed, colorGreen, colorBlue, colorAlpha).light(l).next();
-        vertexConsumer.vertex(Vec3fs[2].x(), Vec3fs[2].y(), Vec3fs[2].z()).uv(minU, minV).color(colorRed, colorGreen, colorBlue, colorAlpha).light(l).next();
-        vertexConsumer.vertex(Vec3fs[3].x(), Vec3fs[3].y(), Vec3fs[3].z()).uv(minU, maxV).color(colorRed, colorGreen, colorBlue, colorAlpha).light(l).next();
+        vertexConsumer.vertex(Vec3fs[0].x(), Vec3fs[0].y(), Vec3fs[0].z()).texture(maxU, maxV).color(red, green, blue, alpha).light(l);
+        vertexConsumer.vertex(Vec3fs[1].x(), Vec3fs[1].y(), Vec3fs[1].z()).texture(maxU, minV).color(red, green, blue, alpha).light(l);
+        vertexConsumer.vertex(Vec3fs[2].x(), Vec3fs[2].y(), Vec3fs[2].z()).texture(minU, minV).color(red, green, blue, alpha).light(l);
+        vertexConsumer.vertex(Vec3fs[3].x(), Vec3fs[3].y(), Vec3fs[3].z()).texture(minU, maxV).color(red, green, blue, alpha).light(l);
     }
-
+/*
     public static class Factory implements ParticleFactory<WispTrailParticleEffect> {
         private final SpriteProvider spriteProvider;
 
@@ -156,4 +153,6 @@ public final class WispTrailParticle extends SpriteBillboardParticle {
             return new WispTrailParticle(clientWorld, x, y, z, velocityX, velocityY, velocityZ, wispTrailParticleEffect, this.spriteProvider);
         }
     }
+
 }
+*/

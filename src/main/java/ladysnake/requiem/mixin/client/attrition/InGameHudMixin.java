@@ -70,7 +70,7 @@ public abstract class InGameHudMixin {
     // ModifyVariable is only used to capture the local variable more easily
     @ModifyArg(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
     private Identifier customizeDrawnBackground(Identifier texture, @Local StatusEffectInstance statusEffectInstance) {
-        if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType().value())) {
+        if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType())) {
             assert this.client != null;
             //RenderSystem.setShaderTexture(0, RequiemClient.SOULBOUND_BACKGROUND);
             return RequiemClient.SOULBOUND_BACKGROUND;

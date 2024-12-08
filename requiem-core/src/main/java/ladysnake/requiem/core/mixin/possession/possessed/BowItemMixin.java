@@ -68,14 +68,13 @@ public abstract class BowItemMixin extends RangedWeaponItem {
             possessed.setAttacking(true);
         }
     }
-
+/*TODO
     @Inject(
             method = "onStoppedUsing",
             at = @At(
                     value = "FIELD",
                     opcode = Opcodes.GETFIELD,
-                    target = "Lnet/minecraft/entity/player/PlayerAbilities;creativeMode:Z",
-                    ordinal = 0
+                    target = "h"
             )
     )
     private void setCurrentUser(ItemStack item, World world, LivingEntity user, int charge, CallbackInfo ci) {
@@ -85,4 +84,6 @@ public abstract class BowItemMixin extends RangedWeaponItem {
             possessed.setAttacking(false);
         }
     }
+
+ */
 }

@@ -34,13 +34,14 @@
  */
 package ladysnake.requiem.compat;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import ladysnake.requiem.Requiem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
+import org.ladysnake.cca.api.v3.component.Component;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
 
 import java.util.Optional;
 
@@ -55,20 +56,20 @@ public class ComponentDataHolder<C extends Component> implements Component {
         this.selfKey = selfKey;
     }
 
-    public void copyDataBetween(PlayerEntity from, PlayerEntity to) {
-        writePlayerDataToNbt(from).ifPresent(nbt -> readPlayerDataFromNbt(to, nbt));
+    public void copyDataBetween(PlayerEntity from, PlayerEntity to, RegistryWrapper.WrapperLookup wrapperLookup) {
+        writePlayerDataToNbt(from, wrapperLookup).ifPresent(nbt -> readPlayerDataFromNbt(to, nbt, wrapperLookup));
     }
 
-    public void storeDataFrom(PlayerEntity player, boolean override) {
+    public void storeDataFrom(PlayerEntity player, boolean override, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (!player.getWorld().isClient && (this.data == null || override)) {
-            writePlayerDataToNbt(player).ifPresent(d -> this.data = d);
+            writePlayerDataToNbt(player, wrapperLookup).ifPresent(d -> this.data = d);
         }
     }
 
-    private Optional<NbtCompound> writePlayerDataToNbt(PlayerEntity player) {
+    private Optional<NbtCompound> writePlayerDataToNbt(PlayerEntity player, RegistryWrapper.WrapperLookup wrapperLookup) {
         try {
             NbtCompound originData = new NbtCompound();
-            this.dataKey.get(player).writeToNbt(originData);
+            this.dataKey.get(player).writeToNbt(originData, wrapperLookup);
             return Optional.of(originData);
         } catch (RuntimeException e) {
             Requiem.LOGGER.error("[Requiem] Failed to serialize data from " + this.dataKey.getId(), e);
@@ -76,27 +77,27 @@ public class ComponentDataHolder<C extends Component> implements Component {
         }
     }
 
-    public void restoreDataToPlayer(PlayerEntity player, boolean clear) {
+    public void restoreDataToPlayer(PlayerEntity player, boolean clear, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (!player.getWorld().isClient && this.data != null) {
-            readPlayerDataFromNbt(player, this.data);
+            readPlayerDataFromNbt(player, this.data, wrapperLookup);
             if (clear) this.data = null;
         }
     }
 
-    private void readPlayerDataFromNbt(PlayerEntity player, NbtCompound data) {
+    private void readPlayerDataFromNbt(PlayerEntity player, NbtCompound data, RegistryWrapper.WrapperLookup wrapperLookup) {
         C component = this.dataKey.get(player);
-        NbtCompound backup = Util.make(new NbtCompound(), component::writeToNbt);
+        NbtCompound backup = Util.make(new NbtCompound(), (w) -> component.writeToNbt(w, wrapperLookup));
         try {
-            component.readFromNbt(data);
+            component.readFromNbt(data, wrapperLookup);
         } catch (RuntimeException e) {
             Requiem.LOGGER.error("[Requiem] Failed to deserialize data from " + this.dataKey.getId(), e);
-            component.readFromNbt(backup);
+            component.readFromNbt(backup, wrapperLookup);
         }
         this.dataKey.sync(player);
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (tag.contains("originData")) {
             this.data = tag.getCompound("originData");
         } else if (tag.contains("componentData")) {
@@ -105,7 +106,7 @@ public class ComponentDataHolder<C extends Component> implements Component {
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         if (this.data != null) {
             tag.put("componentData", this.data);
         }

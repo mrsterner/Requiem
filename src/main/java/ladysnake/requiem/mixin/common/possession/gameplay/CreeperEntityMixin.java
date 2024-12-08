@@ -52,7 +52,7 @@ public abstract class CreeperEntityMixin {
             Collection<StatusEffectInstance> copy = new ArrayList<>();
             boolean edited = false;
             for (StatusEffectInstance effect : allEffects) {
-                if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType().value())) {
+                if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType())) {
                     edited = true;
                 } else {
                     copy.add(effect);

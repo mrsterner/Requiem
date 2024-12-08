@@ -41,7 +41,6 @@ import ladysnake.requiem.common.block.obelisk.InertRunestoneBlock;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlock;
 import ladysnake.requiem.common.entity.RequiemEntityAttributes;
 import ladysnake.requiem.common.entity.effect.AttritionStatusEffect;
-import ladysnake.requiem.common.particle.RequiemEntityParticleEffect;
 import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.remnant.WandererRemnantState;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
@@ -61,6 +60,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -204,7 +204,7 @@ public class EmptySoulVesselItem extends Item {
                 case NORMAL -> setupRecord(target).getUuid();
                 case AGGREGATE -> UUID.randomUUID(); // if we are stealing a soul from an aggregate, there is no linked entity
             };
-            result.getOrCreateSubNbt(FilledSoulVesselItem.SOUL_FRAGMENT_NBT).putUuid("uuid", recordUuid);
+            //TODO result.getOrCreateSubNbt(FilledSoulVesselItem.SOUL_FRAGMENT_NBT).putUuid("uuid", recordUuid);
             switch (captureType.get()) {
                 case NORMAL -> SoulHolderComponent.get(target).removeSoul();
                 case AGGREGATE -> target.damage(world.getDamageSources().magic(), SOUL_AGGREGATE_STEALING_DAMAGE);
@@ -214,7 +214,7 @@ public class EmptySoulVesselItem extends Item {
             AttritionStatusEffect.apply(remnant, 1, 20 * 60 * 5);
             WandererRemnantState.spawnAttritionParticles(remnant, remnant);
             remnant.incrementStat(Stats.BROKEN.getOrCreateStat(this));
-            remnant.sendToolBreakStatus(user.getActiveHand());
+            //TODO remnant.sendToolBreakStatus(user.getActiveHand());
             result = new ItemStack(RequiemItems.SHATTERED_SOUL_VESSEL);
         }
 
@@ -224,16 +224,19 @@ public class EmptySoulVesselItem extends Item {
     public static GlobalRecord setupRecord(LivingEntity target) {
         return EntityPositionClerk.get(target).getOrCreateRecord();
     }
-
+/* TODO
     @Override
     public int getMaxUseTime(ItemStack stack) {
         NbtCompound tag = stack.getSubNbt(ACTIVE_DATA_TAG);
         return tag == null ? 0 : tag.getInt("use_time");
     }
 
+ */
+
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (world instanceof ServerWorld serverWorld) {
+            /* TODO
             NbtCompound useData = stack.getSubNbt(ACTIVE_DATA_TAG);
             if (useData != null) {
                 Entity target = serverWorld.getEntity(useData.getUuid("target"));
@@ -241,12 +244,15 @@ public class EmptySoulVesselItem extends Item {
                     playSoulCaptureEffects(user, target);
                 }
             }
+
+             */
         }
     }
 
     public static void playSoulCaptureEffects(LivingEntity user, Entity target) {
         if (!(user.getWorld() instanceof ServerWorld world)) throw new IllegalStateException("Must be called serverside");
         if (world.getRandom().nextFloat() < 0.75f) {
+            /* TODO
             world.spawnParticles(
                 new RequiemEntityParticleEffect(RequiemParticleTypes.ENTITY_DUST, target.getId(), user.getId()),
                 target.getX(), target.getBodyY(0.5), target.getZ(),
@@ -256,7 +262,11 @@ public class EmptySoulVesselItem extends Item {
                 target.getWidth() * 0.2,
                 1.0
             );
+
+
+             */
         }
+
         user.playSound(RequiemSoundEvents.ITEM_EMPTY_VESSEL_USE, 1, 1);
     }
 
@@ -299,7 +309,7 @@ public class EmptySoulVesselItem extends Item {
         else return Math.sqrt(intrinsicStrength * 0.5);
     }
 
-    private static double getAttributeBaseValue(LivingEntity entity, EntityAttribute attribute) {
+    private static double getAttributeBaseValue(LivingEntity entity, RegistryEntry<EntityAttribute> attribute) {
         if (!entity.getAttributes().hasAttribute(attribute)) return 0;
         return entity.getAttributes().getBaseValue(attribute);
     }
