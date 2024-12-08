@@ -74,7 +74,7 @@ public abstract class WitchEntityMixin extends HostileEntity {
             cir.setReturnValue(false);
         }
     }
-
+/*TODO
     @Nullable
     @ModifyVariable(method = "tickMovement", ordinal = 0, at = @At("STORE"))
     private Potion preventPotionOverride(final Potion selectedPotion) {
@@ -83,4 +83,6 @@ public abstract class WitchEntityMixin extends HostileEntity {
         }
         return selectedPotion;
     }
+
+ */
 }

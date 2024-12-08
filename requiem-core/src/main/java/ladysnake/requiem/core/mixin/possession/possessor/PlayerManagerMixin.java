@@ -60,6 +60,7 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
+    /*TODO
     @ModifyVariable(
             method = "onPlayerConnect",
             at = @At(
@@ -91,6 +92,8 @@ public abstract class PlayerManagerMixin {
         }
         return serializedPlayer;
     }
+
+     */
 
     private void resumePossession(PossessionComponent player, Entity possessedEntityMount, UUID possessedEntityUuid) {
         if (possessedEntityMount instanceof MobEntity && possessedEntityMount.getUuid().equals(possessedEntityUuid)) {

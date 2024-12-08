@@ -40,18 +40,18 @@ import ladysnake.requiem.mixin.common.shell.ai.MemoryModuleTypeAccessor;
 import ladysnake.requiem.mixin.common.shell.ai.SerializableMemoryModuleTypeAccessor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
+import java.util.Optional;
 
 public final class PandemoniumMemoryModules {
     public static final MemoryModuleType<Integer> GO_HOME_ATTEMPTS = register("pathfinding_failures");
     public static final MemoryModuleType<List<LivingEntity>> VISIBLE_HOSTILES = register("visible_hostiles");
 
     private static <U> MemoryModuleType<U> register(String id) {
-        return MemoryModuleTypeAccessor.pandemonium$register(Requiem.MOD_ID + ":" + id);
-    }
-
-    private static <U> MemoryModuleType<U> register(String id, Codec<U> codec) {
-        return SerializableMemoryModuleTypeAccessor.pandemonium$register(Requiem.MOD_ID + ":" + id, codec);
+        return Registry.register(Registries.MEMORY_MODULE_TYPE, Requiem.id(id), new MemoryModuleType(Optional.empty()));
     }
 }

@@ -26,7 +26,7 @@
       ]
     },
     {
-      "name": "blur",
+      "name": "requiem:blur",
       "intarget": "swap",
       "outtarget": "blurred_players",
       "uniforms": [

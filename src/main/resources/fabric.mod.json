@@ -30,9 +30,6 @@
     "cardinal-components": [
       "ladysnake.requiem.common.RequiemComponents"
     ],
-    "cardinal-components-entity": [
-      "ladysnake.requiem.compat.RequiemCompatibilityManager"
-    ],
     "modmenu": [
       "ladysnake.requiem.compat.ModMenuCompat"
     ]

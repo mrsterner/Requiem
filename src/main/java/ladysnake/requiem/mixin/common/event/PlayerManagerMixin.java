@@ -37,6 +37,7 @@ package ladysnake.requiem.mixin.common.event;
 import ladysnake.requiem.api.v1.event.minecraft.PlayerRespawnCallback;
 import ladysnake.requiem.api.v1.event.minecraft.PrepareRespawnCallback;
 import ladysnake.requiem.api.v1.event.minecraft.SyncServerResourcesCallback;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -61,7 +62,7 @@ public abstract class PlayerManagerMixin {
     private static final ThreadLocal<ServerWorld> REQUIEM$RESPAWN_WORLD = new ThreadLocal<>();
 
     @Shadow @Final private List<ServerPlayerEntity> players;
-
+/*
     @Inject(method = "onPlayerConnect", at = @At(value = "NEW", target = "net/minecraft/network/packet/s2c/play/TagsSynchronizationS2CPacket"))
     private void synchronizeServerData(ClientConnection conn, ServerPlayerEntity player, CallbackInfo ci) {
         SyncServerResourcesCallback.EVENT.invoker().onServerSync(player);
@@ -74,6 +75,8 @@ public abstract class PlayerManagerMixin {
         }
     }
 
+ */
+/*
     @ModifyVariable(
         method = "respawnPlayer",
         slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;isSpaceEmpty(Lnet/minecraft/entity/Entity;)Z")),
@@ -95,6 +98,8 @@ public abstract class PlayerManagerMixin {
         return clone;
     }
 
+ */
+/*
     @ModifyVariable(
         method = "respawnPlayer",
         slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;isSpaceEmpty(Lnet/minecraft/entity/Entity;)Z")),
@@ -111,12 +116,14 @@ public abstract class PlayerManagerMixin {
         return REQUIEM$RESPAWN_WORLD.get();
     }
 
+ */
+/*
     @Inject(method = "respawnPlayer", at = @At("RETURN"))
     private void firePlayerRespawnEvent(
-            ServerPlayerEntity original,
-            boolean returnFromEnd,
-            CallbackInfoReturnable<ServerPlayerEntity> cir
+        ServerPlayerEntity player, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayerEntity> cir
     ) {
         PlayerRespawnCallback.EVENT.invoker().onPlayerRespawn(cir.getReturnValue(), returnFromEnd);
     }
+
+ */
 }

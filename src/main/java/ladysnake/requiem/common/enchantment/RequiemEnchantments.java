@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.common.enchantment;
 
-import com.sammy.malum.MalumMod;
 import ladysnake.requiem.Requiem;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
@@ -50,7 +49,7 @@ public class RequiemEnchantments {
     public static final RegistryKey<Enchantment> HUMANITY = keyOf("humanity");
 
     static RegistryKey<Enchantment> keyOf(String id) {
-        return RegistryKey.of(RegistryKeys.ENCHANTMENT, MalumMod.malumPath(id));
+        return RegistryKey.of(RegistryKeys.ENCHANTMENT, Requiem.id(id));
     }
 
     public static int getEnchantmentLevel(World level, RegistryKey<Enchantment> key, ItemStack stack) {

@@ -50,8 +50,8 @@ public final class RequiemStatusEffects {
         .addAttributeModifier(EntityAttributes.GENERIC_MAX_HEALTH, Requiem.id("attrition"), -0.2, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         .addAttributeModifier(RequiemEntityAttributes.SOUL_OFFENSE, Requiem.id("attrition_soul_offence"), -0.2, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
     public static final RegistryEntry<StatusEffect> EMANCIPATION = register("emancipation", new EmancipationStatusEffect(StatusEffectCategory.BENEFICIAL, 0x7799FF));
-    public static final RegistryEntry<StatusEffect> RECLAMATION = register("penance", new ReclamationStatusEffect(StatusEffectCategory.BENEFICIAL, 0xFFDF00));
-    public static final RegistryEntry<StatusEffect> PENANCE = register("reclamation", new PenanceStatusEffect(StatusEffectCategory.HARMFUL, 0xB6FF00));
+    public static final RegistryEntry<StatusEffect> RECLAMATION = register("reclamation", new ReclamationStatusEffect(StatusEffectCategory.BENEFICIAL, 0xFFDF00));
+    public static final RegistryEntry<StatusEffect> PENANCE = register("penance", new PenanceStatusEffect(StatusEffectCategory.HARMFUL, 0xB6FF00));
 
     public static void init() {
         PenanceStatusEffect.registerCallbacks();

@@ -77,11 +77,6 @@ public final class RequiemCompatibilityManager {
         }
     }
 
-    @CalledThroughReflection
-    public static void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-
-    }
-
     static <T extends Entity> void findEntityType(Identifier id, Consumer<EntityType<T>> action) {
         @SuppressWarnings("unchecked") Optional<EntityType<T>> maybe = (Optional<EntityType<T>>) (Optional<?>) Registries.ENTITY_TYPE.getOrEmpty(id);
         if (maybe.isPresent()) {

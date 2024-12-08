@@ -37,6 +37,7 @@ package ladysnake.requiem.common.loot;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.common.enchantment.RequiemEnchantments;
 import ladysnake.requiem.mixin.common.access.LootContextTypesAccessor;
+import ladysnake.requiem.mixin.common.access.LootContextTypesMapAccessor;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableSource;
 import net.minecraft.enchantment.Enchantment;
@@ -51,6 +52,7 @@ import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextType;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.LootFunction;
 import net.minecraft.loot.function.LootFunctionType;
@@ -60,15 +62,31 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.Identifier;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public final class RequiemLootTables {
-    public static final LootContextType POSSESSION = LootContextTypesAccessor.requiem$register(
+    public static final LootContextType POSSESSION = register(
         "requiem:possession",
         builder -> builder.require(LootContextParameters.THIS_ENTITY).require(LootContextParameters.ORIGIN)
     );
+
+    private static LootContextType register(String name, Consumer<LootContextType.Builder> type) {
+        LootContextType.Builder builder = new LootContextType.Builder();
+        type.accept(builder);
+        LootContextType lootContextType = builder.build();
+        Identifier identifier = Identifier.of(name);
+        LootContextType lootContextType2 = LootContextTypesMapAccessor.getMap().put(identifier, lootContextType);
+        if (lootContextType2 != null) {
+            throw new IllegalStateException("Loot table parameter set " + String.valueOf(identifier) + " is already registered");
+        } else {
+            return lootContextType;
+        }
+    }
+
     public static final LootConditionType BOUND_SHELL_CONDITION = new LootConditionType(BoundShellLootCondition.CODEC);
     public static final LootConditionType HOST_CONDITION = new LootConditionType(HostLootCondition.CODEC);
     public static final LootConditionType POSSESSOR_CONDITION = new LootConditionType(HostLootCondition.CODEC);

@@ -43,6 +43,7 @@ import ladysnake.requiem.common.ApiInitializer;
 import ladysnake.requiem.common.RequiemConfig;
 import ladysnake.requiem.common.RequiemRecordTypes;
 import ladysnake.requiem.common.RequiemRegistries;
+import ladysnake.requiem.common.VanillaRequiemPlugin;
 import ladysnake.requiem.common.advancement.RequiemStats;
 import ladysnake.requiem.common.advancement.criterion.RequiemCriteria;
 import ladysnake.requiem.common.block.RequiemBlockEntities;
@@ -73,12 +74,16 @@ import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ladysnake.blabber.Blabber;
+
+import java.util.function.UnaryOperator;
 
 public final class Requiem implements ModInitializer {
     public static final String MOD_ID = "requiem";
@@ -125,6 +130,8 @@ public final class Requiem implements ModInitializer {
         SyncServerResourcesCallback.EVENT.register(player -> RequiemNetworking.sendTo(player, RequiemNetworking.createDataSyncMessage(SubDataManagerHelper.getServerHelper())));
         ApiInitializer.setPluginCallback(this::registerPlugin);
         RequiemCompatibilityManager.init();
+
+        VanillaRequiemPlugin.INFINITY_SHOT_TAG.getCodec();
     }
 
     private void registerPlugin(RequiemPlugin plugin) {
@@ -134,5 +141,9 @@ public final class Requiem implements ModInitializer {
         plugin.registerSoulBindings(SoulbindingRegistry.instance());
         plugin.registerVagrantInteractions(VagrantInteractionRegistryImpl.INSTANCE);
         plugin.registerPossessionItemActions(RequiemRegistries.MOB_ACTIONS);
+    }
+
+    public static <T> ComponentType<T> registerData(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
+        return Registry.register(Registries.DATA_COMPONENT_TYPE, id, (builderOperator.apply(ComponentType.builder())).build());
     }
 }

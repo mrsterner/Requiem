@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.compat;
 
-import com.sammy.malum.MalumMod;
-import com.sammy.malum.common.components.MalumComponents;
-import com.sammy.malum.common.components.MalumLivingEntityDataComponent;
 import ladysnake.requiem.api.v1.RequiemPlugin;
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
 import ladysnake.requiem.api.v1.event.requiem.PossessionStartCallback;
@@ -47,15 +44,6 @@ public class MalumCompat implements RequiemPlugin {
 
     @CalledThroughReflection
     public static void init() {
-         PossessionStartCallback.EVENT.register(MalumMod.malumPath("soulless"), (target, possessor, simulate) -> {
-             /*
-             Optional<MalumLivingEntityDataComponent> optionalComponent = MalumComponents.MALUM_LIVING_ENTITY_COMPONENT.maybeGet(target);
-             if (optionalComponent.isPresent() && optionalComponent.get().soulData.soulless) {
-                 return PossessionStartCallback.Result.ALLOW;
-             }
 
-              */
-             return PossessionStartCallback.Result.PASS;
-        });
     }
 }

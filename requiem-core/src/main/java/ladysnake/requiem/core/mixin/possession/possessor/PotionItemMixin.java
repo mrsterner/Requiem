@@ -43,7 +43,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(PotionItem.class)
 public abstract class PotionItemMixin {
-    @ModifyArg(method = "finishUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;applyInstantEffect(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/LivingEntity;ID)V"))
+    /*TODO
+    @ModifyArg(method = "finishUsing", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/entity/effect/StatusEffect;applyInstantEffect(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/LivingEntity;ID)V"))
     private LivingEntity targetPossessedEntity(LivingEntity entity) {
         LivingEntity possessed = PossessionComponent.getHost(entity);
         if (possessed != null) {
@@ -51,4 +53,6 @@ public abstract class PotionItemMixin {
         }
         return entity;
     }
+
+     */
 }

@@ -36,6 +36,7 @@ package ladysnake.requiem.common;
 
 import baritone.api.fakeplayer.AutomatoneFakePlayer;
 import com.mojang.authlib.GameProfile;
+import com.mojang.serialization.Codec;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.RequiemPlugin;
 import ladysnake.requiem.api.v1.entity.CurableEntityComponent;
@@ -138,6 +139,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.Uuids;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.ladysnake.impersonate.Impersonate;
@@ -153,10 +155,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 public final class VanillaRequiemPlugin implements RequiemPlugin {
 
-    public static final ComponentType<Boolean> INFINITY_SHOT_TAG = ComponentType.<Boolean>builder().build();
+    public static final ComponentType<Boolean> INFINITY_SHOT_TAG = Requiem.registerData("infinity_shot_tag", (builder) -> {
+        return builder.codec(Codec.BOOL);
+    });
 
     public static final MobAbilityConfig<PlayerEntity> SOUL_ABILITY_CONFIG = MobAbilityConfig.<PlayerEntity>builder()
         .directAttack(player -> new DelegatingDirectAbility<>(player, LivingEntity.class, AbilityType.INTERACT))

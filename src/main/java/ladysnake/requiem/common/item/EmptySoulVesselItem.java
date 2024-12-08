@@ -34,6 +34,8 @@
  */
 package ladysnake.requiem.common.item;
 
+import com.mojang.serialization.Codec;
+import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.event.requiem.SoulCaptureEvents;
 import ladysnake.requiem.api.v1.record.GlobalRecord;
 import ladysnake.requiem.common.block.RequiemBlocks;
@@ -49,6 +51,7 @@ import ladysnake.requiem.core.entity.SoulHolderComponent;
 import ladysnake.requiem.core.record.EntityPositionClerk;
 import net.minecraft.block.Block;
 import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -60,6 +63,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -69,6 +73,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.Uuids;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -79,8 +85,13 @@ import java.util.UUID;
 
 public class EmptySoulVesselItem extends Item {
 
-    public static final ComponentType<UUID> TARGET = ComponentType.<UUID>builder().build();
-    public static final ComponentType<Integer> USE_TIME = ComponentType.<Integer>builder().build();
+    public static final ComponentType<UUID> TARGET = Requiem.registerData("target", (builder) -> {
+        return builder.codec(Uuids.CODEC);
+    });
+
+    public static final ComponentType<Integer> USE_TIME = Requiem.registerData("use_time", (builder) -> {
+        return builder.codec(Codec.INT);
+    });
 
     public static final String ACTIVE_DATA_TAG = "requiem:soul_capture";
     /**

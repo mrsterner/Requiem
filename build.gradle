@@ -203,7 +203,7 @@ dependencies {
 
     modCompileOnly (compatLibs.eldritchMobs) { transitive = false }
     modCompileOnly (compatLibs.bumblezone) { transitive = false }
-    modCompileOnly (compatLibs.malum) { transitive = false }
+    //modCompileOnly (compatLibs.malum) { transitive = false }
     modLocalImplementation (compatLibs.trinkets) {
         exclude group: "net.fabricmc"
         exclude group: "net.fabricmc.fabric-api"

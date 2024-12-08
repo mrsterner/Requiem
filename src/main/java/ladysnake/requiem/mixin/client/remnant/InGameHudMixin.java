@@ -125,35 +125,33 @@ public abstract class InGameHudMixin {
         return true;
     }
 
-    @ModifyVariable(
+    @WrapWithCondition(
         method = "renderStatusBars",
-        at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/gui/hud/InGameHud;getHeartCount(Lnet/minecraft/entity/LivingEntity;)I"),
-        index = 22
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderFood(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;II)V")
     )
-    private int preventFoodRender(int mountHeartCount) {
-        ClientPlayerEntity player = this.client.player;
-
-        if (mountHeartCount == 0 && player != null && RemnantComponent.get(player).isVagrant()) {
+    private boolean preventFoodRender(InGameHud instance, DrawContext context, PlayerEntity player, int top, int right) {
+        if (RemnantComponent.get(player).isVagrant()) {
             Possessable possessed = (Possessable) PossessionComponent.get(player).getHost();
             if (possessed == null || !possessed.isRegularEater()) {
                 skippedFood = true;
-                return -1;
+                return false;
             }
         }
 
         skippedFood = false;
-        return mountHeartCount;
+        return true;
     }
-
+/*TODO
     @ModifyVariable(
         method = "renderStatusBars",
-        at = @At(value = "CONSTANT", args = "stringValue=air"),
-        index = 22
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAir()I")
     )
     private int fixAirRender(int mountHeartCount) {
         if (skippedFood) return 0;
         return mountHeartCount;
     }
+
+ */
 
     @ModifyArg(
         method = "renderStatusBars",

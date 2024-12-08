@@ -9,6 +9,7 @@
     "access.BrainAccessor",
     "access.EndermanEntityAccessor",
     "access.LootContextTypesAccessor",
+    "access.LootContextTypesMapAccessor",
     "access.PrepareRamTaskAccessor",
     "access.ProjectileEntityAccessor",
     "access.RamImpactTaskAccessor",
