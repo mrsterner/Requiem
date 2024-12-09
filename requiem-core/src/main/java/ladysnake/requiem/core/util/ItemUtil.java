@@ -43,6 +43,6 @@ public final class ItemUtil {
     private ItemUtil() { throw new AssertionError();}
 
     public static boolean isWaterBottle(ItemStack item) {
-        return item.getItem() == Items.POTION && !item.get(DataComponentTypes.POTION_CONTENTS).hasEffects();
+        return item.getItem() == Items.POTION && !item.contains(DataComponentTypes.POTION_CONTENTS);
     }
 }

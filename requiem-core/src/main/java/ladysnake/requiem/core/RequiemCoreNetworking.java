@@ -35,44 +35,57 @@
 package ladysnake.requiem.core;
 
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
+import ladysnake.requiem.core.network.ConsumeResurrectionItemS2CPayload;
+import ladysnake.requiem.core.network.HuggingWallC2SPayload;
+import ladysnake.requiem.core.network.UseDirectAbilityC2SPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 import static io.netty.buffer.Unpooled.buffer;
 
 public final class RequiemCoreNetworking {
-    // Client -> Server
-    public static final Identifier USE_DIRECT_ABILITY = RequiemCore.id("direct_ability");
-    public static final Identifier HUGGING_WALL = RequiemCore.id("hugging_wall");
-    public static final Identifier CONSUME_RESURRECTION_ITEM = RequiemCore.id("consume_resurrection_item");
 
     public static void sendAbilityUseMessage(AbilityType type, Entity entity) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeEnumConstant(type);
         buf.writeVarInt(entity.getId());
-        //TODO ClientPlayNetworking.send(USE_DIRECT_ABILITY, buf);
+        ClientPlayNetworking.send(new UseDirectAbilityC2SPayload(buf));
     }
 
     public static void sendHugWallMessage(boolean hugging) {
         PacketByteBuf buf = new PacketByteBuf(buffer());
         buf.writeBoolean(hugging);
-        //TODO ClientPlayNetworking.send(HUGGING_WALL, buf);
+        ClientPlayNetworking.send(new HuggingWallC2SPayload(buf));
     }
 
     public static void sendItemConsumptionPacket(Entity user, ItemStack stack) {
-        PacketByteBuf buf = PacketByteBufs.create();
+        RegistryByteBuf buf = new RegistryByteBuf(PacketByteBufs.create() , user.getRegistryManager());
         buf.writeVarInt(user.getId());
-        //TODO buf.writeItemStack(stack);
-        //TODO sendToAllTrackingIncluding(user, new CustomPayloadS2CPacket(CONSUME_RESURRECTION_ITEM, buf));
+        ItemStack.OPTIONAL_PACKET_CODEC.encode(buf, stack);
+        sendToAllTrackingIncluding(user, new ConsumeResurrectionItemS2CPayload(buf));
+    }
+    public static <T extends CustomPayload> void sendToAllTrackingIncluding(Entity tracked, T payload) {
+        if (tracked.getWorld() instanceof ServerWorld) {
+            for (ServerPlayerEntity player : PlayerLookup.tracking(tracked)) {
+                ServerPlayNetworking.send(player, payload);
+            }
+            if (tracked instanceof ServerPlayerEntity player) {
+                ServerPlayNetworking.send(player, payload);
+            }
+        }
     }
 
     public static void sendToAllTrackingIncluding(Entity tracked, Packet<?> message) {

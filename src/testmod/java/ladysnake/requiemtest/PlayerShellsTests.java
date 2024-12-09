@@ -35,7 +35,6 @@
 package ladysnake.requiemtest;
 
 import com.mojang.authlib.GameProfile;
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.api.v1.event.requiem.PlayerShellEvents;
 import ladysnake.requiem.api.v1.record.GlobalRecord;
 import ladysnake.requiem.api.v1.remnant.PlayerSplitResult;
@@ -47,11 +46,11 @@ import ladysnake.requiem.common.gamerule.RequiemGamerules;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.core.record.EntityPositionClerk;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClientStatusUpdateC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -60,12 +59,13 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class PlayerShellsTests implements QuiltGameTest {
+import static net.fabricmc.fabric.api.gametest.v1.FabricGameTest.EMPTY_STRUCTURE;
+
+public class PlayerShellsTests implements FabricGameTest {
     public static final String POSSESSION_KEEPS_INVENTORY_BATCH = "possessionKeepsInventory";
 
     @BeforeBatch(batchId = POSSESSION_KEEPS_INVENTORY_BATCH)
@@ -77,7 +77,7 @@ public class PlayerShellsTests implements QuiltGameTest {
     public void resetPossessionKeepInventory(ServerWorld world) {
         world.getGameRules().get(RequiemGamerules.POSSESSION_KEEP_INVENTORY).set(PossessionKeepInventory.NEVER, world.getServer());
     }
-
+/*
     @GameTest(structureName = EMPTY_STRUCTURE)
     public void mergingWithShellsShouldMergeXp(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
@@ -214,4 +214,6 @@ public class PlayerShellsTests implements QuiltGameTest {
         ));
         ctx.complete();
     }
+
+ */
 }

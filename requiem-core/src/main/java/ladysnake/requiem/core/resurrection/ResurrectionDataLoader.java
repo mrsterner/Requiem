@@ -40,6 +40,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import ladysnake.requiem.core.RequiemCore;
 import ladysnake.requiem.core.util.serde.EntityTypeAdapter;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
@@ -128,7 +130,9 @@ public final class ResurrectionDataLoader implements IdentifiableResourceReloadL
             this.resurrectionData.clear();
             for (Pair<Identifier, JsonObject> datum : rawData) {
                 try {
-                    //TODO this.resurrectionData.add(ResurrectionData.deserialize(datum.getRight()));
+                    DataResult<ResurrectionData> result = ResurrectionData.CODEC.parse(JsonOps.INSTANCE, datum.getRight());
+                    ResurrectionData data = result.getOrThrow();
+                    this.resurrectionData.add(data);
                 } catch (JsonParseException e) {
                     RequiemCore.LOGGER.error("[Requiem] Could not read resurrection data from {}", datum.getLeft(), e);
                 }

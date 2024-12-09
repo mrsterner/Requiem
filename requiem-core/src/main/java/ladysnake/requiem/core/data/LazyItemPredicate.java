@@ -36,11 +36,14 @@ package ladysnake.requiem.core.data;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-/*
+
 public class LazyItemPredicate extends LazyDataPredicate<ItemPredicate> {
     public static final LazyItemPredicate ANY = new LazyItemPredicate(null);
 
@@ -49,7 +52,7 @@ public class LazyItemPredicate extends LazyDataPredicate<ItemPredicate> {
     }
 
     public LazyItemPredicate(@Nullable JsonElement json) {
-        super(json);
+        super(json, ItemPredicate.CODEC);
     }
 
     public boolean test(World world, ItemStack stack) {
@@ -58,8 +61,9 @@ public class LazyItemPredicate extends LazyDataPredicate<ItemPredicate> {
 
     @Override
     protected ItemPredicate deserialize(@Nullable JsonElement json) {
-        return ItemPredicate.'(json);
+        DataResult<ItemPredicate> result = ItemPredicate.CODEC.parse(JsonOps.INSTANCE, json);
+        return result.result().orElseThrow(() -> new IllegalArgumentException("Failed to deserialize ItemPredicate"));
     }
 }
 
- */
+

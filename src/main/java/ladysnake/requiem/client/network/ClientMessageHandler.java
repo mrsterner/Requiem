@@ -47,7 +47,16 @@ import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.RequiemCoreNetworking;
+import ladysnake.requiem.core.network.AnchorDamageS2CPayload;
+import ladysnake.requiem.core.network.BodyCureS2CPayload;
+import ladysnake.requiem.core.network.ConsumeResurrectionItemS2CPayload;
+import ladysnake.requiem.core.network.DataSyncS2CPayload;
+import ladysnake.requiem.core.network.EtherealAnimationS2CPayload;
+import ladysnake.requiem.core.network.ObeliskPowerUpgradeS2CPayload;
+import ladysnake.requiem.core.network.OpusUseS2CPayload;
+import ladysnake.requiem.core.network.RiftWitnessedS2CPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -78,68 +87,64 @@ public class ClientMessageHandler {
         this.rc = requiemClient;
     }
 
-    public void init() {/*
-        ClientPlayNetworking.registerGlobalReceiver(ANCHOR_DAMAGE, (client, handler, buf, responseSender) -> {
-            boolean dead = buf.readBoolean();
-            client.execute(() -> RequiemClient.instance().fxRenderer().playEtherealPulseAnimation(
-                dead ? 4 : 1, RequiemFx.ETHEREAL_DAMAGE_COLOR[0], RequiemFx.ETHEREAL_DAMAGE_COLOR[1], RequiemFx.ETHEREAL_DAMAGE_COLOR[2]
-            ));
-        });
-        ClientPlayNetworking.registerGlobalReceiver(BODY_CURE, (client, handler, buf, responseSender) -> {
-            int entityId = buf.readVarInt();
-            client.execute(() -> {
-                Entity entity = handler.getWorld().getEntityById(entityId);
-                if (entity != null) {
-                    for(int i = 0; i < 40; ++i) {
-                        double vx = entity.getWorld().random.nextGaussian() * 0.05D;
-                        double vy = entity.getWorld().random.nextGaussian() * 0.05D;
-                        double vz = entity.getWorld().random.nextGaussian() * 0.05D;
-                        entity.getWorld().addParticle(RequiemParticleTypes.CURE, entity.getParticleX(0.5D), entity.getRandomBodyY(), entity.getParticleZ(0.5D), vx, vy, vz);
-                    }
-                }
+    public void init() {
+        PayloadTypeRegistry.playS2C().register(AnchorDamageS2CPayload.ID, AnchorDamageS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(AnchorDamageS2CPayload.ID, (payload, ctx) -> {
+            var dead = payload.dead;
+            ctx.client().execute(() -> {
+                RequiemClient.instance().fxRenderer().playEtherealPulseAnimation(
+                    dead ? 4 : 1, RequiemFx.ETHEREAL_DAMAGE_COLOR[0], RequiemFx.ETHEREAL_DAMAGE_COLOR[1], RequiemFx.ETHEREAL_DAMAGE_COLOR[2]
+                );
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(RequiemCoreNetworking.CONSUME_RESURRECTION_ITEM, (client, handler, buf, responseSender) -> {
-            int entityId = buf.readVarInt();
-            ItemStack stack = buf.readItemStack();
-            client.execute(() -> {
-                World world = handler.getWorld();
-                Entity entity = world.getEntityById(entityId);
-                if (entity != null) {
-                    world.playSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_TOTEM_USE, entity.getSoundCategory(), 1.0F, 1.0F, false);
-                    if (entity == this.mc.player || ((Possessable)entity).getPossessor() == this.mc.player) {
-                        this.mc.gameRenderer.showFloatingItem(stack);
-                    }
-                }
+
+        PayloadTypeRegistry.playS2C().register(BodyCureS2CPayload.ID, BodyCureS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(BodyCureS2CPayload.ID, (payload, ctx) -> {
+            ctx.client().execute(() -> {
+                payload.handle(payload, ctx);
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(DATA_SYNC, (client, handler, buf, responseSender) -> {
+
+        PayloadTypeRegistry.playS2C().register(ConsumeResurrectionItemS2CPayload.ID, ConsumeResurrectionItemS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(ConsumeResurrectionItemS2CPayload.ID, (payload, ctx) -> {
+            ctx.client().execute(() -> {
+                payload.handle(payload, ctx);
+            });
+        });
+
+        PayloadTypeRegistry.playS2C().register(DataSyncS2CPayload.ID, DataSyncS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(DataSyncS2CPayload.ID,  (payload, ctx) -> {
             // We intentionally do not use the context's task queue directly
             // First, we make each sub data manager process its data, then we apply it synchronously with the task queue
             Map<Identifier, SubDataManager<?>> map = SubDataManagerHelper.getClientHelper().streamDataManagers().collect(Collectors.toMap(IdentifiableResourceReloadListener::getFabricId, Function.identity()));
-            int nbManagers = buf.readVarInt();
+            int nbManagers = payload.nbManagers;
             for (int i = 0; i < nbManagers; i++) {
-                Identifier id = buf.readIdentifier();
+                Identifier id = payload.id;
                 SubDataManager<?> manager = Objects.requireNonNull(map.get(id), "Unknown sub data manager " + id);
                 Requiem.LOGGER.info("[Requiem] Received data for {}", manager.getFabricId());
-                syncSubDataManager(buf, manager, client);
+                //TODO syncSubDataManager(buf, manager, ctx.client());
             }
         });
-        ClientPlayNetworking.registerGlobalReceiver(ETHEREAL_ANIMATION, (client, handler, buf, responseSender) -> client.execute(() -> {
-            MinecraftClient mc = this.mc;
-            assert mc.player != null;
-            mc.player.getWorld().playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), RequiemSoundEvents.EFFECT_DISSOCIATE, SoundCategory.PLAYERS, 2, 0.6f);
-            this.rc.fxRenderer().beginEtherealAnimation();
-        }));
-        ClientPlayNetworking.registerGlobalReceiver(OPUS_USE, (client, handler, buf, responseSender) -> {
-            int remnantId = buf.readVarInt();
-            boolean showBook = buf.readBoolean();
-            RemnantType remnantType = RemnantTypes.get(remnantId);
+
+
+        PayloadTypeRegistry.playS2C().register(EtherealAnimationS2CPayload.ID, EtherealAnimationS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(EtherealAnimationS2CPayload.ID,  (payload, ctx) -> {
+            ctx.client().execute(() -> {
+                MinecraftClient mc = this.mc;
+                assert mc.player != null;
+                mc.player.getWorld().playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), RequiemSoundEvents.EFFECT_DISSOCIATE, SoundCategory.PLAYERS, 2, 0.6f);
+                this.rc.fxRenderer().beginEtherealAnimation();
+            });
+        });
+
+        PayloadTypeRegistry.playS2C().register(OpusUseS2CPayload.ID, OpusUseS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(OpusUseS2CPayload.ID,  (payload, ctx) -> {
+            RemnantType remnantType = RemnantTypes.get(payload.remnantId);
             boolean cure = !remnantType.isDemon();
 
-            client.execute(() -> {
-                PlayerEntity player = Objects.requireNonNull(client.player);
-                if (showBook) {
+            ctx.client().execute(() -> {
+                PlayerEntity player = Objects.requireNonNull(ctx.client().player);
+                if (payload.showBook) {
                     mc.particleManager.addEmitter(player, ParticleTypes.PORTAL, 120);
                     mc.gameRenderer.showFloatingItem(remnantType.getConversionBook(player));
                 }
@@ -150,20 +155,17 @@ public class ClientMessageHandler {
                 }
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(OBELISK_POWER_UPDATE, (client, handler, buf, responseSender) -> {
-            BlockPos controllerPos = buf.readBlockPos();
-            int coreWidth = buf.readVarInt();
-            int coreHeight = buf.readVarInt();
-            float powerRate = buf.readFloat();
 
-            client.execute(() -> RunestoneBlockEntity.updateObeliskPower(client.world, controllerPos, coreWidth, coreHeight, powerRate));
+        PayloadTypeRegistry.playS2C().register(ObeliskPowerUpgradeS2CPayload.ID, ObeliskPowerUpgradeS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(ObeliskPowerUpgradeS2CPayload.ID,  (payload, ctx) -> {
+            ctx.client().execute(() -> RunestoneBlockEntity.updateObeliskPower(ctx.client().world, payload.controllerPos, payload.coreWidth, payload.coreHeight, payload.powerRate));
         });
-        ClientPlayNetworking.registerGlobalReceiver(RIFT_WITNESSED, (client, handler, buf, responseSender) -> {
-            Text riftName = buf.readText();
 
-            client.execute(() -> client.getToastManager().add(new RiftWitnessedToast(riftName)));
+        PayloadTypeRegistry.playS2C().register(RiftWitnessedS2CPayload.ID, RiftWitnessedS2CPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(RiftWitnessedS2CPayload.ID, (payload, ctx) -> {
+            ctx.client().execute(() -> ctx.client().getToastManager().add(new RiftWitnessedToast(payload.riftName)));
         });
-        */
+
     }
 
     private static <T> void syncSubDataManager(PacketByteBuf buffer, SubDataManager<T> subManager, ThreadExecutor<?> taskQueue) {

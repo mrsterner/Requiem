@@ -36,16 +36,20 @@ package ladysnake.requiem.common.network;
 
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
-import ladysnake.requiem.api.v1.entity.ability.AbilityType;
-import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import ladysnake.requiem.api.v1.event.requiem.InitiateFractureCallback;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.common.screen.RiftScreenHandler;
 import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
 import ladysnake.requiem.core.RequiemCoreNetworking;
+import ladysnake.requiem.core.network.EtherealFractureC2SPayload;
+import ladysnake.requiem.core.network.HuggingWallC2SPayload;
+import ladysnake.requiem.core.network.OpenCraftingScreenC2SPayload;
+import ladysnake.requiem.core.network.UseDirectAbilityC2SPayload;
+import ladysnake.requiem.core.network.UseIndirectDirectAbilityC2SPayload;
+import ladysnake.requiem.core.network.UseRiftC2SPayload;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtOps;
 
@@ -54,51 +58,50 @@ import static ladysnake.requiem.common.network.RequiemNetworking.*;
 public final class ServerMessageHandling {
 
     public static void init() {
-        /*TODO
-        ServerPlayNetworking.registerGlobalReceiver(RequiemCoreNetworking.USE_DIRECT_ABILITY, (server, player, handler, buf, responseSender) -> {
-            AbilityType type = buf.readEnumConstant(AbilityType.class);
-            int entityId = buf.readVarInt();
-            server.execute(() -> {
-                MobAbilityController abilityController = MobAbilityController.get(player);
-                Entity targetedEntity = player.getWorld().getEntityById(entityId);
 
-                // allow a slightly longer reach in case of lag
-                if (targetedEntity != null && (abilityController.getRange(type) + 3) > targetedEntity.distanceTo(player)) {
-                    abilityController.useDirect(type, targetedEntity);
-                }
+        PayloadTypeRegistry.playC2S().register(UseDirectAbilityC2SPayload.ID, UseDirectAbilityC2SPayload.STREAM_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(UseDirectAbilityC2SPayload.ID, (payload, ctx) -> {
+            ctx.server().execute(() ->
+                payload.handle(payload, ctx)
+            );
+        });
 
-                // sync abilities in case the server disagrees with the client's guess
-                MobAbilityController.KEY.sync(player);
-            });
+        PayloadTypeRegistry.playC2S().register(UseIndirectDirectAbilityC2SPayload.ID, UseIndirectDirectAbilityC2SPayload.STREAM_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(UseIndirectDirectAbilityC2SPayload.ID,  (payload, ctx) -> {
+            ctx.server().execute(() ->
+                payload.handle(payload, ctx)
+            );
         });
-        ServerPlayNetworking.registerGlobalReceiver(USE_INDIRECT_ABILITY, (server, player, handler, buf, responseSender) -> {
-            AbilityType type = buf.readEnumConstant(AbilityType.class);
-            server.execute(() -> MobAbilityController.get(player).useIndirect(type));
+
+        PayloadTypeRegistry.playC2S().register(EtherealFractureC2SPayload.ID, EtherealFractureC2SPayload.STREAM_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(EtherealFractureC2SPayload.ID, (payload, ctx) -> {
+            ctx.server().execute(() ->  InitiateFractureCallback.EVENT.invoker().performFracture(ctx.player()));
         });
-        ServerPlayNetworking.registerGlobalReceiver(ETHEREAL_FRACTURE, (server, player, handler, buf, responseSender) -> server.execute(() ->
-            InitiateFractureCallback.EVENT.invoker().performFracture(player)));
-        ServerPlayNetworking.registerGlobalReceiver(RequiemCoreNetworking.HUGGING_WALL, (server, player, handler, buf, responseSender) -> {
-            boolean yes = buf.readBoolean();
+
+        PayloadTypeRegistry.playC2S().register(HuggingWallC2SPayload.ID, HuggingWallC2SPayload.STREAM_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(HuggingWallC2SPayload.ID, (payload, ctx) -> {
             // Possible failure points: the player may not actually be against a block, or it may not have the right movement
             // we do not handle those right now, as movement is entirely done clientside
-            server.execute(() -> MovementAlterer.get(player).hugWall(yes));
+            ctx.server().execute(() -> payload.handle(payload, ctx));
         });
-        ServerPlayNetworking.registerGlobalReceiver(OPEN_CRAFTING_MENU, (server, player, handler, buf, responseSender) -> server.execute(() -> {
-            MobEntity possessed = PossessionComponent.get(player).getHost();
-            if (possessed != null && possessed.getType().isIn(RequiemEntityTypeTags.SUPERCRAFTERS)) {
-                player.openHandledScreen(Blocks.CRAFTING_TABLE.getDefaultState().createScreenHandlerFactory(player.getWorld(), player.getBlockPos()));
-            }
-        }));
-        ServerPlayNetworking.registerGlobalReceiver(USE_RIFT, (server, player, handler, buf, responseSender) -> {
-            ObeliskDescriptor target = buf.decode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC);
 
-            server.execute(() -> {
-                if (player.currentScreenHandler instanceof RiftScreenHandler riftScreenHandler) {
-                    riftScreenHandler.useRift(player, target);
+        PayloadTypeRegistry.playC2S().register(OpenCraftingScreenC2SPayload.ID, OpenCraftingScreenC2SPayload.STREAM_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(OpenCraftingScreenC2SPayload.ID, (payload, context) -> {
+            context.server().execute(() -> {
+                MobEntity possessed = PossessionComponent.get(context.player()).getHost();
+                if (possessed != null && possessed.getType().isIn(RequiemEntityTypeTags.SUPERCRAFTERS)) {
+                    context.player().openHandledScreen(Blocks.CRAFTING_TABLE.getDefaultState().createScreenHandlerFactory(context.player().getWorld(), context.player().getBlockPos()));
                 }
             });
         });
 
-         */
+        PayloadTypeRegistry.playC2S().register(UseRiftC2SPayload.ID, UseRiftC2SPayload.STREAM_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(UseRiftC2SPayload.ID, (payload, ctx) -> {
+            ctx.server().execute(() -> {
+                payload.handle(payload, ctx);
+            });
+        });
+
+
     }
 }
