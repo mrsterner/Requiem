@@ -40,6 +40,7 @@ import com.mojang.serialization.MapCodec;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
@@ -51,7 +52,7 @@ import java.util.function.Function;
 public final class PolymorphicCodecBuilder<K, S> {
     private final Codec<K> keyCodec;
     private final Function<S, K> keyExtractor;
-    private final Map<K, Codec<? extends S>> codecs;
+    private final Map<K, MapCodec<? extends S>> codecs;
     private final String keyName;
 
     private PolymorphicCodecBuilder(String keyName, Codec<K> keyCodec, Function<S, K> keyExtractor) {
@@ -61,17 +62,17 @@ public final class PolymorphicCodecBuilder<K, S> {
         this.codecs = new HashMap<>();
     }
 
-    public static <K, S> PolymorphicCodecBuilder<K, S> create(String keyName, Codec<K> keyElementCodec, Function<S, K> keyExtractor) {
-        return new PolymorphicCodecBuilder<>(keyName, keyElementCodec, keyExtractor);
+    public static <K, S> PolymorphicCodecBuilder<K, S> create(String keyName, Codec<K> keyCodec, Function<S, K> keyExtractor) {
+        return new PolymorphicCodecBuilder<>(keyName, keyCodec, keyExtractor);
     }
 
-    public PolymorphicCodecBuilder<K, S> with(K key, Codec<? extends S> codec) {
+    public PolymorphicCodecBuilder<K, S> with(K key, MapCodec<? extends S> codec) {
         this.codecs.put(key, codec);
         return this;
     }
 
     public Codec<S> build() {
-        return this.keyCodec.dispatch(this.keyName, this.keyExtractor, this.codecs::entrySet);
+        return this.keyCodec.dispatch(this.keyName, this.keyExtractor, this.codecs::get);
     }
 }
 

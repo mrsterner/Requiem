@@ -78,7 +78,7 @@ public record PossessionItemOverrideWrapper(
 
     public static final int CURRENT_SCHEMA_VERSION = 0;
 
-    public static final Codec<PossessionItemOverrideWrapper> CODEC_V0 = RecordCodecBuilder.create((instance) -> instance.group(
+    public static final MapCodec<PossessionItemOverrideWrapper> CODEC_V0 = RecordCodecBuilder.mapCodec((instance) -> instance.group(
         Codec.INT.optionalFieldOf("priority", 100).forGetter(PossessionItemOverrideWrapper::priority),
         Codec.BOOL.optionalFieldOf("enabled", true).forGetter(PossessionItemOverrideWrapper::enabled),
         TextCodecs.CODEC.optionalFieldOf("tooltip").forGetter(w -> w.tooltip),
@@ -88,7 +88,7 @@ public record PossessionItemOverrideWrapper(
     ).apply(instance, (p, e, t, req, u, res) -> new PossessionItemOverrideWrapper(p, e, t, req.possessed, new OldPossessionItemOverride(req, u, res))));
 
 
-    public static final Codec<PossessionItemOverrideWrapper> CODEC_V1 = codecV1(MoreCodecs.DYNAMIC_JSON);
+    public static final MapCodec<PossessionItemOverrideWrapper> CODEC_V1 = codecV1(MoreCodecs.DYNAMIC_JSON);
 
     public static final Codec<PossessionItemOverrideWrapper> CODEC = PolymorphicCodecBuilder.create("schema_version", Codec.INT, (PossessionItemOverrideWrapper o) -> CURRENT_SCHEMA_VERSION)
         .with(0, CODEC_V0)
@@ -97,10 +97,10 @@ public record PossessionItemOverrideWrapper(
         .xmap(PossessionItemOverrideWrapper::initNow, Function.identity());
 
     // The compressed NBT codec used by PacketByteBuf#encode fails on nulls, so we cannot use regular JSON objects
-    public static final Codec<PossessionItemOverrideWrapper> NETWORK_CODEC = codecV1(MoreCodecs.STRING_JSON);
+    public static final MapCodec<PossessionItemOverrideWrapper> NETWORK_CODEC = codecV1(MoreCodecs.STRING_JSON);
 
-    private static Codec<PossessionItemOverrideWrapper> codecV1(Codec<JsonElement> jsonCodec) {
-        return RecordCodecBuilder.create(instance -> instance.group(
+    private static MapCodec<PossessionItemOverrideWrapper> codecV1(Codec<JsonElement> jsonCodec) {
+        return RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.INT.optionalFieldOf("priority", 100).forGetter(PossessionItemOverrideWrapper::priority),
             Codec.BOOL.optionalFieldOf("enabled", true).forGetter(PossessionItemOverrideWrapper::enabled),
             TextCodecs.CODEC.optionalFieldOf("tooltip").forGetter(o -> o.tooltip),

@@ -41,6 +41,8 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public abstract class LazyDataPredicate<T> {
     private final @Nullable JsonElement json;
     private @Nullable T predicate;
@@ -61,7 +63,9 @@ public abstract class LazyDataPredicate<T> {
     public void initNow() {
         if (this.json != null) {
             DataResult<T> result = this.codec.parse(JsonOps.INSTANCE, this.json);
-            this.predicate = result.result().orElseThrow(() -> new IllegalStateException("Failed to deserialize JSON"));
+            if (result.result().isPresent()) {
+                this.predicate = result.result().get();
+            }
         } else {
             throw new IllegalStateException("JSON data is not available for deserialization");
         }
