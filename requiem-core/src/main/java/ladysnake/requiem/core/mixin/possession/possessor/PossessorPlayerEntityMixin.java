@@ -34,6 +34,9 @@
  */
 package ladysnake.requiem.core.mixin.possession.possessor;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import ladysnake.requiem.api.v1.possession.Possessable;
@@ -137,18 +140,20 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
             cir.setReturnValue(((Possessable) possessed).isRegularEater() && possessed.getHealth() > 0 && possessed.getHealth() < possessed.getMaxHealth());
         }
     }
-/*TODO
-    @Inject(method = "addExhaustion", slice = @Slice(to = @At("INVOKE:FIRST")), at = @At(value = "RETURN"))
-    private void addExhaustion(float exhaustion, CallbackInfo ci) {
+
+    @WrapWithCondition(method = "addExhaustion",  at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/HungerManager;addExhaustion(F)V"))
+    private boolean addExhaustion(HungerManager instance, float exhaustion) {
         Possessable possessed = (Possessable) PossessionComponent.KEY.get(this).getHost();
         if (possessed != null && possessed.isRegularEater()) {
             if (!this.requiem$getWorld().isClient) {
                 this.getHungerManager().addExhaustion(exhaustion);
+                return false;
             }
         }
+        return true;
     }
 
- */
+
 
     @Override
     protected void requiem$delegateBreath(CallbackInfoReturnable<Integer> cir) {

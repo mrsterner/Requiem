@@ -34,25 +34,35 @@
  */
 package ladysnake.requiem.core.mixin.possession.possessor;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.PotionItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+
+import java.util.function.Consumer;
 
 @Mixin(PotionItem.class)
 public abstract class PotionItemMixin {
-    /*TODO
-    @ModifyArg(method = "finishUsing", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/entity/effect/StatusEffect;applyInstantEffect(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/LivingEntity;ID)V"))
-    private LivingEntity targetPossessedEntity(LivingEntity entity) {
+   
+    @WrapWithCondition(method = "finishUsing", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/component/type/PotionContentsComponent;forEachEffect(Ljava/util/function/Consumer;)V"))
+    private boolean targetPossessedEntity(PotionContentsComponent instance, Consumer<StatusEffectInstance> effectConsumer, @Local LivingEntity entity, @Local PlayerEntity user) {
         LivingEntity possessed = PossessionComponent.getHost(entity);
         if (possessed != null) {
-            return possessed;
+            instance.forEachEffect((effect) -> {
+                if ((effect.getEffectType().value()).isInstant()) {
+                    (effect.getEffectType().value()).applyInstantEffect(possessed, possessed, user, effect.getAmplifier(), 1.0);
+                }
+            });
+            return false;
         }
-        return entity;
+        return true;
     }
-
-     */
 }
