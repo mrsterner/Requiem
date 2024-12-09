@@ -14,6 +14,7 @@
     "access.ProjectileEntityAccessor",
     "access.RamImpactTaskAccessor",
     "access.ShulkerEntityAccessor",
+    "access.TextAccessor",
     "attrition.EffectCommandMixin",
     "attrition.LivingEntityMixin",
     "attrition.ServerPlayerEntityMixin",

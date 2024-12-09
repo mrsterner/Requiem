@@ -36,10 +36,13 @@ package ladysnake.requiem.common.possession.item;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.VanillaRequiemPlugin;
 import ladysnake.requiem.core.RequiemCore;
+import ladysnake.requiem.core.data.LazyEntityPredicate;
+import ladysnake.requiem.core.data.LazyItemPredicate;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -49,12 +52,12 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.Optional;
-/*
+
 public class CureItemOverride implements PossessionItemOverride, InstancedItemOverride {
     public static final Identifier ID = RequiemCore.id("cure");
 
-    public static Codec<CureItemOverride> codec(Codec<JsonElement> jsonCodec) {
-        return RecordCodecBuilder.create(instance -> instance.group(
+    public static MapCodec<CureItemOverride> codec(Codec<JsonElement> jsonCodec) {
+        return RecordCodecBuilder.mapCodec(instance -> instance.group(
             LazyEntityPredicate.codec(jsonCodec).fieldOf("possessed_state").forGetter(o -> o.possessedState),
             LazyItemPredicate.codec(jsonCodec).fieldOf("reagent").forGetter(o -> o.reagent)
         ).apply(instance, CureItemOverride::new));
@@ -108,6 +111,3 @@ public class CureItemOverride implements PossessionItemOverride, InstancedItemOv
         return Optional.empty();
     }
 }
-
-
- */

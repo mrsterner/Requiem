@@ -47,7 +47,7 @@ import com.mojang.serialization.DataResult;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-/*
+
 public final class PolymorphicCodecBuilder<K, S> {
     private final Codec<K> keyCodec;
     private final Function<S, K> keyExtractor;
@@ -71,15 +71,8 @@ public final class PolymorphicCodecBuilder<K, S> {
     }
 
     public Codec<S> build() {
-        // This method returns a Codec<S> by dispatching based on the key codec and the registered codecs.
-        return this.keyCodec.dispatch(this.keyName, this.keyExtractor, key -> {
-            Codec<? extends S> codec = this.codecs.get(key);
-            if (codec == null) {
-                return DataResult.error(() -> "No codec found for key: " + key);
-            }
-            return DataResult.success((MapCodec<S>) MapCodec.of(codec));
-        });
+        return this.keyCodec.dispatch(this.keyName, this.keyExtractor, this.codecs::entrySet);
     }
 }
 
- */
+

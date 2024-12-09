@@ -35,15 +35,26 @@
 package ladysnake.requiem.common.possession.item;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.api.v1.util.MoreCodecs;
 import ladysnake.requiem.common.RequiemRegistries;
+import ladysnake.requiem.core.data.LazyEntityPredicate;
+import ladysnake.requiem.core.util.serde.PolymorphicCodecBuilder;
+import ladysnake.requiem.mixin.common.access.TextAccessor;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -56,7 +67,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-/*
+
 public record PossessionItemOverrideWrapper(
     int priority,
     boolean enabled,
@@ -64,17 +75,18 @@ public record PossessionItemOverrideWrapper(
     LazyEntityPredicate mob,
     PossessionItemOverride override
 ) implements Comparable<PossessionItemOverrideWrapper> {
+
     public static final int CURRENT_SCHEMA_VERSION = 0;
 
-    // the fun bit is that V0 is both a schema version and an override type, so we need to flatten some stuff here
     public static final Codec<PossessionItemOverrideWrapper> CODEC_V0 = RecordCodecBuilder.create((instance) -> instance.group(
         Codec.INT.optionalFieldOf("priority", 100).forGetter(PossessionItemOverrideWrapper::priority),
         Codec.BOOL.optionalFieldOf("enabled", true).forGetter(PossessionItemOverrideWrapper::enabled),
-        MoreCodecs.text(MoreCodecs.DYNAMIC_JSON).optionalFieldOf("tooltip").forGetter(w -> w.tooltip),
+        TextCodecs.CODEC.optionalFieldOf("tooltip").forGetter(w -> w.tooltip),
         OldPossessionItemOverride.Requirements.codec(MoreCodecs.DYNAMIC_JSON).fieldOf("requirements").forGetter(o -> ((OldPossessionItemOverride) o.override).requirements()),
         Codec.INT.optionalFieldOf("use_time", 0).forGetter(w -> ((OldPossessionItemOverride) w.override).useTime()),
         OldPossessionItemOverride.Result.CODEC.fieldOf("result").forGetter(w -> ((OldPossessionItemOverride) w.override).result())
     ).apply(instance, (p, e, t, req, u, res) -> new PossessionItemOverrideWrapper(p, e, t, req.possessed, new OldPossessionItemOverride(req, u, res))));
+
 
     public static final Codec<PossessionItemOverrideWrapper> CODEC_V1 = codecV1(MoreCodecs.DYNAMIC_JSON);
 
@@ -91,7 +103,7 @@ public record PossessionItemOverrideWrapper(
         return RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.optionalFieldOf("priority", 100).forGetter(PossessionItemOverrideWrapper::priority),
             Codec.BOOL.optionalFieldOf("enabled", true).forGetter(PossessionItemOverrideWrapper::enabled),
-            MoreCodecs.text(jsonCodec).optionalFieldOf("tooltip").forGetter(o -> o.tooltip),
+            TextCodecs.CODEC.optionalFieldOf("tooltip").forGetter(o -> o.tooltip),
             LazyEntityPredicate.codec(jsonCodec).fieldOf("mob").forGetter(o -> o.mob),
             overrideCodecV1(jsonCodec).fieldOf("override").forGetter(w -> w.override)
         ).apply(instance, PossessionItemOverrideWrapper::new));
@@ -100,7 +112,7 @@ public record PossessionItemOverrideWrapper(
     private static Codec<PossessionItemOverride> overrideCodecV1(Codec<JsonElement> jsonCodec) {
         // I promise I will make this a registry at some point
         return PolymorphicCodecBuilder.create("type", Identifier.CODEC, PossessionItemOverride::getType)
-            .with(OldPossessionItemOverride.ID, OldPossessionItemOverride.codec(jsonCodec))
+            .with(OldPossessionItemOverride.ID, OldPossessionItemOverride.mapCodec(jsonCodec))
             .with(DietItemOverride.ID, DietItemOverride.codec(jsonCodec))
             .with(HealingItemOverride.ID, HealingItemOverride.codec(jsonCodec))
             .with(CureItemOverride.ID, CureItemOverride.codec(jsonCodec))
@@ -155,9 +167,9 @@ public record PossessionItemOverrideWrapper(
             if (tested.isPresent()) {
                 InstancedItemOverride override = tested.get();
                 if (override.shortCircuits()) {
-                    return wrapper.tooltip.flatMap(override::tweakTooltip).map(Collections::singletonList).orElse(Collections.emptyList());
+                    return wrapper.tooltip.flatMap((t) -> override.tweakTooltip(Text.of(t))).map(Collections::singletonList).orElse(Collections.emptyList());
                 } else {
-                    wrapper.tooltip.flatMap(override::tweakTooltip).ifPresent(lines::add);
+                    wrapper.tooltip.flatMap((t) -> override.tweakTooltip(Text.of(t))).ifPresent(lines::add);
                 }
             }
         }
@@ -179,5 +191,3 @@ public record PossessionItemOverrideWrapper(
         return o.priority - this.priority;
     }
 }
-
- */

@@ -36,10 +36,13 @@ package ladysnake.requiem.common.possession.item;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.possession.item.PossessionItemAction;
 import ladysnake.requiem.common.RequiemRegistries;
+import ladysnake.requiem.core.data.LazyEntityPredicate;
+import ladysnake.requiem.core.data.LazyItemPredicate;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,7 +54,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.Optional;
-/*
+
 public record OldPossessionItemOverride(
     OldPossessionItemOverride.Requirements requirements,
     int useTime,
@@ -66,6 +69,15 @@ public record OldPossessionItemOverride(
             Result.CODEC.fieldOf("result").forGetter(OldPossessionItemOverride::result)
         ).apply(instance, OldPossessionItemOverride::new));
     }
+
+    static MapCodec<OldPossessionItemOverride> mapCodec(Codec<JsonElement> jsonCodec) {
+        return RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            Requirements.codec(jsonCodec).fieldOf("requirements").forGetter(OldPossessionItemOverride::requirements),
+            Codec.INT.optionalFieldOf("use_time", 0).forGetter(OldPossessionItemOverride::useTime),
+            Result.CODEC.fieldOf("result").forGetter(OldPossessionItemOverride::result)
+        ).apply(instance, OldPossessionItemOverride::new));
+    }
+
 
 
     @Override
@@ -181,4 +193,4 @@ public record OldPossessionItemOverride(
         }
     }
 }
-*/
+
