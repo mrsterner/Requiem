@@ -52,6 +52,7 @@ import ladysnake.requiem.mixin.common.access.TextAccessor;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
@@ -72,29 +73,11 @@ public record PossessionItemOverrideWrapper(
     int priority,
     boolean enabled,
     Optional<Text> tooltip,
-    LazyEntityPredicate mob,
-    PossessionItemOverride override
+    EntityPredicate mob,
+    Optional<PossessionItemOverride> override
 ) implements Comparable<PossessionItemOverrideWrapper> {
 
-    public static final int CURRENT_SCHEMA_VERSION = 0;
-
-    public static final MapCodec<PossessionItemOverrideWrapper> CODEC_V0 = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-        Codec.INT.optionalFieldOf("priority", 100).forGetter(PossessionItemOverrideWrapper::priority),
-        Codec.BOOL.optionalFieldOf("enabled", true).forGetter(PossessionItemOverrideWrapper::enabled),
-        TextCodecs.CODEC.optionalFieldOf("tooltip").forGetter(w -> w.tooltip),
-        OldPossessionItemOverride.Requirements.codec(MoreCodecs.DYNAMIC_JSON).fieldOf("requirements").forGetter(o -> ((OldPossessionItemOverride) o.override).requirements()),
-        Codec.INT.optionalFieldOf("use_time", 0).forGetter(w -> ((OldPossessionItemOverride) w.override).useTime()),
-        OldPossessionItemOverride.Result.CODEC.fieldOf("result").forGetter(w -> ((OldPossessionItemOverride) w.override).result())
-    ).apply(instance, (p, e, t, req, u, res) -> new PossessionItemOverrideWrapper(p, e, t, req.possessed, new OldPossessionItemOverride(req, u, res))));
-
-
     public static final MapCodec<PossessionItemOverrideWrapper> CODEC_V1 = codecV1(MoreCodecs.DYNAMIC_JSON);
-
-    public static final Codec<PossessionItemOverrideWrapper> CODEC = PolymorphicCodecBuilder.create("schema_version", Codec.INT, (PossessionItemOverrideWrapper o) -> CURRENT_SCHEMA_VERSION)
-        .with(0, CODEC_V0)
-        .with(1, CODEC_V1)
-        .build()
-        .xmap(PossessionItemOverrideWrapper::initNow, Function.identity());
 
     // The compressed NBT codec used by PacketByteBuf#encode fails on nulls, so we cannot use regular JSON objects
     public static final MapCodec<PossessionItemOverrideWrapper> NETWORK_CODEC = codecV1(MoreCodecs.STRING_JSON);
@@ -104,13 +87,12 @@ public record PossessionItemOverrideWrapper(
             Codec.INT.optionalFieldOf("priority", 100).forGetter(PossessionItemOverrideWrapper::priority),
             Codec.BOOL.optionalFieldOf("enabled", true).forGetter(PossessionItemOverrideWrapper::enabled),
             TextCodecs.CODEC.optionalFieldOf("tooltip").forGetter(o -> o.tooltip),
-            LazyEntityPredicate.codec(jsonCodec).fieldOf("mob").forGetter(o -> o.mob),
-            overrideCodecV1(jsonCodec).fieldOf("override").forGetter(w -> w.override)
+            EntityPredicate.CODEC.fieldOf("mob").forGetter(o -> o.mob),
+            overrideCodecV1(jsonCodec).optionalFieldOf("override").forGetter(w -> w.override)
         ).apply(instance, PossessionItemOverrideWrapper::new));
     }
 
     private static Codec<PossessionItemOverride> overrideCodecV1(Codec<JsonElement> jsonCodec) {
-        // I promise I will make this a registry at some point
         return PolymorphicCodecBuilder.create("type", Identifier.CODEC, PossessionItemOverride::getType)
             .with(OldPossessionItemOverride.ID, OldPossessionItemOverride.mapCodec(jsonCodec))
             .with(DietItemOverride.ID, DietItemOverride.codec(jsonCodec))
@@ -177,12 +159,12 @@ public record PossessionItemOverrideWrapper(
     }
 
     public Optional<InstancedItemOverride> test(PlayerEntity player, MobEntity host, ItemStack stack) {
-        return this.enabled() && this.mob.test(host) ? this.override.test(player, host, stack) : Optional.empty();
+        return this.override.flatMap(possessionItemOverride -> possessionItemOverride.test(player, host, stack));
     }
 
     public PossessionItemOverrideWrapper initNow() {
-        this.mob.initNow();
-        this.override.initNow();
+
+        this.override.ifPresent(PossessionItemOverride::initNow);
         return this;
     }
 

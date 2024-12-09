@@ -45,6 +45,8 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
+import java.util.Objects;
+
 public class RequiemEnchantments {
     public static final RegistryKey<Enchantment> HUMANITY = keyOf("humanity");
 
@@ -55,7 +57,7 @@ public class RequiemEnchantments {
     public static int getEnchantmentLevel(World level, RegistryKey<Enchantment> key, ItemStack stack) {
         RegistryEntryLookup<Enchantment> enchantmentLookup = level.getRegistryManager().createRegistryLookup().getOrThrow(RegistryKeys.ENCHANTMENT);
         var opt = enchantmentLookup.getOptional(key);
-        return opt.map(enchantmentReference -> stack.get(DataComponentTypes.ENCHANTMENTS).getLevel(enchantmentReference)).orElse(0);
+        return opt.map(enchantmentReference -> stack.contains(DataComponentTypes.ENCHANTMENTS) ? stack.get(DataComponentTypes.ENCHANTMENTS).getLevel(enchantmentReference) : 0).orElse(0);
     }
 
     public static void init() {

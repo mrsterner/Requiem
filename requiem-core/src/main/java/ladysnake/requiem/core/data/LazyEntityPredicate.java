@@ -72,7 +72,12 @@ public class LazyEntityPredicate extends LazyDataPredicate<EntityPredicate> {
     @Override
     protected EntityPredicate deserialize(@Nullable JsonElement json) {
         DataResult<EntityPredicate> result = EntityPredicate.CODEC.parse(JsonOps.INSTANCE, json);
-        return result.result().orElseThrow(() -> new IllegalArgumentException("Failed to deserialize EntityPredicate"));
+        if (result.error().isPresent()) {
+            System.err.println("Failed to deserialize EntityPredicate: " + json);
+        }
+        return result.result().orElseThrow(() ->
+            new IllegalArgumentException("Failed to deserialize EntityPredicate: " + json)
+        );
     }
 }
 

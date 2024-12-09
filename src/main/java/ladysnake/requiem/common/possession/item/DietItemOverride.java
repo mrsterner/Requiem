@@ -46,6 +46,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -58,22 +59,22 @@ public class DietItemOverride implements PossessionItemOverride, InstancedItemOv
 
     public static MapCodec<DietItemOverride> codec(Codec<JsonElement> jsonCodec) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-            LazyItemPredicate.codec(jsonCodec).fieldOf("food").forGetter(o -> o.food),
+            ItemPredicate.CODEC.fieldOf("food").forGetter(o -> o.food),
             MoreCodecs.enumeration(Filter.class).optionalFieldOf("filter", Filter.NONE).forGetter(o -> o.filter)
         ).apply(instance, DietItemOverride::new));
     }
 
-    private final LazyItemPredicate food;
+    private final ItemPredicate food;
     private final Filter filter;
 
-    public DietItemOverride(LazyItemPredicate food, Filter filter) {
+    public DietItemOverride(ItemPredicate food, Filter filter) {
         this.food = food;
         this.filter = filter;
     }
 
     @Override
     public void initNow() {
-        this.food.initNow();
+
     }
 
     @Override
@@ -83,7 +84,7 @@ public class DietItemOverride implements PossessionItemOverride, InstancedItemOv
 
     @Override
     public Optional<InstancedItemOverride> test(PlayerEntity player, MobEntity possessed, ItemStack stack) {
-        if (this.food.get(possessed.getWorld()).test(stack)) {
+        if (this.food.test(stack)) {
             return Optional.of(this);
         } else if (stack.contains(DataComponentTypes.FOOD)) {
             return Optional.of(OverrideFailure.get(true));

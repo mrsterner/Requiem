@@ -46,6 +46,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -54,7 +55,7 @@ import net.minecraft.world.World;
 import java.util.Optional;
 
 public record HealingItemOverride(
-    LazyItemPredicate item,
+    ItemPredicate item,
     int useTime,
     int cooldown,
     HealingItemOverride.Usage usage
@@ -63,7 +64,7 @@ public record HealingItemOverride(
 
     public static MapCodec<HealingItemOverride> codec(Codec<JsonElement> jsonCodec) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-            LazyItemPredicate.codec(jsonCodec).fieldOf("item").forGetter(HealingItemOverride::item),
+            ItemPredicate.CODEC.fieldOf("item").forGetter(HealingItemOverride::item),
             Codec.INT.optionalFieldOf("use_time", 0).forGetter(HealingItemOverride::useTime),
             Codec.INT.optionalFieldOf("cooldown", 0).forGetter(HealingItemOverride::cooldown),
             MoreCodecs.enumeration(Usage.class).fieldOf("usage").forGetter(HealingItemOverride::usage)
@@ -72,7 +73,7 @@ public record HealingItemOverride(
 
     @Override
     public void initNow() {
-        this.item.initNow();
+
     }
 
     @Override
@@ -82,7 +83,7 @@ public record HealingItemOverride(
 
     @Override
     public Optional<InstancedItemOverride> test(PlayerEntity player, MobEntity possessed, ItemStack stack) {
-        if (this.item.test(player.getWorld(), stack)) {
+        if (this.item.test(stack)) {
             if (possessed.getHealth() < possessed.getMaxHealth()) {
                 return Optional.of(this);
             } else {

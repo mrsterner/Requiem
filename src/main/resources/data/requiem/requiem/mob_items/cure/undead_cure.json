@@ -19,7 +19,7 @@
       }
     },
     "reagent": {
-      "tag": "requiem:undead_cures"
+      "tag": "#requiem:undead_cures"
     }
   }
 }

@@ -137,6 +137,8 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         return InventoryLimiter.instance().getInventoryShape(requiem$player).swapBackground(background);
     }
 
+
+
     @Inject(
         method = "drawBackground",
         at = @At(
@@ -173,6 +175,7 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         }
     }
 
+
     @ModifyArg(
         method = "drawBackground",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/DrawContext;IIIIIFFFLnet/minecraft/entity/LivingEntity;)V"),
@@ -194,9 +197,9 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
     @ModifyArg(
         method = "drawBackground",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/DrawContext;IIIIIFFFLnet/minecraft/entity/LivingEntity;)V"),
-        index = 4
+        index = 3
     )
-    private int shiftPossessedEntityLookX(int x1) {
+    private int shiftPossessedEntityLookX(int x) {
         return InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityX(x);
     }
 
@@ -205,7 +208,12 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(Lnet/minecraft/client/gui/DrawContext;IIIIIFFFLnet/minecraft/entity/LivingEntity;)V"),
         index = 4
     )
-    private int shiftPossessedEntityLookY(int x1) {
+    private int shiftPossessedEntityLookY(int y) {
         return (int) InventoryLimiter.instance().getInventoryShape(requiem$player).shiftEntityY(y);
     }
+
+
+
+
+
 }

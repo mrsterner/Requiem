@@ -50,6 +50,7 @@ import java.util.Iterator;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityModel<T>> {
+
     @ModifyVariable(method = "render", at = @At(value = "INVOKE_ASSIGN", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
     private Iterator<FeatureRenderer<T, M>> emptyFeatures(Iterator<FeatureRenderer<T, M>> iterator, T entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         if (RemnantComponent.isVagrant(entity)) {

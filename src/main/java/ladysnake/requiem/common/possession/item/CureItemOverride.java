@@ -46,6 +46,9 @@ import ladysnake.requiem.core.data.LazyItemPredicate;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -58,15 +61,15 @@ public class CureItemOverride implements PossessionItemOverride, InstancedItemOv
 
     public static MapCodec<CureItemOverride> codec(Codec<JsonElement> jsonCodec) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-            LazyEntityPredicate.codec(jsonCodec).fieldOf("possessed_state").forGetter(o -> o.possessedState),
-            LazyItemPredicate.codec(jsonCodec).fieldOf("reagent").forGetter(o -> o.reagent)
+            EntityPredicate.CODEC.fieldOf("possessed_state").forGetter(o -> o.possessedState),
+            ItemPredicate.CODEC.fieldOf("reagent").forGetter(o -> o.reagent)
         ).apply(instance, CureItemOverride::new));
     }
 
-    private final LazyEntityPredicate possessedState;
-    private final LazyItemPredicate reagent;
+    private final EntityPredicate possessedState;
+    private final ItemPredicate reagent;
 
-    public CureItemOverride(LazyEntityPredicate possessedState, LazyItemPredicate reagent) {
+    public CureItemOverride(EntityPredicate possessedState, ItemPredicate reagent) {
         this.possessedState = possessedState;
         this.reagent = reagent;
     }
@@ -90,8 +93,6 @@ public class CureItemOverride implements PossessionItemOverride, InstancedItemOv
 
     @Override
     public void initNow() {
-        this.possessedState.initNow();
-        this.reagent.initNow();
     }
 
     @Override
@@ -101,8 +102,8 @@ public class CureItemOverride implements PossessionItemOverride, InstancedItemOv
 
     @Override
     public Optional<InstancedItemOverride> test(PlayerEntity player, MobEntity possessed, ItemStack stack) {
-        if (RemnantComponent.get(player).canCurePossessed(possessed) && this.reagent.test(player.getWorld(), stack)) {
-            if (this.possessedState.test(possessed)) {
+        if (RemnantComponent.get(player).canCurePossessed(possessed) && this.reagent.test(stack)) {
+            if (player instanceof ServerPlayerEntity serverPlayerEntity && this.possessedState.test(serverPlayerEntity, possessed)) {
                 return Optional.of(this);
             } else {
                 return Optional.of(OverrideFailure.get(false));

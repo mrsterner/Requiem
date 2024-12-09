@@ -35,6 +35,8 @@
 package ladysnake.requiem.core.data;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
@@ -47,8 +49,24 @@ import org.jetbrains.annotations.Nullable;
 public class LazyItemPredicate extends LazyDataPredicate<ItemPredicate> {
     public static final LazyItemPredicate ANY = new LazyItemPredicate(null);
 
-    public static Codec<LazyItemPredicate> codec(Codec<JsonElement> codec) {
-        return codec.xmap(LazyItemPredicate::new, LazyDataPredicate::getJson);
+    public static Codec<LazyItemPredicate> codec(Codec<JsonElement> jsonCodec) {
+        return Codec.either(Codec.STRING, jsonCodec)
+            .xmap(either -> {
+                if (either.left().isPresent()) {
+                    // Handle string form
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("tag", either.left().get());
+                    return new LazyItemPredicate(jsonObject);
+                }
+                // Handle object form
+                return new LazyItemPredicate(either.right().get());
+            }, predicate -> {
+                JsonElement json = predicate.getJson();
+                if (json.isJsonObject() && json.getAsJsonObject().has("tag")) {
+                    return Either.left(json.getAsJsonObject().get("tag").getAsString());
+                }
+                return Either.right(json);
+            });
     }
 
     public LazyItemPredicate(@Nullable JsonElement json) {

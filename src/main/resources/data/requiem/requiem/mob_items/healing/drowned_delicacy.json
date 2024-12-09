@@ -12,7 +12,7 @@
   "override": {
     "type": "requiem:healing",
     "item": {
-      "tag": "requiem:raw_fishes"
+      "tag": "#requiem:raw_fishes"
     },
     "use_time": 32,
     "cooldown": 150,
