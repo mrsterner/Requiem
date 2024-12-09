@@ -104,11 +104,6 @@ public final class RequiemNetworking {
         return new OpusUseS2CPayload(buf);
     }
 
-    @Contract(pure = true)
-    public static CustomPayloadS2CPacket createEmptyMessage(Identifier id) {
-        return new CustomPayloadS2CPacket(new SimplePayload(id, createEmptyBuffer()));
-    }
-
     public static DataSyncS2CPayload createDataSyncMessage(SubDataManagerHelper helper) {
         PacketByteBuf buf = createEmptyBuffer();
         List<SubDataManager<?>> managers = helper.streamDataManagers().toList();
@@ -129,33 +124,33 @@ public final class RequiemNetworking {
     public static void sendRiftUseMessage(ObeliskDescriptor target) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.encode(NbtOps.INSTANCE, ObeliskDescriptor.CODEC, target);
-        sendToServer(new UseRiftC2SPayload(buf));
+        //sendToServer(new UseRiftC2SPayload(buf));
     }
 
     public static void sendIndirectAbilityUseMessage(AbilityType type) {
         PacketByteBuf buf = new PacketByteBuf(buffer());
         buf.writeEnumConstant(type);
-        sendToServer(new UseIndirectDirectAbilityC2SPayload(buf));
+        //sendToServer(new UseIndirectDirectAbilityC2SPayload(buf));
     }
 
     public static void sendSupercrafterMessage() {
-        sendToServer(new OpenCraftingScreenC2SPayload(createEmptyBuffer()));
+        //sendToServer(new OpenCraftingScreenC2SPayload(createEmptyBuffer()));
     }
 
     public static void sendEtherealAnimationMessage(ServerPlayerEntity player) {
-        sendTo(player, new EtherealAnimationS2CPayload(PacketByteBufs.create()));
+        //sendTo(player, new EtherealAnimationS2CPayload(PacketByteBufs.create()));
     }
 
     public static void sendBodyCureMessage(LivingEntity entity) {
         PacketByteBuf buf = new PacketByteBuf(buffer());
         buf.writeVarInt(entity.getId());
-        RequiemCoreNetworking.sendToAllTrackingIncluding(entity, new BodyCureS2CPayload(buf));
+        //RequiemCoreNetworking.sendToAllTrackingIncluding(entity, new BodyCureS2CPayload(buf));
     }
 
     public static void sendAnchorDamageMessage(ServerPlayerEntity player, boolean dead) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(dead);
-        ServerPlayNetworking.send(player, new AnchorDamageS2CPayload(buf));
+       // ServerPlayNetworking.send(player, new AnchorDamageS2CPayload(buf));
     }
 
     public static void sendObeliskPowerUpdateMessage(RunestoneBlockEntity runestone) {
@@ -165,13 +160,13 @@ public final class RequiemNetworking {
         buf.writeVarInt(runestone.getCoreHeight());
         buf.writeFloat(runestone.getPowerRate());
         for(ServerPlayerEntity serverPlayer : PlayerLookup.tracking(runestone)) {
-            ServerPlayNetworking.send(serverPlayer, new ObeliskPowerUpgradeS2CPayload(buf));
+           // ServerPlayNetworking.send(serverPlayer, new ObeliskPowerUpgradeS2CPayload(buf));
         }
     }
 
     public static void sendRiftWitnessedMessage(ServerPlayerEntity player, String obeliskName) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeString(obeliskName);
-        ServerPlayNetworking.send(player, new RiftWitnessedS2CPayload(buf));
+        //ServerPlayNetworking.send(player, new RiftWitnessedS2CPayload(buf));
     }
 }

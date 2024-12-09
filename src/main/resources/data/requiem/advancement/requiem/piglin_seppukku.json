@@ -2,7 +2,7 @@
   "parent": "requiem:requiem/first_possession",
   "display": {
     "icon": {
-      "item": "minecraft:netherite_sword"
+      "id": "minecraft:netherite_sword"
     },
     "title": {
       "translate": "requiem:advancements.requiem.piglin_seppukku.title"

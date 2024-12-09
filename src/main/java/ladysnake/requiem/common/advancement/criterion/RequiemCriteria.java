@@ -47,12 +47,12 @@ public class RequiemCriteria {
     public static final UsedRequiemTotemCriterion USED_TOTEM = new UsedRequiemTotemCriterion();
 
     public static void init() {
-        Criteria.register("player_resurrected_as_entity", PLAYER_RESURRECTED_AS_ENTITY);
-        Criteria.register("made_remnant_choice", MADE_REMNANT_CHOICE);
-        Criteria.register("player_possessed_entity", PLAYER_POSSESSED_ENTITY);
-        Criteria.register("entity_died_after_possession", DEATH_AFTER_POSSESSION);
-        Criteria.register("possessed_hit_entity", POSSESSED_HIT_ENTITY);
-        Criteria.register("transformed_possessed_entity", TRANSFORMED_POSSESSED_ENTITY);
-        Criteria.register("used_totem", USED_TOTEM);
+        Criteria.register("requiem:player_resurrected_as_entity", PLAYER_RESURRECTED_AS_ENTITY);
+        Criteria.register("requiem:made_remnant_choice", MADE_REMNANT_CHOICE);
+        Criteria.register("requiem:player_possessed_entity", PLAYER_POSSESSED_ENTITY);
+        Criteria.register("requiem:entity_died_after_possession", DEATH_AFTER_POSSESSION);
+        Criteria.register("requiem:possessed_hit_entity", POSSESSED_HIT_ENTITY);
+        Criteria.register("requiem:transformed_possessed_entity", TRANSFORMED_POSSESSED_ENTITY);
+        Criteria.register("requiem:used_totem", USED_TOTEM);
     }
 }

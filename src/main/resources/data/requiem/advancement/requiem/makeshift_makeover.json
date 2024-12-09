@@ -2,7 +2,7 @@
   "parent": "requiem:requiem/first_possession",
   "display": {
     "icon": {
-      "item": "minecraft:skeleton_skull"
+      "id": "minecraft:skeleton_skull"
     },
     "title": {
       "translate": "requiem:advancements.requiem.makeshift_makeover.title"

@@ -54,6 +54,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
+import java.util.Optional;
+
 public class LootingPossessedData extends PossessedDataBase {
     private boolean previouslyPossessed;
 
@@ -97,7 +99,7 @@ public class LootingPossessedData extends PossessedDataBase {
                 .add(LootContextParameters.ORIGIN, this.holder.getPos())
                 .luck(player.getLuck())
                 .build(RequiemLootTables.POSSESSION)
-        ).build(null);
+        ).build(Optional.empty());
         lootTable.generateLoot(lootContext, player.getInventory()::offerOrDrop);
     }
 

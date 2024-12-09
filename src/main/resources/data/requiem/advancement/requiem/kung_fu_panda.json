@@ -2,7 +2,7 @@
   "parent": "requiem:requiem/first_possession",
   "display": {
     "icon": {
-      "item": "minecraft:bamboo"
+      "id": "minecraft:bamboo"
     },
     "title": {
       "translate": "requiem:advancements.requiem.kung_fu_panda.title"

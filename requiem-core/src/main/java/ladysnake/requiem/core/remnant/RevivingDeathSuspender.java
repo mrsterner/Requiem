@@ -102,8 +102,8 @@ public final class RevivingDeathSuspender implements DeathSuspender {
     @Override
     public void serverTick() {
         if (this.isLifeTransient()) {
-            if (--timeBeforeDialogue == 0) {
-                Blabber.startDialogue((ServerPlayerEntity) this.player, RequiemCore.id("remnant_choice"));
+            if (--timeBeforeDialogue == 0 && this.player instanceof ServerPlayerEntity serverPlayer) {
+                Blabber.startDialogue(serverPlayer, RequiemCore.id("remnant_choice"));
             }
         }
     }

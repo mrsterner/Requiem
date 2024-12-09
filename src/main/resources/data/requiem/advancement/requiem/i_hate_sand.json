@@ -2,7 +2,7 @@
   "parent": "requiem:requiem/first_possession",
   "display": {
     "icon": {
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     },
     "title": {
       "translate": "requiem:advancements.requiem.i_hate_sand.title"
