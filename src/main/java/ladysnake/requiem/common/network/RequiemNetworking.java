@@ -45,7 +45,12 @@ import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.core.RequiemCoreNetworking;
 import ladysnake.requiem.core.network.AnchorDamageS2CPayload;
 import ladysnake.requiem.core.network.BodyCureS2CPayload;
+import ladysnake.requiem.core.network.DataSyncS2CPayload;
+import ladysnake.requiem.core.network.EtherealAnimationS2CPayload;
+import ladysnake.requiem.core.network.ObeliskPowerUpgradeS2CPayload;
 import ladysnake.requiem.core.network.OpenCraftingScreenC2SPayload;
+import ladysnake.requiem.core.network.OpusUseS2CPayload;
+import ladysnake.requiem.core.network.RiftWitnessedS2CPayload;
 import ladysnake.requiem.core.network.UseIndirectDirectAbilityC2SPayload;
 import ladysnake.requiem.core.network.UseRiftC2SPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -71,13 +76,7 @@ import static io.netty.buffer.Unpooled.buffer;
 
 public final class RequiemNetworking {
     // Server -> Client
-    public static final Identifier DATA_SYNC = Requiem.id("data_sync");
-    public static final Identifier OPUS_USE = Requiem.id("opus_use");
-    public static final Identifier ETHEREAL_ANIMATION = Requiem.id("ethereal_animation");
-    public static final Identifier OBELISK_POWER_UPDATE = Requiem.id("obelisk_power_update");
-    public static final Identifier RIFT_WITNESSED = Requiem.id("rift_witnessed");
 
-    public static final Identifier ETHEREAL_FRACTURE = Requiem.id("ethereal_fracture");
 
     public static void sendToServer(CustomPayload message) {
         assert MinecraftClient.getInstance().player != null;
@@ -88,17 +87,21 @@ public final class RequiemNetworking {
         sendToPlayer(player, message);
     }
 
+    public static void sendTo(ServerPlayerEntity player, CustomPayload message) {
+        ServerPlayNetworking.send(player, message);
+    }
+
     private static void sendToPlayer(ServerPlayerEntity player, Packet<?> message) {
         if (player.networkHandler != null) {
             player.networkHandler.sendPacket(message);
         }
     }
 
-    public static CustomPayloadS2CPacket createOpusUsePacket(RemnantType chosenType, boolean showBook) {
+    public static OpusUseS2CPayload createOpusUsePacket(RemnantType chosenType, boolean showBook) {
         PacketByteBuf buf = createEmptyBuffer();
         buf.writeVarInt(RemnantTypes.getRawId(chosenType));
         buf.writeBoolean(showBook);
-        return new CustomPayloadS2CPacket(new SimplePayload(OPUS_USE, buf));
+        return new OpusUseS2CPayload(buf);
     }
 
     @Contract(pure = true)
@@ -106,7 +109,7 @@ public final class RequiemNetworking {
         return new CustomPayloadS2CPacket(new SimplePayload(id, createEmptyBuffer()));
     }
 
-    public static CustomPayloadS2CPacket createDataSyncMessage(SubDataManagerHelper helper) {
+    public static DataSyncS2CPayload createDataSyncMessage(SubDataManagerHelper helper) {
         PacketByteBuf buf = createEmptyBuffer();
         List<SubDataManager<?>> managers = helper.streamDataManagers().toList();
         buf.writeVarInt(managers.size());
@@ -115,7 +118,7 @@ public final class RequiemNetworking {
             buf.writeIdentifier(manager.getFabricId());
             manager.toPacket(buf);
         }
-        return new CustomPayloadS2CPacket(new SimplePayload(DATA_SYNC, buf));
+        return new DataSyncS2CPayload(buf);
     }
 
     @Contract(pure = true)
@@ -140,7 +143,7 @@ public final class RequiemNetworking {
     }
 
     public static void sendEtherealAnimationMessage(ServerPlayerEntity player) {
-        sendTo(player, createEmptyMessage(ETHEREAL_ANIMATION));
+        sendTo(player, new EtherealAnimationS2CPayload(PacketByteBufs.create()));
     }
 
     public static void sendBodyCureMessage(LivingEntity entity) {
@@ -162,13 +165,13 @@ public final class RequiemNetworking {
         buf.writeVarInt(runestone.getCoreHeight());
         buf.writeFloat(runestone.getPowerRate());
         for(ServerPlayerEntity serverPlayer : PlayerLookup.tracking(runestone)) {
-            ServerPlayNetworking.send(serverPlayer, new SimplePayload(OBELISK_POWER_UPDATE, buf));
+            ServerPlayNetworking.send(serverPlayer, new ObeliskPowerUpgradeS2CPayload(buf));
         }
     }
 
     public static void sendRiftWitnessedMessage(ServerPlayerEntity player, String obeliskName) {
         PacketByteBuf buf = PacketByteBufs.create();
-        //TODO buf.writeText(obeliskName);
-        ServerPlayNetworking.send(player, new SimplePayload(RIFT_WITNESSED, buf));
+        buf.writeString(obeliskName);
+        ServerPlayNetworking.send(player, new RiftWitnessedS2CPayload(buf));
     }
 }

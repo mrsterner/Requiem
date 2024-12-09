@@ -32,6 +32,9 @@
     ],
     "modmenu": [
       "ladysnake.requiem.compat.ModMenuCompat"
+    ],
+    "requiem:plugin": [
+      "ladysnake.requiem.common.VanillaRequiemPlugin"
     ]
   },
   "mixins": [
@@ -45,7 +48,6 @@
     "requiem-api": "${version}",
     "requiem-core": "${version}",
     "cardinal-components-base": "*",
-    "cloth-config2": "*",
     "satin": "*",
     "automatone": "*",
     "impersonate": "*",

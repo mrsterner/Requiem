@@ -49,7 +49,7 @@ public final class PandemoniumItems {
 
     public static void init() {
         registerItem(PandemoniumItems.BALEFUL_SOUL_VESSEL, "baleful_soul_vessel");
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS_AND_UTILITIES).register(entries -> entries.addItem(BALEFUL_SOUL_VESSEL));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> entries.add(BALEFUL_SOUL_VESSEL));
     }
 
     public static <T extends Item> void registerItem(T item, String name) {

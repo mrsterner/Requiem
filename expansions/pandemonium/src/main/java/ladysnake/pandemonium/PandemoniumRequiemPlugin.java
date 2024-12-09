@@ -49,7 +49,7 @@ public class PandemoniumRequiemPlugin implements RequiemPlugin {
     public void onRequiemInitialize() {
         if (PandemoniumConfig.possession.allowPossessingAllMobs) {
             // Enderman specific behaviour is unneeded now that players can possess them
-            PossessionStartCallback.EVENT.unregister(new Identifier(Requiem.MOD_ID, "enderman"));
+            PossessionStartCallback.EVENT.unregister(Identifier.of(Requiem.MOD_ID, "enderman"));
             PossessionStartCallback.EVENT.register(Pandemonium.id("allow_everything"), (target, possessor, simulate) -> PossessionStartCallback.Result.ALLOW);
         }
     }

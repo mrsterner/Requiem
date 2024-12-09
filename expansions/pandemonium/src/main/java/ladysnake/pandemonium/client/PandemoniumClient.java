@@ -53,6 +53,6 @@ public class PandemoniumClient implements ClientModInitializer {
     }
 
     private void registerCallbacks() {
-        CrosshairRenderCallback.EVENT.unregister(new Identifier("requiem:enderman_color"));
+        CrosshairRenderCallback.EVENT.unregister(Identifier.of("requiem:enderman_color"));
     }
 }
