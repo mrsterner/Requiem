@@ -1,0 +1,142 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.github.ladysnake",
+    "module": "automatone",
+    "version": "0.12.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.11"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "automatone-0.12.3.jar",
+          "url": "automatone-0.12.3.jar",
+          "size": 791051,
+          "sha512": "9c02d6e9fe897d7474076bc9886088a715cd0be4fd83e174d78e41b3a6090b8cf5b7be4f524cfc7e60f7708ec14f66e4ae1fe68c9fc7671a4cf6e3125a7b821c",
+          "sha256": "02ed1765ef92583878024bdc4a2c45e586f5c819a30f89bd988e9439045874d3",
+          "sha1": "d01afcabf7c0511ff178e385f042160ab324e7dc",
+          "md5": "3367aa4d20eed0fa863a33efa5a315df"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.google.code.findbugs",
+          "module": "jsr305",
+          "version": {
+            "requires": "3.0.2"
+          }
+        },
+        {
+          "group": "net.fabricmc",
+          "module": "fabric-loader",
+          "version": {
+            "requires": "0.16.9"
+          }
+        },
+        {
+          "group": "net.fabricmc.fabric-api",
+          "module": "fabric-api",
+          "version": {
+            "requires": "0.110.0+1.21.1"
+          }
+        },
+        {
+          "group": "org.ladysnake.cardinal-components-api",
+          "module": "cardinal-components-base",
+          "version": {
+            "requires": "6.1.1"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "org.ladysnake.cardinal-components-api",
+          "module": "cardinal-components-entity",
+          "version": {
+            "requires": "6.1.1"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "org.ladysnake.cardinal-components-api",
+          "module": "cardinal-components-world",
+          "version": {
+            "requires": "6.1.1"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "name": "automatone-0.12.3.jar",
+          "url": "automatone-0.12.3.jar",
+          "size": 791051,
+          "sha512": "9c02d6e9fe897d7474076bc9886088a715cd0be4fd83e174d78e41b3a6090b8cf5b7be4f524cfc7e60f7708ec14f66e4ae1fe68c9fc7671a4cf6e3125a7b821c",
+          "sha256": "02ed1765ef92583878024bdc4a2c45e586f5c819a30f89bd988e9439045874d3",
+          "sha1": "d01afcabf7c0511ff178e385f042160ab324e7dc",
+          "md5": "3367aa4d20eed0fa863a33efa5a315df"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "automatone-0.12.3-sources.jar",
+          "url": "automatone-0.12.3-sources.jar",
+          "size": 267911,
+          "sha512": "446473ddb392ba63ef94907df9a2565bfa1bc4f15834d25ec9ac7e776970579982d81a512fb900982c4b6524f800e089f84454a6902a4289c2c808c4dca9e22f",
+          "sha256": "72e84dd3e7f60154d1e5606fff7eb6f38b0f893190888d0d1563cf4edf7bc8cc",
+          "sha1": "68db09d8daa6e41d1f6c06c0d4ab5dd54ce83325",
+          "md5": "b13f49f94322eb16baa7105d8d06a814"
+        }
+      ]
+    }
+  ]
+}
