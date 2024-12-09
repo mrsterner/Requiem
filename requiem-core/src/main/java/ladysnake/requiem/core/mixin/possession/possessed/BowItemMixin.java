@@ -68,14 +68,12 @@ public abstract class BowItemMixin extends RangedWeaponItem {
             possessed.setAttacking(true);
         }
     }
-/*TODO
+
     @Inject(
             method = "onStoppedUsing",
             at = @At(
-                    value = "FIELD",
-                    opcode = Opcodes.GETFIELD,
-                    target = "h"
-            )
+                value = "INVOKE",
+                target = "Lnet/minecraft/entity/player/PlayerEntity;getProjectileType(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;")
     )
     private void setCurrentUser(ItemStack item, World world, LivingEntity user, int charge, CallbackInfo ci) {
         MobEntity possessed = PossessionComponent.getHost(user);
@@ -84,6 +82,4 @@ public abstract class BowItemMixin extends RangedWeaponItem {
             possessed.setAttacking(false);
         }
     }
-
- */
 }

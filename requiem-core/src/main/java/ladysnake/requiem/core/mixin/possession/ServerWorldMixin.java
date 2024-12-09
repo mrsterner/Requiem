@@ -35,28 +35,36 @@
 package ladysnake.requiem.core.mixin.possession;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.event.listener.GameEventDispatchManager;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin {
-/*TODO 
-    @ModifyExpressionValue(method = "emitGameEvent", at = @At("HEAD"))
-    private GameEvent.Emitter updatePossessorContext(GameEvent.Emitter ctx) {
-        if (ctx.sourceEntity() instanceof ServerPlayerEntity player) {
+
+    @Shadow
+    @Final
+    private GameEventDispatchManager gameEventDispatchManager;
+
+    @WrapWithCondition(method = "emitGameEvent", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/event/listener/GameEventDispatchManager;dispatch(Lnet/minecraft/registry/entry/RegistryEntry;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/event/GameEvent$Emitter;)V"))
+    private boolean updatePossessorContext(GameEventDispatchManager instance, RegistryEntry<GameEvent> event, Vec3d emitterPos, GameEvent.Emitter emitter) {
+        if (emitter.sourceEntity() instanceof ServerPlayerEntity player) {
             MobEntity host = PossessionComponent.get(player).getHost();
             if (host != null) {
-                return GameEvent.Emitter.of(host, ctx.affectedState());
+                this.gameEventDispatchManager.dispatch(event, emitterPos, GameEvent.Emitter.of(host, emitter.affectedState()));
             }
         }
-        return ctx;
+        return true;
     }
-
- */
 }

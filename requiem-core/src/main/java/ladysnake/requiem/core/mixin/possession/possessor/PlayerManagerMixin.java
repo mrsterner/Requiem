@@ -34,6 +34,8 @@
  */
 package ladysnake.requiem.core.mixin.possession.possessor;
 
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
+import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.core.RequiemCore;
@@ -60,21 +62,15 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
-    /*TODO
-    @ModifyVariable(
+
+    @ModifyReceiver(
             method = "onPlayerConnect",
-            at = @At(
-                    value = "CONSTANT",
-                    args = "stringValue=RootVehicle",
-                    ordinal = 0
-            ),
-            ordinal = 0
+            at = @At(value = "INVOKE",
+                target = "Lnet/minecraft/nbt/NbtCompound;contains(Ljava/lang/String;I)Z")
     )
     @Nullable
     private NbtCompound logInPossessedEntity(
-            @Nullable NbtCompound serializedPlayer,
-            ClientConnection connection,
-            ServerPlayerEntity player
+        NbtCompound serializedPlayer, String key, int type, @Local(argsOnly = true) ServerPlayerEntity player
     ) {
         if (serializedPlayer != null && serializedPlayer.contains(POSSESSED_ROOT_TAG, NbtType.COMPOUND)) {
             RemnantComponent.KEY.sync(player);
@@ -93,7 +89,6 @@ public abstract class PlayerManagerMixin {
         return serializedPlayer;
     }
 
-     */
 
     private void resumePossession(PossessionComponent player, Entity possessedEntityMount, UUID possessedEntityUuid) {
         if (possessedEntityMount instanceof MobEntity && possessedEntityMount.getUuid().equals(possessedEntityUuid)) {

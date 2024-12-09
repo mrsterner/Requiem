@@ -34,12 +34,15 @@
  */
 package ladysnake.requiem.common.item;
 
+import com.mojang.serialization.Codec;
+import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.event.requiem.EntityRecordUpdateCallback;
 import ladysnake.requiem.common.RequiemRecordTypes;
 import ladysnake.requiem.common.entity.ReleasedSoulEntity;
 import ladysnake.requiem.common.entity.RequiemEntities;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.entity.SoulHolderComponent;
+import net.minecraft.component.ComponentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,6 +54,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.Uuids;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,11 +63,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class FilledSoulVesselItem extends Item {
-    public static final String SOUL_FRAGMENT_NBT = "requiem:soul_fragment";
+
+    public static final ComponentType<UUID> SOUL_FRAGMENT_UUID = Requiem.registerData("soul_fragment_uuid", (builder) -> {
+        return builder.codec(Uuids.CODEC);
+    });
+
+    public static final ComponentType<String> SOUL_FRAGMENT_STRING = Requiem.registerData("soul_fragment", (builder) -> {
+        return builder.codec(Codec.STRING);
+    });
 
     public static ItemStack forEntityType(EntityType<?> type) {
         ItemStack result = new ItemStack(RequiemItems.FILLED_SOUL_VESSEL);
-        //TODO result.getOrCreateSubNbt(SOUL_FRAGMENT_NBT).putString("type", EntityType.getId(type).toString());
+        result.set(SOUL_FRAGMENT_STRING, EntityType.getId(type).toString());
         return result;
     }
 
@@ -81,11 +92,11 @@ public class FilledSoulVesselItem extends Item {
                 linkedRecord.invalidate();
             }));
     }
-/*TODO
+
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        Optional.ofNullable(stack.getSubNbt(SOUL_FRAGMENT_NBT))
-            .flatMap(fragmentData -> EntityType.get(fragmentData.getString("type")))
+        Optional.ofNullable(stack.get(SOUL_FRAGMENT_STRING))
+            .flatMap(EntityType::get)
             .ifPresent(contained -> tooltip.add(Text.translatable("requiem:tooltip.filled_vessel", contained.getName()).formatted(Formatting.GRAY)));
     }
 
@@ -93,9 +104,7 @@ public class FilledSoulVesselItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (!world.isClient()) {
-            releaseSoul(user, Optional.ofNullable(stack.getSubNbt(FilledSoulVesselItem.SOUL_FRAGMENT_NBT))
-                .filter(data -> data.containsUuid("uuid"))
-                .map(data -> data.getUuid("uuid"))
+            releaseSoul(user, Optional.ofNullable(stack.get(FilledSoulVesselItem.SOUL_FRAGMENT_UUID))
                 .orElse(null));
             return TypedActionResult.success(ItemUsage.exchangeStack(stack, user, this.getEmptiedStack()));
         }
@@ -103,9 +112,6 @@ public class FilledSoulVesselItem extends Item {
         return TypedActionResult.success(stack);
     }
 
-
-
- */
 public ItemStack getEmptiedStack() {
     return new ItemStack(this.emptySoulVessel);
 }

@@ -93,7 +93,10 @@ public class EmptySoulVesselItem extends Item {
         return builder.codec(Codec.INT);
     });
 
-    public static final String ACTIVE_DATA_TAG = "requiem:soul_capture";
+    public static final ComponentType<UUID> ACTIVE_DATA_TAG = Requiem.registerData("soul_capture", (builder) -> {
+        return builder.codec(Uuids.CODEC);
+    });
+
     /**
      * The damage inflicted to soul aggregating creatures when stealing one of their souls
      */
@@ -215,7 +218,7 @@ public class EmptySoulVesselItem extends Item {
                 case NORMAL -> setupRecord(target).getUuid();
                 case AGGREGATE -> UUID.randomUUID(); // if we are stealing a soul from an aggregate, there is no linked entity
             };
-            //TODO result.getOrCreateSubNbt(FilledSoulVesselItem.SOUL_FRAGMENT_NBT).putUuid("uuid", recordUuid);
+            result.set(FilledSoulVesselItem.SOUL_FRAGMENT_UUID, recordUuid);
             switch (captureType.get()) {
                 case NORMAL -> SoulHolderComponent.get(target).removeSoul();
                 case AGGREGATE -> target.damage(world.getDamageSources().magic(), SOUL_AGGREGATE_STEALING_DAMAGE);
@@ -247,16 +250,14 @@ public class EmptySoulVesselItem extends Item {
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (world instanceof ServerWorld serverWorld) {
-            /* TODO
-            NbtCompound useData = stack.getSubNbt(ACTIVE_DATA_TAG);
+
+            var useData = stack.get(ACTIVE_DATA_TAG);
             if (useData != null) {
-                Entity target = serverWorld.getEntity(useData.getUuid("target"));
+                Entity target = serverWorld.getEntity(useData);
                 if (target instanceof LivingEntity) {
                     playSoulCaptureEffects(user, target);
                 }
             }
-
-             */
         }
     }
 

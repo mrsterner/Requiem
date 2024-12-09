@@ -197,7 +197,6 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
             RemnantComponent remnantComponent = RemnantComponent.get(player);
             PossessionComponent possessionComponent = PossessionComponent.get(player);
             MobEntity host = possessionComponent.getHost();
-
             boolean success;
 
             if (remnantComponent.splitPlayer(false).isPresent()) {
