@@ -44,9 +44,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlabberDialogueScreen.class)
 public class BlabberDialogueScreenMixin {
+
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     private void cancelRender(DrawContext context, int mouseX, int mouseY, float tickDelta, CallbackInfo ci) {
-        if (!RequiemClient.instance().worldFreezeFxRenderer().hasFinishedAnimation()) {
+        if (!RequiemClient.instance().worldFreezeFxRenderer().hasFinishedAnimation() && false) {
             ci.cancel();
         }
     }

@@ -88,6 +88,7 @@ public class ClientMessageHandler {
     }
 
     public void init() {
+
         PayloadTypeRegistry.playS2C().register(AnchorDamageS2CPayload.ID, AnchorDamageS2CPayload.STREAM_CODEC);
         ClientPlayNetworking.registerGlobalReceiver(AnchorDamageS2CPayload.ID, (payload, ctx) -> {
             var dead = payload.dead;

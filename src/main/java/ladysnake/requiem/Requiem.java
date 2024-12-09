@@ -120,18 +120,20 @@ public final class Requiem implements ModInitializer {
         ApiInitializer.discoverEntryPoints();
         Blabber.registerAction(id("remnant_choice"), RemnantChoiceDialogueAction.CODEC);
         CommandRegistrationCallback.EVENT.register((dispatcher, ctx, dedicated) -> RequiemCommand.register(dispatcher));
-        // Quilt's ServerArgumentType.register seems to break somehow
-        ArgumentTypeRegistry.registerArgumentType(
-            id("remnant"),
-            RemnantArgumentType.class,
-            ConstantArgumentSerializer.of(RemnantArgumentType::remnantType)
-            );
+
+
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new ResurrectionDataLoader());
         SyncServerResourcesCallback.EVENT.register(player -> RequiemNetworking.sendTo(player, RequiemNetworking.createDataSyncMessage(SubDataManagerHelper.getServerHelper())));
         ApiInitializer.setPluginCallback(this::registerPlugin);
         RequiemCompatibilityManager.init();
 
         VanillaRequiemPlugin.INFINITY_SHOT_TAG.getCodec();
+
+        ArgumentTypeRegistry.registerArgumentType(
+            id("remnant"),
+            RemnantArgumentType.class,
+            ConstantArgumentSerializer.of(RemnantArgumentType::remnantType)
+        );
     }
 
     private void registerPlugin(RequiemPlugin plugin) {

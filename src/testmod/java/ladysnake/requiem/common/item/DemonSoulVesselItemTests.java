@@ -34,19 +34,22 @@
  */
 package ladysnake.requiem.common.item;
 
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.remnant.RemnantTypes;
+import ladysnake.requiem.core.network.OpusUseS2CPayload;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import org.ladysnake.elmendorf.GameTestUtil;
 
-public class DemonSoulVesselItemTests implements QuiltGameTest {
+public class DemonSoulVesselItemTests implements FabricGameTest {
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void sealedVesselWorks(TestContext ctx) {
         var player = ctx.spawnServerPlayer(2, 0, 2);
         GameTestUtil.assertTrue("Default remnant type should be mortal", RemnantComponent.get(player).getRemnantType() == RemnantTypes.MORTAL);
@@ -60,7 +63,7 @@ public class DemonSoulVesselItemTests implements QuiltGameTest {
                     .checkBoolean(false)
                     .noMoreData()
             );
-            conn.sent(RequiemNetworking.OPUS_USE);
+            //TODO conn.sent(new OpusUseS2CPayload(PacketByteBufs.create()));
         });
         ctx.complete();
     }

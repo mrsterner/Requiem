@@ -34,8 +34,8 @@
  */
 package ladysnake.requiemtest;
 
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -45,11 +45,11 @@ import net.minecraft.item.Items;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import org.ladysnake.elmendorf.GameTestUtil;
 
-public class RequiemTestSuite implements QuiltGameTest {
+public class RequiemTestSuite implements FabricGameTest {
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void goldenApplesCureZombies(TestContext ctx) {
         var player = ctx.spawnServerPlayer(2, 0, 2);
         var zombie = ctx.spawnMob(EntityType.ZOMBIE, 3, 0, 3);

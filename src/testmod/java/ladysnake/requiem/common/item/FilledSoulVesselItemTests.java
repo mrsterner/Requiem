@@ -35,21 +35,21 @@
 package ladysnake.requiem.common.item;
 
 import ladysnake.requiem.common.entity.RequiemEntities;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.dispenser.DispenserBlock;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
 
 import java.util.Objects;
 
-public class FilledSoulVesselItemTests implements QuiltGameTest {
+public class FilledSoulVesselItemTests implements FabricGameTest {
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void filledVesselDispensingWorks(TestContext ctx) {
         BlockPos dispenserPos = new BlockPos(1, 1, 1);
         Direction dispenserFacing = Direction.EAST;

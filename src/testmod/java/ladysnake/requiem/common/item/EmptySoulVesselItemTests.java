@@ -34,12 +34,12 @@
  */
 package ladysnake.requiem.common.item;
 
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.event.requiem.SoulCaptureEvents;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.core.entity.SoulHolderComponent;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
@@ -50,10 +50,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import org.ladysnake.elmendorf.GameTestUtil;
 
-public class EmptySoulVesselItemTests implements QuiltGameTest {
-    @GameTest(structureName = EMPTY_STRUCTURE)
+public class EmptySoulVesselItemTests implements FabricGameTest {
+
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void computeSoulDefense(TestContext ctx) {
         LivingEntity mob = new PiglinBruteEntity(EntityType.PIGLIN_BRUTE, ctx.getWorld());
         SoulCaptureEvents.CaptureType captureType = SoulCaptureEvents.CaptureType.NORMAL;
@@ -68,7 +69,7 @@ public class EmptySoulVesselItemTests implements QuiltGameTest {
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void soulVesselStealsWitherSouls(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
         RemnantComponent.get(player).become(RemnantTypes.REMNANT);

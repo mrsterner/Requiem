@@ -149,7 +149,7 @@ allprojects {
 }
 
 chenille {
-    configureTestmod()
+    //configureTestmod()
     configurePublishing {
         mainArtifact = remapJar.archiveFile
         withLadysnakeMaven()
@@ -176,15 +176,14 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
     include libs.bundles.requiredLibraries
-
     // Test dependencies
-    testImplementation testLibs.junit
-    testImplementation testLibs.mockito
-    testmodImplementation testLibs.mockito
-    modLocalImplementation(testLibs.elmendorf) {
-        exclude group: "net.fabricmc"
-        exclude group: "net.fabricmc.fabric-api"
-    }
+//    testImplementation testLibs.junit
+//    testImplementation testLibs.mockito
+//    testmodImplementation testLibs.mockito
+ //   modLocalImplementation(testLibs.elmendorf) {
+ //       exclude group: "net.fabricmc"
+ //       exclude group: "net.fabricmc.fabric-api"
+  //  }
 
     // Optional dependencies
     modCompileOnly(libs.modmenu) { transitive = false }

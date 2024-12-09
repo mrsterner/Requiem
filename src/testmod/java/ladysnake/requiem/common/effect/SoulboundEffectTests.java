@@ -34,32 +34,32 @@
  */
 package ladysnake.requiem.common.effect;
 
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.common.entity.effect.RequiemStatusEffects;
 import ladysnake.requiemtest.RequiemTestUtil;
 import ladysnake.requiemtest.mixin.EffectCommandAccessor;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import org.ladysnake.elmendorf.GameTestUtil;
 
 import java.util.List;
 
-public class SoulboundEffectTests implements QuiltGameTest {
-    @GameTest(structureName = EMPTY_STRUCTURE)
+public class SoulboundEffectTests implements FabricGameTest {
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void attritionSticksToSpirits(TestContext ctx) {
         ServerPlayerEntity ghost = RequiemTestUtil.spawnGhost(ctx);
         ghost.addStatusEffect(new StatusEffectInstance(RequiemStatusEffects.ATTRITION, 30, 0));
         ghost.clearStatusEffects();
-        ctx.waitAndRun(1, () -> ctx.succeedIf(() -> GameTestUtil.assertTrue("Player should keep attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
+        ctx.waitAndRun(1, () -> ctx.addTask(() -> GameTestUtil.assertTrue("Player should keep attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void clearCommandBypassesSticky(TestContext ctx) {
         ServerPlayerEntity ghost = RequiemTestUtil.spawnGhost(ctx);
         ghost.addStatusEffect(new StatusEffectInstance(RequiemStatusEffects.ATTRITION, 30, 0));
         EffectCommandAccessor.invokeExecuteClear(ghost.getCommandSource(), List.of(ghost));
-        ctx.waitAndRun(1, () -> ctx.succeedIf(() -> GameTestUtil.assertFalse("Player should lose attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
+        ctx.waitAndRun(1, () -> ctx.addTask(() -> GameTestUtil.assertFalse("Player should lose attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
     }
 }

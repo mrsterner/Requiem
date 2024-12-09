@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.common.block.obelisk;
 
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.api.v1.remnant.RiftTracker;
@@ -43,6 +42,7 @@ import ladysnake.requiem.common.entity.effect.RequiemStatusEffects;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.screen.RiftScreenHandler;
 import ladysnake.requiemtest.mixin.WorldAccessor;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
@@ -52,17 +52,17 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import org.ladysnake.elmendorf.GameTestUtil;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class ObeliskTests implements QuiltGameTest {
+public class ObeliskTests implements FabricGameTest {
     public static final String SMALL_OBELISK = "requiem-test:small_obelisk";
     public static final String POWERED_SMALL_OBELISK = "requiem-test:powered_small_obelisk";
 
-    @GameTest(structureName = SMALL_OBELISK)
+    @GameTest(templateName = SMALL_OBELISK)
     public void obelisksGetDetected(TestContext ctx) {
         BlockPos controllerPos = new BlockPos(4, 3, 4);
         BlockPos absoluteControllerPos = ctx.getAbsolutePos(controllerPos);
@@ -83,7 +83,7 @@ public class ObeliskTests implements QuiltGameTest {
         });
     }
 
-    @GameTest(structureName = POWERED_SMALL_OBELISK)
+    @GameTest(templateName = POWERED_SMALL_OBELISK)
     public void obelisksGetPower(TestContext ctx) {
         BlockPos controllerPos = new BlockPos(20, 3, 20);
         InertRunestoneBlock.tryActivateObelisk(ctx.getWorld(), ctx.getAbsolutePos(controllerPos), true);
@@ -105,7 +105,7 @@ public class ObeliskTests implements QuiltGameTest {
         });
     }
 
-    @GameTest(structureName = POWERED_SMALL_OBELISK)
+    @GameTest(templateName = POWERED_SMALL_OBELISK)
     public void interactingWithRiftsOpensMenu(TestContext ctx) {
         BlockPos controllerPos = new BlockPos(20, 3, 20);
         BlockPos absoluteControllerPos = ctx.getAbsolutePos(controllerPos);
@@ -121,11 +121,11 @@ public class ObeliskTests implements QuiltGameTest {
             ObeliskDescriptor obeliskDescriptor = controller.getDescriptor().orElseThrow();
             GameTestUtil.assertTrue("Obelisk should have appropriate descriptor", controller.getDescriptor().filter(obeliskDescriptor::equals).isPresent());
             GameTestUtil.assertFalse("Player should not know about the rift before interacting", player.getComponent(RiftTracker.KEY).fetchKnownObelisks().contains(obeliskDescriptor));
-            ctx.getBlockState(controllerPos.up()).onUse(ctx.getWorld(), player, Hand.MAIN_HAND, hitResult);
+            ctx.getBlockState(controllerPos.up()).onUse(ctx.getWorld(), player, hitResult);
             GameTestUtil.assertTrue("Player should know about the rift after interacting", player.getComponent(RiftTracker.KEY).fetchKnownObelisks().contains(obeliskDescriptor));
             GameTestUtil.assertTrue("Corporeal player should not open the rift GUI", player.currentScreenHandler == player.playerScreenHandler);
             RemnantComponent.get(player).setVagrant(true);
-            ctx.getBlockState(controllerPos.up()).onUse(ctx.getWorld(), player, Hand.MAIN_HAND, hitResult);
+            ctx.getBlockState(controllerPos.up()).onUse(ctx.getWorld(), player, hitResult);
             GameTestUtil.assertTrue("Incorporeal player should open the rift GUI", player.currentScreenHandler instanceof RiftScreenHandler);
             GameTestUtil.assertTrue("Player should get opened rift in GUI", ((RiftScreenHandler) player.currentScreenHandler).getObelisks().equals(Set.of(obeliskDescriptor)));
             ctx.complete();

@@ -123,16 +123,14 @@
       "type": "end_dialogue",
       "action": {
         "type": "requiem:remnant_choice",
-        "chosenType": "requiem:remnant",
-        "value": "requiem:remnant"
+        "chosenType": "requiem:remnant"
       }
     },
     "refuse": {
       "type": "end_dialogue",
       "action": {
         "type": "requiem:remnant_choice",
-        "chosenType": "requiem:mortal",
-        "value": "requiem:mortal"
+        "chosenType": "requiem:mortal"
       }
     }
   }

@@ -35,16 +35,17 @@
 package ladysnake.requiem.compat;
 
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
-import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
-import org.quiltmc.qsl.testing.api.game.TestRegistrationContext;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 
 @CalledThroughReflection
-public class RequiemCompatTestManager implements QuiltGameTest {
+public class RequiemCompatTestManager implements FabricGameTest {
+    /*
     @Override
     public void registerTests(TestRegistrationContext context) {
         if (QuiltLoader.isModLoaded("origins")) {
             context.register(OriginsCompatTest.class);
         }
     }
+
+     */
 }

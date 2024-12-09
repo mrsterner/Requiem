@@ -34,13 +34,13 @@
  */
 package ladysnake.requiemtest;
 
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.TestContext;
+import org.ladysnake.elmendorf.GameTestUtil;
 
 public class RequiemTestUtil {
     public static void startPossession(ServerPlayerEntity player, ZombieEntity zombie) {

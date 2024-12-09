@@ -35,16 +35,17 @@
 package ladysnake.requiem.common.possession;
 
 import ladysnake.requiemtest.RequiemTestUtil;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
-import org.quiltmc.qsl.testing.api.game.QuiltTestContext;
+import net.minecraft.test.TestContext;
 
-public class PossessionAiTests implements QuiltGameTest {
-    @GameTest(structureName = EMPTY_STRUCTURE)
-    public void possessedMobsCantTargetThemselves(QuiltTestContext ctx) {
+public class PossessionAiTests implements FabricGameTest {
+
+    @GameTest(templateName = EMPTY_STRUCTURE)
+    public void possessedMobsCantTargetThemselves(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(1, 0, 1);
         ZombieEntity mu = ctx.spawnMob(EntityType.ZOMBIE, 2, 0, 1);
         ZombieEntity nu = ctx.spawnMob(EntityType.ZOMBIE, 3, 0, 1);
@@ -52,11 +53,13 @@ public class PossessionAiTests implements QuiltGameTest {
         RequiemTestUtil.startPossession(player, mu);
         ctx.waitAndRun(2, () -> {
             mu.tryAttack(nu);
-            ctx.succeedWhen(() -> {
+            ctx.addTask(() -> {
                 ctx.assertTrue(nu.getTarget() == mu, "Attacked party should target attacker");
                 ctx.assertTrue(xi.getTarget() == mu, "Third party angerables should target attacker");
                 ctx.assertTrue(mu.getTarget() == null, "Attacker should not target itself");
             });
         });
     }
+
+
 }

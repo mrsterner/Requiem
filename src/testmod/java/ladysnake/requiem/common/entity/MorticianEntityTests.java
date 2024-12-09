@@ -34,13 +34,13 @@
  */
 package ladysnake.requiem.common.entity;
 
-import io.github.ladysnake.elmendorf.GameTestUtil;
 import ladysnake.requiem.api.v1.record.GlobalRecord;
 import ladysnake.requiem.common.RequiemRecordTypes;
 import ladysnake.requiem.common.block.RequiemBlocks;
 import ladysnake.requiem.common.block.obelisk.ObeliskTests;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlockEntity;
 import ladysnake.requiem.core.record.EntityPositionClerk;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.GameTestException;
@@ -48,14 +48,15 @@ import net.minecraft.test.TestContext;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import org.ladysnake.elmendorf.GameTestUtil;
 
-public class MorticianEntityTests implements QuiltGameTest {
-    @GameTest(structureName = ObeliskTests.POWERED_SMALL_OBELISK)
+public class MorticianEntityTests implements FabricGameTest {
+
+    @GameTest(templateName = ObeliskTests.POWERED_SMALL_OBELISK)
     public void oldEtherealMorticiansGetConverted(TestContext ctx) {
         BlockPos controllerPos = new BlockPos(20, 3, 20);
         ctx.setBlockState(controllerPos.up(), RequiemBlocks.RIFT_RUNE);
-        ctx.succeedWhen(() -> {
+        ctx.addTask(() -> {
             RunestoneBlockEntity controller = (RunestoneBlockEntity) ctx.getBlockEntity(controllerPos);
             ctx.assertTrue(controller != null, "Controller should be available");
             assert controller != null : "TestContext#assertTrue is not doing its job";

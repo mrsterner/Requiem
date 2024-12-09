@@ -43,13 +43,14 @@ import ladysnake.requiem.api.v1.remnant.RemnantType;
 import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
+import net.fabricmc.fabric.impl.screenhandler.Networking;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.ladysnake.blabber.DialogueAction;
 import org.ladysnake.blabber.api.DialogueActionV2;
 
-public record RemnantChoiceDialogueAction(RemnantType chosenType) implements DialogueActionV2 {
+public record RemnantChoiceDialogueAction(RemnantType chosenType) implements DialogueAction {
 
     public static final MapCodec<RemnantChoiceDialogueAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         RequiemRegistries.REMNANT_STATES.getCodec().fieldOf("chosenType").forGetter(RemnantChoiceDialogueAction::chosenType)
@@ -68,7 +69,7 @@ public record RemnantChoiceDialogueAction(RemnantType chosenType) implements Dia
     }
 
     @Override
-    public void handle(ServerPlayerEntity serverPlayerEntity, @Nullable Entity entity) {
+    public void handle(ServerPlayerEntity serverPlayerEntity) {
         makeRemnantChoice(serverPlayerEntity, chosenType);
 
         DeathSuspender deathSuspender = DeathSuspender.get(serverPlayerEntity);

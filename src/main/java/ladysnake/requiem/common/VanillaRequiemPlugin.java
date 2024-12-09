@@ -118,7 +118,6 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -139,7 +138,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.Uuids;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.ladysnake.impersonate.Impersonate;
@@ -155,7 +153,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 public final class VanillaRequiemPlugin implements RequiemPlugin {
 
