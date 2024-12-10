@@ -69,10 +69,6 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
     @Shadow
     protected abstract void mobTick();
 
-
-    @Shadow
-    public abstract void detachLeash(boolean sendPacket, boolean dropItem);
-
     @Unique
     private int attackingCountdown;
 

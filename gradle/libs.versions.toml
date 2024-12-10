@@ -11,7 +11,7 @@ impersonate = "3.2.0"
 locki = "0.14.0"
 loom = "1.8.+"
 modmenu = "11.0.3"
-pal = "1.11.0"
+pal = "1.10.0"
 satin = "2.0.0"
 
 [libraries]

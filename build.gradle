@@ -1,6 +1,6 @@
 plugins {
-    id 'org.quiltmc.loom' version "1.8.+"
-    id 'io.github.ladysnake.chenille' version "0.12.0"
+    id 'fabric-loom' version '1.9-SNAPSHOT'
+    id 'io.github.ladysnake.chenille' version "0.13.0"
 }
 
 group = rootProject.maven_group
@@ -8,17 +8,17 @@ archivesBaseName = rootProject.name
 
 allprojects {
     apply plugin: 'maven-publish'
-    apply plugin: 'org.quiltmc.loom'
+    apply plugin: 'fabric-loom'
     apply plugin: 'io.github.ladysnake.chenille'
 
     version = project.mod_version
 
     chenille {
-        javaVersion = 17
+        javaVersion = 21
     }
 
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    sourceCompatibility = 21
+    targetCompatibility = 21
 
     chenille {
         license = 'GPL_WITH_MC_EXCEPTION'
@@ -41,10 +41,6 @@ allprojects {
             modrinth()
             jitpack()
         }
-        maven {
-            name = 'Quilt'
-            url = 'https://maven.quiltmc.org/repository/snapshot'
-        }
         maven { repo ->
             repo.name = "Ladysnake Mods"
             repo.setUrl("https://maven.ladysnake.org/releases")
@@ -54,12 +50,6 @@ allprojects {
                 it.includeGroup("org.ladysnake")
                 it.includeGroupByRegex("(dev|io\\.github)\\.onyxstudios.*")
                 it.includeGroupByRegex("org.quiltmc.*")
-            }
-        }
-        maven {
-            url = 'https://maven.willbl.dev/releases'
-            content {
-                includeGroupByRegex 'com\\.williambl.*'
             }
         }
         maven {
@@ -122,7 +112,7 @@ allprojects {
     processResources {
         inputs.property "version", project.version
 
-        filesMatching("quilt.mod.json") {
+        filesMatching("fabric.mod.json") {
             expand "version": project.version
         }
     }
@@ -136,9 +126,7 @@ allprojects {
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-        //modImplementation "org.quiltmc:qsl:${qsl_version}+${minecraft_version}"
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-        //modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}"
 
         compileOnly("com.google.code.findbugs:jsr305:3.0.2")
         compileOnly 'org.jetbrains:annotations:26.0.1'
@@ -168,8 +156,8 @@ dependencies {
     // Looking for version definitions? see https://docs.gradle.org/7.4-rc-1/userguide/platforms.html
 
     // Required dependencies
-    api include(project(path: ":requiem-api", configuration: "namedElements")) { transitive = false }
-    api include(project(path: ":requiem-core", configuration: "namedElements")) { transitive = false }
+    api include(project(path: ":requiem-api", configuration: "namedElements"))
+    api include(project(path: ":requiem-core", configuration: "namedElements"))
     api include(project(path: ":requiem-core:vaquero", configuration: "namedElements"))
     modImplementation(libs.bundles.requiredLibraries) {
         exclude group: "net.fabricmc"
@@ -213,7 +201,6 @@ dependencies {
     }
 }
 
-remapJar.dependsOn(project(":requiem-core").tasks.remapJar)
 
 jar {
     from 'LICENSE-CODE'

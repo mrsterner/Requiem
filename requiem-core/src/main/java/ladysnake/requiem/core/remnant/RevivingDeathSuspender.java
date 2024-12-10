@@ -34,12 +34,14 @@
  */
 package ladysnake.requiem.core.remnant;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
 import ladysnake.requiem.api.v1.remnant.DeathSuspender;
 import ladysnake.requiem.core.RequiemCore;
 import ladysnake.requiem.core.util.serde.DamageSourceSerialization;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -47,7 +49,13 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import org.ladysnake.blabber.Blabber;
+import org.ladysnake.blabber.impl.common.DialogueRegistry;
+import org.ladysnake.blabber.impl.common.PlayerDialogueTracker;
+import org.ladysnake.blabber.impl.common.actions.CommandDialogueAction;
+import org.ladysnake.blabber.impl.common.machine.DialogueStateMachine;
+import org.ladysnake.blabber.impl.common.model.DialogueTemplate;
 
 import javax.annotation.Nullable;
 
@@ -99,11 +107,16 @@ public final class RevivingDeathSuspender implements DeathSuspender {
         this.player.onDeath(this.deathCause != null ? deathCause : this.player.getDamageSources().generic());
     }
 
+
     @Override
     public void serverTick() {
         if (this.isLifeTransient()) {
             if (--timeBeforeDialogue == 0 && this.player instanceof ServerPlayerEntity serverPlayer) {
-                Blabber.startDialogue(serverPlayer, RequiemCore.id("remnant_choice"));
+                Blabber.startDialogue(serverPlayer, RequiemCore.id("remnant_choice"), serverPlayer);
+
+                //var v = PlayerDialogueTracker.get(player);
+
+
             }
         }
     }

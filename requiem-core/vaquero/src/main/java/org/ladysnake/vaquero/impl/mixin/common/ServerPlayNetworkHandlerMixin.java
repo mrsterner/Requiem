@@ -38,7 +38,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Shadow
     public ServerPlayerEntity player;
 
-    @WrapOperation(method = "onVehicleMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getPrimaryPassenger()Lnet/minecraft/entity/LivingEntity;"))
+    @WrapOperation(method = "onVehicleMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getControllingPassenger()Lnet/minecraft/entity/LivingEntity;"))
     private LivingEntity enableRiding(Entity instance, Operation<LivingEntity> original) {
         return PossessionRidingHelper.getRider(instance, original.call(instance));
     }

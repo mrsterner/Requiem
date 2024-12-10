@@ -3,14 +3,8 @@
   "package": "ladysnake.requiem.core.mixin",
   "plugin": "org.ladysnake.locki.impl.LockiClientMixinPlugin",
   "mixins": [
-    "org.ladysnake.vaquero.impl.mixin.common.EntityAccessor",
-    "org.ladysnake.vaquero.impl.mixin.common.EntityMixin",
-    "vaquero.LivingEntityAccessor",
-    "vaquero.LivingEntityMixin",
-    "vaquero.MobEntityMixin",
-    "vaquero.ServerPlayNetworkHandlerMixin"
+    "OpenScreenPayloadMixin"
   ],
   "client": [
-    "vaquero.ClientPlayerEntityMixin"
   ]
 }

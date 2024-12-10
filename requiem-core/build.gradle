@@ -21,7 +21,6 @@ dependencies {
     }
 }
 
-remapJar.dependsOn(project(":requiem-api").tasks.remapJar)
 
 chenille {
     configurePublishing {

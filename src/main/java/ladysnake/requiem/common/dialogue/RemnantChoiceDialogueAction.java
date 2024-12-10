@@ -53,7 +53,7 @@ import org.ladysnake.blabber.api.DialogueActionV2;
 public record RemnantChoiceDialogueAction(RemnantType chosenType) implements DialogueAction {
 
     public static final MapCodec<RemnantChoiceDialogueAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        RequiemRegistries.REMNANT_STATES.getCodec().fieldOf("chosenType").forGetter(RemnantChoiceDialogueAction::chosenType)
+        RequiemRegistries.REMNANT_STATES.getCodec().fieldOf("value").forGetter(RemnantChoiceDialogueAction::chosenType)
     ).apply(instance, RemnantChoiceDialogueAction::new));
 
 
