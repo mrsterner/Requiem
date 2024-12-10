@@ -42,7 +42,10 @@ import ladysnake.requiem.api.v1.entity.ability.MobAbilityConfig;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -89,8 +92,8 @@ public class ImmutableMobAbilityController<T extends LivingEntity> implements Mo
     }
 
     @Override
-    public ActionResult useDirect(AbilityType type, Entity target) {
-        return this.use(this.getDirect(type), target);
+    public ActionResult useDirectAbility(AbilityType type, Entity target) {
+        return this.useAbility(this.getDirect(type), target);
     }
 
     @Override
@@ -104,14 +107,14 @@ public class ImmutableMobAbilityController<T extends LivingEntity> implements Mo
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         for (MobAbility<? super T> ability : this.abilities) {
             ability.writeToPacket(buf);
         }
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         for (MobAbility<? super T> ability : this.abilities) {
             ability.readFromPacket(buf);
         }
@@ -137,13 +140,10 @@ public class ImmutableMobAbilityController<T extends LivingEntity> implements Mo
         return false;
     }
 
-    private <E extends Entity> ActionResult use(DirectAbility<? super T, E> ability, Entity target) {
+    private <E extends Entity> ActionResult useAbility(DirectAbility<? super T, E> ability, Entity target) {
         Class<E> targetType = ability.getTargetType();
-        System.out.println("isClient: " + target.getWorld().isClient);
         if (targetType.isInstance(target)) {
-            var v = ability.trigger(targetType.cast(target));
-            System.out.println("V: " +v);
-            return v;
+            return ability.triggerDirectAbility(targetType.cast(target));
         }
         return ActionResult.FAIL;
     }
@@ -160,5 +160,15 @@ public class ImmutableMobAbilityController<T extends LivingEntity> implements Mo
             case ATTACK -> this.indirectAttack;
             case INTERACT -> this.indirectInteraction;
         };
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
     }
 }

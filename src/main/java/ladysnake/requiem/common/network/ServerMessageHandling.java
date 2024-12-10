@@ -36,6 +36,8 @@ package ladysnake.requiem.common.network;
 
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
+import ladysnake.requiem.api.v1.entity.ability.AbilityType;
+import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import ladysnake.requiem.api.v1.event.requiem.InitiateFractureCallback;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.common.screen.RiftScreenHandler;
@@ -68,9 +70,7 @@ public final class ServerMessageHandling {
 
         PayloadTypeRegistry.playC2S().register(UseIndirectDirectAbilityC2SPayload.ID, UseIndirectDirectAbilityC2SPayload.STREAM_CODEC);
         ServerPlayNetworking.registerGlobalReceiver(UseIndirectDirectAbilityC2SPayload.ID,  (payload, ctx) -> {
-            ctx.server().execute(() ->
-                payload.handle(payload, ctx)
-            );
+            payload.handle(payload, ctx);
         });
 
         PayloadTypeRegistry.playC2S().register(EtherealFractureC2SPayload.ID, EtherealFractureC2SPayload.STREAM_CODEC);

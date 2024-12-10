@@ -57,13 +57,10 @@ public abstract class AbilityBase<E extends LivingEntity> implements MobAbility<
     }
 
     public void setCooldown(int cooldown) {
-        System.out.println("Setting cooldown to " + cooldown);
         Preconditions.checkArgument(cooldown >= 0);
-        System.out.println("Setting cooldown to Post " + cooldown);
 
         if (this.cooldown != cooldown) {
             this.cooldown = cooldown;
-            System.out.println("SyncCd");
             this.sync();
 
             if (cooldown == 0) {
@@ -74,16 +71,11 @@ public abstract class AbilityBase<E extends LivingEntity> implements MobAbility<
 
     protected void sync() {
         E owner = this.owner;
-        System.out.println("Sync");
         if (owner instanceof PlayerEntity) {
-
-            System.out.println("SyncPla");
             MobAbilityController.KEY.sync(owner);
         } else {
             PlayerEntity possessor = ((Possessable) owner).getPossessor();
             if (possessor != null) {
-
-                System.out.println("SyncMo");
                 MobAbilityController.KEY.sync(possessor);
             }
         }
@@ -107,7 +99,6 @@ public abstract class AbilityBase<E extends LivingEntity> implements MobAbility<
     public void update() {
         int cooldown = this.getCooldown();
         if (cooldown > 0 && !this.owner.getWorld().isClient) {
-            System.out.println("N:; " + cooldown);
             this.setCooldown(cooldown - 1);
         }
     }
@@ -123,6 +114,7 @@ public abstract class AbilityBase<E extends LivingEntity> implements MobAbility<
 
     @Override
     public void readFromPacket(PacketByteBuf buf) {
-        this.setCooldown(buf.readVarInt());
+        int receivedCooldown = buf.readVarInt();
+        this.setCooldown(receivedCooldown);
     }
 }

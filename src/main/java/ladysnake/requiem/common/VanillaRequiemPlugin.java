@@ -234,7 +234,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
         // Prevent incorporeal players from hitting anything
         AttackEntityCallback.EVENT.register((player, world, hand, target, hitResult) -> {
             // Proxy melee attacks
-            ActionResult result = MobAbilityController.get(player).useDirect(AbilityType.ATTACK, target);
+            ActionResult result = MobAbilityController.get(player).useDirectAbility(AbilityType.ATTACK, target);
             if (result.isAccepted()) {
                 if (result.shouldSwingHand()) {
                     player.resetLastAttackedTicks();

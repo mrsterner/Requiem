@@ -37,7 +37,6 @@ package ladysnake.requiem.core.network;
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import ladysnake.requiem.core.RequiemCore;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
@@ -66,13 +65,11 @@ public class UseDirectAbilityC2SPayload implements CustomPayload {
         var player = context.player();
         MobAbilityController abilityController = MobAbilityController.get(player);
         Entity targetedEntity = player.getWorld().getEntityById(entityId);
-        System.out.println("Handle");
-        // allow a slightly longer reach in case of lag
+
         if (targetedEntity != null && (abilityController.getRange(type) + 3) > targetedEntity.distanceTo(player)) {
-            abilityController.useDirect(type, targetedEntity);
+            abilityController.useDirectAbility(type, targetedEntity);
         }
 
-        // sync abilities in case the server disagrees with the client's guess
         MobAbilityController.KEY.sync(player);
     }
 

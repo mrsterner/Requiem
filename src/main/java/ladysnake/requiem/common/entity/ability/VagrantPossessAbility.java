@@ -42,6 +42,7 @@ import ladysnake.requiem.core.remnant.VagrantInteractionRegistryImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -74,18 +75,15 @@ public class VagrantPossessAbility extends DirectAbilityBase<PlayerEntity, Livin
             RequiemClient.instance().fxRenderer().beginFishEyeAnimation(target);
         }
         target.getWorld().playSound(this.owner, target.getX(), target.getY(), target.getZ(), RequiemSoundEvents.EFFECT_POSSESSION_ATTEMPT, SoundCategory.PLAYERS, 2, 0.6f);
-        System.out.println("Run");
         this.beginCooldown();
         return true;
     }
 
     @Override
     protected void onCooldownEnd() {
-        System.out.println("CooldownEnd");
         if (this.owner.getWorld().isClient && this.owner == MinecraftClient.getInstance().player) {
             RequiemClient.instance().fxRenderer().onPossessionAck();
         } else if (this.interaction != null && this.target != null && !this.target.isRemoved() && this.target.isAlive()) {
-            System.out.println("Accespr");
             this.interaction.action().accept(this.target, this.owner);
         }
         this.interaction = null;
@@ -95,5 +93,15 @@ public class VagrantPossessAbility extends DirectAbilityBase<PlayerEntity, Livin
     @Override
     public Identifier getIconTexture() {
         return this.interaction != null ? this.interaction.icon() : VagrantInteractionRegistryImpl.POSSESSION_ICON;
+    }
+
+    @Override
+    public void writeToPacket(PacketByteBuf buf) {
+        super.writeToPacket(buf);
+    }
+
+    @Override
+    public void readFromPacket(PacketByteBuf buf) {
+        super.readFromPacket(buf);
     }
 }

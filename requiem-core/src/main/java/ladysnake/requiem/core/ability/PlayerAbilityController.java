@@ -45,7 +45,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -109,13 +112,9 @@ public class PlayerAbilityController implements MobAbilityController, AutoSynced
     @Environment(EnvType.CLIENT)
     public ActionResult useDirectAbility(AbilityType type) {
         Entity targetedEntity = this.getTargetedEntity(type);
-        System.out.println("UseDirectAbility: " + targetedEntity);
         if (targetedEntity != null) {
-            ActionResult result = this.useDirect(type, targetedEntity);
-            System.out.println("Side: " + targetedEntity.getWorld().isClient);
-            System.out.println("Result: " + result);
+            ActionResult result = this.useDirectAbility(type, targetedEntity);
             if (result.isAccepted()) {
-                System.out.println("SendAbility");
                 RequiemCoreNetworking.sendAbilityUseMessage(type, targetedEntity);
             }
             return result;
@@ -155,8 +154,8 @@ public class PlayerAbilityController implements MobAbilityController, AutoSynced
     }
 
     @Override
-    public ActionResult useDirect(AbilityType type, Entity target) {
-        return delegate.useDirect(type, target);
+    public ActionResult useDirectAbility(AbilityType type, Entity target) {
+        return delegate.useDirectAbility(type, target);
     }
 
     @Override
@@ -180,12 +179,22 @@ public class PlayerAbilityController implements MobAbilityController, AutoSynced
     }
 
     @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+    public void writeSyncPacket(RegistryByteBuf buf, ServerPlayerEntity recipient) {
         this.delegate.writeSyncPacket(buf, recipient);
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
+    public void applySyncPacket(RegistryByteBuf buf) {
         this.delegate.applySyncPacket(buf);
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
     }
 }

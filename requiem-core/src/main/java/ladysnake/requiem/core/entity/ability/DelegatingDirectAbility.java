@@ -74,8 +74,8 @@ public class DelegatingDirectAbility<E extends LivingEntity, T extends Entity> i
     }
 
     @Override
-    public ActionResult trigger(T target) {
-        return this.getDelegate().useDirect(this.delegatedType, target);
+    public ActionResult triggerDirectAbility(T target) {
+        return this.getDelegate().useDirectAbility(this.delegatedType, target);
     }
 
     @Override

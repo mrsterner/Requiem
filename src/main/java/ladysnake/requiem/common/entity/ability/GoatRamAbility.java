@@ -64,7 +64,6 @@ import net.minecraft.util.math.Vec3d;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
@@ -150,9 +149,9 @@ public class GoatRamAbility<O extends PathAwareEntity> extends DirectAbilityBase
     }
 
     @Override
-    public ActionResult trigger(Entity target) {
-        if (super.trigger(target).isAccepted()) return ActionResult.CONSUME;
-        return this.backup.trigger(target);
+    public ActionResult triggerDirectAbility(Entity target) {
+        if (super.triggerDirectAbility(target).isAccepted()) return ActionResult.CONSUME;
+        return this.backup.triggerDirectAbility(target);
     }
 
     @Override

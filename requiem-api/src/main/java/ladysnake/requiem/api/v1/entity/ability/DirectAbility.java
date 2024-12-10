@@ -34,7 +34,7 @@ public interface DirectAbility<E extends LivingEntity, T extends Entity> extends
 
     boolean canTarget(T target);
 
-    ActionResult trigger(T target);
+    ActionResult triggerDirectAbility(T target);
 
     default Identifier getIconTexture() {
         return ABILITY_ICON;

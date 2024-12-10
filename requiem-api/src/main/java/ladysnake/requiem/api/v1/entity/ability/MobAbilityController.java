@@ -28,12 +28,13 @@ import net.minecraft.util.Identifier;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.component.TransientComponent;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 import org.ladysnake.cca.api.v3.component.tick.CommonTickingComponent;
 
 /**
  * A {@link MobAbilityController} is interacted with by a player to use special {@link MobAbility mob abilities}
  */
-public interface MobAbilityController extends TransientComponent, CommonTickingComponent {
+public interface MobAbilityController extends AutoSyncedComponent, CommonTickingComponent {
     ComponentKey<MobAbilityController> KEY = ComponentRegistry.getOrCreate(Identifier.of("requiem", "ability_controller"), MobAbilityController.class);
 
     static MobAbilityController get(Entity entity) {
@@ -45,7 +46,7 @@ public interface MobAbilityController extends TransientComponent, CommonTickingC
 
     boolean canTarget(AbilityType type, Entity target);
 
-    ActionResult useDirect(AbilityType type, Entity target);
+    ActionResult useDirectAbility(AbilityType type, Entity target);
 
     boolean useIndirect(AbilityType type);
 
@@ -54,11 +55,7 @@ public interface MobAbilityController extends TransientComponent, CommonTickingC
     @Override
     void tick();
 
-    void writeSyncPacket(PacketByteBuf packetByteBuf, ServerPlayerEntity serverPlayerEntity);
-
-    @Environment(EnvType.CLIENT)
-    void applySyncPacket(PacketByteBuf buf);
-
     @Environment(EnvType.CLIENT)
     Identifier getIconTexture(AbilityType type);
+
 }

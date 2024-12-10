@@ -88,7 +88,6 @@ public abstract class MinecraftClientMixin {
     private void onInteractWithAir(CallbackInfo info) {
         // Check that the player is qualified to interact with something
         if (!this.interactionManager.isBreakingBlock() && !this.player.isRiding()) {
-            System.out.println("MakeAction");
             ActionResult result = PlayerAbilityController.get(this.player).useDirectAbility(AbilityType.INTERACT);
             if (result.isAccepted()) {
                 if (result.shouldSwingHand()) {

@@ -23,6 +23,7 @@ import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -41,7 +42,7 @@ public class DummyMobAbilityController implements MobAbilityController {
     }
 
     @Override
-    public ActionResult useDirect(AbilityType type, Entity target) {
+    public ActionResult useDirectAbility(AbilityType type, Entity target) {
         return ActionResult.FAIL;
     }
 
@@ -61,17 +62,17 @@ public class DummyMobAbilityController implements MobAbilityController {
     }
 
     @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        // NO-OP
-    }
-
-    @Override
-    public void writeSyncPacket(PacketByteBuf packetByteBuf, ServerPlayerEntity serverPlayerEntity) {
-        // NO-OP
-    }
-
-    @Override
     public Identifier getIconTexture(AbilityType type) {
         return DirectAbility.ABILITY_ICON;
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+
     }
 }

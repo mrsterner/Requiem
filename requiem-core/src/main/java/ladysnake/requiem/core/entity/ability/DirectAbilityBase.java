@@ -78,12 +78,8 @@ public abstract class DirectAbilityBase<E extends LivingEntity, T extends Entity
      * @return <code>true</code> if the ability has been successfully used
      */
     @Override
-    public ActionResult trigger(T target) {
-        System.out.println(target.getWorld().isClient);
-        System.out.println("PreTrigger: " + this.canTarget(target));
-        System.out.println("PreTriggCd: " + this.getCooldown());
+    public ActionResult triggerDirectAbility(T target) {
         if (this.getCooldown() == 0 && this.canTarget(target)) {
-            System.out.println("Trigger");
             return this.run(target) ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
         return ActionResult.FAIL;

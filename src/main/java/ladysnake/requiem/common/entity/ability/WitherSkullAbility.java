@@ -153,7 +153,7 @@ public class WitherSkullAbility extends AbilityBase<WitherEntity> {
         }
 
         @Override
-        public ActionResult trigger(LivingEntity target) {
+        public ActionResult triggerDirectAbility(LivingEntity target) {
             int headIndex = RANDOM.nextInt(3);
             double g = getHeadX(headIndex);
             double h = getHeadY(headIndex);

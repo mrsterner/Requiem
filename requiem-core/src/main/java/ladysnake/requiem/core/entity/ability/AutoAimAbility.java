@@ -63,7 +63,7 @@ public class AutoAimAbility<E extends LivingEntity> extends IndirectAbilityBase<
             this.owner.getZ(),
             this.getSearchBox());
         if (target != null) {
-            return MobAbilityController.get(this.owner).useDirect(type, target).isAccepted();
+            return MobAbilityController.get(this.owner).useDirectAbility(type, target).isAccepted();
         }
         return false;
     }

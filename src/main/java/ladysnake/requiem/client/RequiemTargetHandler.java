@@ -128,7 +128,6 @@ public final class RequiemTargetHandler implements UpdateTargetedEntityCallback,
 
             if (f < 1 || abilityController.getTargetedEntity(renderedType) != null) {
                 var icon = abilityController.getIconTexture(renderedType);
-                //System.out.println(f + " : " + icon);
                 drawCrosshairIcon(graphics, icon, f);
             }
         }

@@ -48,7 +48,7 @@ public class UseIndirectDirectAbilityC2SPayload implements CustomPayload {
     public static Id<UseIndirectDirectAbilityC2SPayload> ID = new Id<>(RequiemCore.id("indirect_ability"));
     public static final PacketCodec<? super PacketByteBuf, UseIndirectDirectAbilityC2SPayload> STREAM_CODEC = CustomPayload.codecOf(UseIndirectDirectAbilityC2SPayload::write, UseIndirectDirectAbilityC2SPayload::new);
 
-    private final AbilityType type;
+    public final AbilityType type;
 
     private void write(PacketByteBuf buf) {
         buf.writeEnumConstant(type);
@@ -59,8 +59,10 @@ public class UseIndirectDirectAbilityC2SPayload implements CustomPayload {
     }
 
     public <T extends CustomPayload> void handle(T payload, ServerPlayNetworking.Context context) {
-        var player = context.player();
-        MobAbilityController.get(player).useIndirect(type);
+        context.server().execute(() -> {
+            var player = context.player();
+            MobAbilityController.get(player).useIndirect(type);
+        });
     }
 
     @Override
