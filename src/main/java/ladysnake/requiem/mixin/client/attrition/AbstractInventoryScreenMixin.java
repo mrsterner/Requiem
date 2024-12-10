@@ -61,6 +61,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(AbstractInventoryScreen.class)
 public abstract class AbstractInventoryScreenMixin<T extends ScreenHandler> extends HandledScreen<T> {
 
+    @Unique
+    private StatusEffectInstance renderedEffect;
+
     public AbstractInventoryScreenMixin(T container, PlayerInventory playerInventory, Text name) {
         super(container, playerInventory, name);
     }
@@ -77,5 +80,16 @@ public abstract class AbstractInventoryScreenMixin<T extends ScreenHandler> exte
             return false;
         }
         return true;
+    }
+
+    @ModifyVariable(method = "drawStatusEffectSprites", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;getEffectType()Lnet/minecraft/registry/entry/RegistryEntry;"))
+    private StatusEffectInstance captureCurrentEffect(StatusEffectInstance effect) {
+        this.renderedEffect = effect;
+        return effect;
+    }
+
+    @WrapOperation(method = "drawStatusEffectSprites", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/StatusEffectSpriteManager;getSprite(Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/client/texture/Sprite;"))
+    private Sprite customizeDrawnSprite(StatusEffectSpriteManager instance, RegistryEntry<StatusEffect> effect, Operation<Sprite> original) {
+        return RequiemClient.instance().statusEffectSpriteManager().substituteSprite(original.call(instance, effect), renderedEffect);
     }
 }

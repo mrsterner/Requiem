@@ -62,6 +62,8 @@ public abstract class InGameHudMixin {
     @Final
     private MinecraftClient client;
 
+    @Unique
+    private StatusEffectInstance renderedEffect;
 
     @WrapWithCondition(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
     private boolean customizeDrawnBackground(DrawContext instance, Identifier texture, int x, int y, int width, int height, @Local StatusEffectInstance statusEffectInstance){
@@ -72,8 +74,16 @@ public abstract class InGameHudMixin {
             } else {
                 instance.drawTexture(RequiemClient.SOULBOUND_BACKGROUND_SMALL, x, y, 0, 0, width, height, width, height);
             }
+            renderedEffect = statusEffectInstance;
             return false;
         }
         return true;
+    }
+
+    @WrapOperation(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/StatusEffectSpriteManager;getSprite(Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/client/texture/Sprite;"))
+    private Sprite customizeDrawnSprite(StatusEffectSpriteManager instance, RegistryEntry<StatusEffect> effect, Operation<Sprite> original) {
+        var v = RequiemClient.instance().statusEffectSpriteManager().substituteSprite(original.call(instance, effect), renderedEffect);
+        System.out.println(v.toString());
+        return v;
     }
 }
