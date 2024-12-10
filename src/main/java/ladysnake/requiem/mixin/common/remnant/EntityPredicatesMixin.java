@@ -48,11 +48,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class EntityPredicatesMixin {
 
     @Dynamic("Lambda method injection")
-    @Inject(method = { "m_xvlyohog", "method_5910" }, at = @At("RETURN"), cancellable = true, require = 1, allow = 1)
+    @Inject(method = { "method_5910" }, at = @At("RETURN"), cancellable = true, require = 1, allow = 1)
     private static void exceptCreativeOrSpectator(@Nullable Entity tested, CallbackInfoReturnable<Boolean> info) {
         if (info.getReturnValueZ() && tested != null && RemnantComponent.isVagrant(tested)) {
             info.setReturnValue(false);
         }
     }
-
 }

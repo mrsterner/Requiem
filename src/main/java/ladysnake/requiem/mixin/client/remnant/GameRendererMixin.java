@@ -112,7 +112,7 @@ public abstract class GameRendererMixin implements GameRendererAccessor {
         }
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;mul(Lorg/joml/Matrix4fc;)Lorg/joml/Matrix4f;"))
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;getDistortionEffectScale()Lnet/minecraft/client/option/SimpleOption;"))
     private void applyCameraTransformations(RenderTickCounter tickCounter, CallbackInfo ci, @Local MatrixStack matrices) {
         ApplyCameraTransformsCallback.EVENT.invoker().applyCameraTransformations(this.camera, matrices, tickCounter.getTickDelta(false));
     }
