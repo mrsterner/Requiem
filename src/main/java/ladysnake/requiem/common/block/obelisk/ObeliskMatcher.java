@@ -177,7 +177,6 @@ public final class ObeliskMatcher {
                 }
             }
         }
-
         return true;
     }
 

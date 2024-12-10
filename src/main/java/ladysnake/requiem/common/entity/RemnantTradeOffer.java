@@ -34,6 +34,8 @@
  */
 package ladysnake.requiem.common.entity;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradedItem;
@@ -45,19 +47,16 @@ public class RemnantTradeOffer extends TradeOffer {
     private final boolean exorcism;
     private boolean tempDisabled;
     boolean demonCustomer;
-/*
-    public static RemnantTradeOffer fromNbt(NbtCompound compound) {
-        TradeOffer vanillaOffer = new TradeOffer(compound.getCompound("vanilla_offer"));
-        TradeOffer demonOffer = new TradeOffer(compound.getCompound("demon_offer"));
-        boolean exorcism = compound.getBoolean("exorcism");
-        RemnantTradeOffer offer = new RemnantTradeOffer(vanillaOffer, demonOffer, exorcism);
-        // Need this specifically to sync trades in singleplayer
-        if (compound.getBoolean("demon_customer")) offer.demonCustomer = true;
-        if (compound.getBoolean("temp_disabled")) offer.tempDisabled = true;
-        return offer;
-    }
 
- */
+    public static final Codec<RemnantTradeOffer> CODEC = RecordCodecBuilder.create(
+        instance -> instance.group(
+                // Assume these match the properties of RemnantTradeOffer
+                TradeOffer.CODEC.fieldOf("vanilla_offer").forGetter(tradeOffer -> tradeOffer.vanillaOffer),
+                TradeOffer.CODEC.fieldOf("demon_offer").forGetter(tradeOffer -> tradeOffer.demonOffer),
+                Codec.BOOL.fieldOf("exorcism").forGetter(RemnantTradeOffer::isExorcism)
+            )
+            .apply(instance, RemnantTradeOffer::new)
+    );
 
     public RemnantTradeOffer(TradeOffer vanillaOffer, TradeOffer demonOffer, boolean exorcism) {
         super(new TradedItem(vanillaOffer.getOriginalFirstBuyItem().getItem()), vanillaOffer.getSecondBuyItem(), vanillaOffer.getSellItem(), vanillaOffer.getUses(), vanillaOffer.getMaxUses(), vanillaOffer.getMerchantExperience(), vanillaOffer.getPriceMultiplier(), vanillaOffer.getDemandBonus());
@@ -178,20 +177,6 @@ public class RemnantTradeOffer extends TradeOffer {
     public boolean shouldRewardPlayerExperience() {
         return getDelegate().shouldRewardPlayerExperience();
     }
-/*
-    @Override
-    public NbtCompound toNbt(RegistryWrapper.WrapperLookup wrapperLookup) {
-        NbtCompound whole = new NbtCompound();
-        whole.putBoolean("requiem:demon_trade", true);
-        whole.put("demon_offer", this.demonOffer.toNbt());
-        whole.put("vanilla_offer", this.vanillaOffer.toNbt());
-        whole.putBoolean("exorcism", this.exorcism);
-        if (this.demonCustomer) whole.putBoolean("demon_customer", true);
-        if (this.tempDisabled) whole.putBoolean("temp_disabled", true);
-        return whole;
-    }
-
- */
 
     @Override
     public boolean matchesBuyItems(ItemStack first, ItemStack second) {

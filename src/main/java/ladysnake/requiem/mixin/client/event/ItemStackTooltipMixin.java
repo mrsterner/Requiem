@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.mixin.client.event;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.event.minecraft.ItemTooltipCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -49,11 +50,16 @@ import java.util.List;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackTooltipMixin {
+
     @Inject(
             method = "getTooltip",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;contains(Lnet/minecraft/component/ComponentType;)Z", ordinal = 0)
+            at = @At(
+                value = "INVOKE",
+                target = "Lnet/minecraft/item/ItemStack;appendTooltip(Lnet/minecraft/component/ComponentType;Lnet/minecraft/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/item/tooltip/TooltipType;)V",
+                ordinal = 1
+            )
     )
-    private void fireTooltipEvent(Item.TooltipContext context, PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir) {
-        ItemTooltipCallback.EVENT.invoker().onTooltipBuilt((ItemStack)(Object)this, player, context, cir.getReturnValue());
+    private void fireTooltipEvent(Item.TooltipContext context, PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir, @Local List<Text> lines) {
+        ItemTooltipCallback.EVENT.invoker().onTooltipBuilt((ItemStack)(Object)this, player, context, lines);
     }
 }

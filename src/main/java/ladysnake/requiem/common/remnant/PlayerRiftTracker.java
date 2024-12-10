@@ -48,6 +48,7 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,8 +71,8 @@ public class PlayerRiftTracker implements RiftTracker {
         Preconditions.checkArgument(riftRecord.has(RequiemRecordTypes.OBELISK_REF));
 
         if (this.riftRecordUuids.add(riftRecord.getUuid()) && this.player instanceof ServerPlayerEntity sp) {
-            Optional<String> obeliskName = riftRecord.get(RequiemRecordTypes.OBELISK_REF).flatMap(ObeliskDescriptor::name);
-            RequiemNetworking.sendRiftWitnessedMessage(sp, obeliskName.orElse(""));
+            Optional<Text> obeliskName = riftRecord.get(RequiemRecordTypes.OBELISK_REF).flatMap(ObeliskDescriptor::name);
+            RequiemNetworking.sendRiftWitnessedMessage(sp, obeliskName.orElse(Text.of("")));
         }
     }
 

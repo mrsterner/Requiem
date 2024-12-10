@@ -37,11 +37,13 @@ package ladysnake.requiem.mixin.common.entity.mortician;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Inject;
 
 import java.util.ArrayList;
 
 @Mixin(TradeOfferList.class)
 public class TradeOfferListMixin extends ArrayList<TradeOffer> {
+
     /*TODO
     @Inject(method = "<init>(Lnet/minecraft/nbt/NbtCompound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/TradeOfferList;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     private void swapDemonTrades(NbtCompound nbtCompound, CallbackInfo ci, NbtList offers, int i) {
@@ -52,4 +54,5 @@ public class TradeOfferListMixin extends ArrayList<TradeOffer> {
     }
 
      */
+
 }

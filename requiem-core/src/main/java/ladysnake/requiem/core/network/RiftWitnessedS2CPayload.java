@@ -39,6 +39,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 
 public class RiftWitnessedS2CPayload implements CustomPayload {
 
@@ -51,7 +52,7 @@ public class RiftWitnessedS2CPayload implements CustomPayload {
     }
 
     public RiftWitnessedS2CPayload(PacketByteBuf buf) {
-       riftName = Text.of(buf.readString());
+       riftName = TextCodecs.PACKET_CODEC.decode(buf);
     }
 
     @Override

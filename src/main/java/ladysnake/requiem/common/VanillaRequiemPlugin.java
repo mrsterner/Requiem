@@ -156,10 +156,6 @@ import java.util.Optional;
 
 public final class VanillaRequiemPlugin implements RequiemPlugin {
 
-    public static final ComponentType<Boolean> INFINITY_SHOT_TAG = Requiem.registerData("infinity_shot_tag", (builder) -> {
-        return builder.codec(Codec.BOOL);
-    });
-
     public static final MobAbilityConfig<PlayerEntity> SOUL_ABILITY_CONFIG = MobAbilityConfig.<PlayerEntity>builder()
         .directAttack(player -> new DelegatingDirectAbility<>(player, LivingEntity.class, AbilityType.INTERACT))
         .directInteract(VagrantPossessAbility::new)

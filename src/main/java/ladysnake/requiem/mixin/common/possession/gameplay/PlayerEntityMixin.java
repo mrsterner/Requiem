@@ -34,11 +34,15 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import ladysnake.requiem.common.VanillaRequiemPlugin;
 import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -55,14 +59,15 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         super(entityType, world);
     }
 
-    @Inject(method = "getProjectileType", at = @At("RETURN"), cancellable = true)
-    private void generateArrow(ItemStack weapon, CallbackInfoReturnable<ItemStack> cir) {
-        if (cir.getReturnValue().isEmpty()) {
-            MobEntity host = PossessionComponent.getHost(this);
-            if (host != null && host.getType().isIn(RequiemEntityTypeTags.ARROW_GENERATORS)) {
-                weapon.set(VanillaRequiemPlugin.INFINITY_SHOT_TAG, true);
-                cir.setReturnValue(new ItemStack(Items.ARROW));
-            }
+
+    @ModifyReturnValue(method = "getProjectileType", at = @At(value = "RETURN"))
+    private ItemStack giveSkeletonInfinity(ItemStack item) {
+        PlayerEntity user = PlayerEntity.class.cast(this);
+
+        MobEntity possessed = PossessionComponent.getHost(user);
+        if (possessed instanceof AbstractSkeletonEntity) {
+            return new ItemStack(Items.ARROW);
         }
+        return item;
     }
 }

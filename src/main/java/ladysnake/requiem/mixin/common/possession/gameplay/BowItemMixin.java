@@ -34,9 +34,24 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import ladysnake.requiem.api.v1.possession.PossessionComponent;
+import ladysnake.requiem.common.VanillaRequiemPlugin;
+import ladysnake.requiem.mixin.common.access.ArrowShooter;
+import ladysnake.requiem.mixin.common.access.ProjectileEntityAccessor;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.AbstractSkeletonEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.BowItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(BowItem.class)
 public abstract class BowItemMixin extends RangedWeaponItem {
@@ -44,28 +59,6 @@ public abstract class BowItemMixin extends RangedWeaponItem {
     public BowItemMixin(Settings settings) {
         super(settings);
     }
-/*
-    @ModifyExpressionValue(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getProjectileType(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;"))
-    private boolean giveSkeletonInfinity(boolean infinity, ItemStack item, World world, LivingEntity user, int charge) {
-        //TODO move to playerEntity getProjectile
-        MobEntity possessed = PossessionComponent.getHost(user);
-        if (item.contains(VanillaRequiemPlugin.INFINITY_SHOT_TAG) && Boolean.TRUE.equals(item.get(VanillaRequiemPlugin.INFINITY_SHOT_TAG))) {
-            item.remove(VanillaRequiemPlugin.INFINITY_SHOT_TAG);
-            return true;
-        } else if (possessed instanceof AbstractSkeletonEntity) {
-            return infinity || world.getRandom().nextFloat() < 0.8f;
-        }
-        return infinity;
-    }
 
-    @WrapOperation(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArrowItem;createArrow(Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/entity/projectile/PersistentProjectileEntity;"))
-    private PersistentProjectileEntity useSkeletonArrow(ArrowItem instance, World world, ItemStack stack, LivingEntity shooter, Operation<PersistentProjectileEntity> original) {
-        LivingEntity possessed = PossessionComponent.getHost(shooter);
-        if (possessed instanceof ArrowShooter) {
-            return ((ArrowShooter)possessed).requiem$invokeCreateArrow(((ProjectileEntityAccessor)original.call(instance, world, stack, shooter)).requiem$invokeAsItemStack(), 1f);
-        }
-        return original.call(instance, world, stack, shooter);
-    }
 
- */
 }

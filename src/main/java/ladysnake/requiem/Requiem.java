@@ -125,8 +125,6 @@ public final class Requiem implements ModInitializer {
         ApiInitializer.setPluginCallback(this::registerPlugin);
         RequiemCompatibilityManager.init();
 
-        VanillaRequiemPlugin.INFINITY_SHOT_TAG.getCodec();
-
         ArgumentTypeRegistry.registerArgumentType(
             id("remnant"),
             RemnantArgumentType.class,

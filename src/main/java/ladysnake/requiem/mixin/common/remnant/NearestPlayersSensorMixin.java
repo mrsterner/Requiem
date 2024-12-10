@@ -34,12 +34,18 @@
  */
 package ladysnake.requiem.mixin.common.remnant;
 
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import net.minecraft.entity.ai.brain.sensor.NearestPlayersSensor;
+import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @Mixin(NearestPlayersSensor.class)
 public abstract class NearestPlayersSensorMixin {
-
+/*
     @Dynamic("Lambda method injection")
     @Inject(method = {"m_rzdyqmrf", "method_19098"}, at = @At("RETURN"), cancellable = true, require = 1, allow = 1)
     private static void preventSensingVagrantPlayers(LivingEntity subject, ServerPlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
@@ -48,6 +54,13 @@ public abstract class NearestPlayersSensorMixin {
         }
     }
 
+ */
 
+
+    @ModifyReceiver(method = "sense", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;", ordinal = 0))
+    private Stream<PlayerEntity> d(Stream<PlayerEntity> instance, Predicate<? super PlayerEntity> predicate){
+
+        return instance;
+    }
 
 }

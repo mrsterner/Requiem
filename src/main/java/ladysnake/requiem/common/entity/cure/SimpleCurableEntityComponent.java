@@ -35,7 +35,10 @@
 package ladysnake.requiem.common.entity.cure;
 
 import ladysnake.requiem.api.v1.entity.CurableEntityComponent;
+import ladysnake.requiem.common.enchantment.RequiemEnchantments;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -96,14 +99,11 @@ public class SimpleCurableEntityComponent implements CurableEntityComponent {
             for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
                 ItemStack itemStack = this.entity.getEquippedStack(equipmentSlot);
                 if (!itemStack.isEmpty()) {
-                    /*TODO
-                    if (EnchantmentHelper.hasBindingCurse(itemStack)) {
+                    if (RequiemEnchantments.getEnchantmentLevel(cured.getWorld(), Enchantments.BINDING_CURSE, itemStack) > 0) {
                         cured.getStackReference(equipmentSlot.getEntitySlotId() + 300).set(itemStack);
                     } else {
                         this.entity.dropStack(itemStack);
                     }
-
-                     */
                 }
             }
             cured.initialize(((ServerWorld) this.entity.getWorld()), this.entity.getWorld().getLocalDifficulty(cured.getBlockPos()), SpawnReason.CONVERSION, null);

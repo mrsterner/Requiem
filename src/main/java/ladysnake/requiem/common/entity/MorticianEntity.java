@@ -43,16 +43,23 @@ import ladysnake.requiem.api.v1.record.RecordPointer;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.api.v1.util.RequiemTargetPredicate;
 import ladysnake.requiem.common.RequiemRecordTypes;
+import ladysnake.requiem.common.enchantment.RequiemEnchantments;
 import ladysnake.requiem.common.entity.ai.FreeFromMortailCoilGoal;
 import ladysnake.requiem.common.entity.ai.MorticianLookAtTargetGoal;
 import ladysnake.requiem.common.entity.ai.MoveBackToObeliskGoal;
 import ladysnake.requiem.common.entity.ai.StealSoulGoal;
 import ladysnake.requiem.common.item.FilledSoulVesselItem;
+import ladysnake.requiem.common.item.RequiemItems;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.record.EntityPositionClerk;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.component.type.PotionContentsComponent;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ExperienceOrbEntity;
@@ -75,12 +82,19 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.EnchantedBookItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.potion.Potion;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -95,6 +109,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
+import net.minecraft.village.TradedItem;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
@@ -106,20 +121,83 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ladysnake.requiem.common.item.FilledSoulVesselItem.SOUL_FRAGMENT_STRING;
+
 public class MorticianEntity extends MerchantEntity implements Angerable {
     public static final int MAX_LINK_DISTANCE = 20;
     public static final TradeOffers.Factory[] TRADES = new TradeOffers.Factory[]{
-        //TODO
-        //(entity, random) -> new RemnantTradeOffer(
-        //    new TradeOffer(new ItemStack(Items.GOLD_INGOT, 32), new ItemStack(Items.NETHERITE_INGOT), new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL), 1, 1, 0.05F),
-        //    new TradeOffer(new ItemStack(RequiemItems.EMPTY_SOUL_VESSEL), new ItemStack(Items.NETHERITE_INGOT, 1), new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL), 1, 1, 0.05F), true),
-        //(entity, random) -> new TradeOffer(new ItemStack(RequiemItems.SHATTERED_SOUL_VESSEL), new ItemStack(Items.GOLD_INGOT), new ItemStack(RequiemItems.EMPTY_SOUL_VESSEL), 10, 1, 0.05F),
-        //(entity, random) -> new TradeOffer(EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(RequiemEnchantments.HUMANITY, 1)), new ItemStack(Items.GOLD_INGOT, 20), EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(RequiemEnchantments.HUMANITY, 2)), 5, 1, 0.05F),
-        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(entity.getWorld().getDimension().ultraWarm() ? EntityType.PIGLIN : EntityType.VILLAGER), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_EMANCIPATION), 10, 1, 0.05F),
-        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.AXOLOTL), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_RECLAMATION), 10, 1, 0.05F),
-        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.GHAST), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_ATTRITION), 10, 1, 0.05F),
-        //(entity, random) -> new TradeOffer(FilledSoulVesselItem.forEntityType(EntityType.PILLAGER), new ItemStack(Items.GOLD_INGOT, 5), new ItemStack(RequiemItems.ICHOR_VESSEL_PENANCE), 10, 1, 0.05F)
+        ((entity, random1) -> new RemnantTradeOffer(
+            new TradeOffer(
+                new TradedItem(Items.GOLD_INGOT, 32),
+                Optional.of(new TradedItem(Items.NETHERITE_INGOT)),
+                new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL),
+                1,
+                1,
+                0.05F
+            ),
+            new TradeOffer(
+                new TradedItem(RequiemItems.EMPTY_SOUL_VESSEL),
+                Optional.of(new TradedItem(Items.NETHERITE_INGOT, 1)),
+                new ItemStack(RequiemItems.SEALED_REMNANT_VESSEL),
+                1,
+                1,
+                0.05F
+            ),
+            true
+        )),
+        ((entity, random1) -> new TradeOffer(
+            new TradedItem(RequiemItems.SHATTERED_SOUL_VESSEL),
+            Optional.of(new TradedItem(Items.GOLD_INGOT)),
+            new ItemStack(RequiemItems.EMPTY_SOUL_VESSEL)
+            , 10, 1, 0.05F
+        )),
+        ((entity, random1) -> new TradeOffer(
+            createEnchant(Items.BOOK.getDefaultStack(), entity.getRegistryManager(), RequiemEnchantments.HUMANITY, 1),
+            Optional.of(new TradedItem(Items.GOLD_INGOT, 20)),
+            createEnchant(Items.BOOK.getDefaultStack(), entity.getRegistryManager(), RequiemEnchantments.HUMANITY, 2).itemStack()
+            , 5, 1, 0.05F
+        )),
+        ((entity, random1) -> new TradeOffer(
+            createVessel(entity.getWorld().getDimension().ultrawarm() ? EntityType.PIGLIN : EntityType.VILLAGER),
+            Optional.of(new TradedItem(Items.GOLD_INGOT, 5)),
+            new ItemStack(RequiemItems.ICHOR_VESSEL_EMANCIPATION)
+            , 10, 1, 0.05F
+        )),
+        ((entity, random1) -> new TradeOffer(
+            createVessel(EntityType.AXOLOTL),
+            Optional.of(new TradedItem(Items.GOLD_INGOT, 5)),
+            new ItemStack(RequiemItems.ICHOR_VESSEL_RECLAMATION)
+            , 10, 1, 0.05F
+        )),
+        ((entity, random1) -> new TradeOffer(
+            createVessel(EntityType.GHAST),
+            Optional.of(new TradedItem(Items.GOLD_INGOT, 5)),
+            new ItemStack(RequiemItems.ICHOR_VESSEL_ATTRITION)
+            , 10, 1, 0.05F
+        )),
+        ((entity, random1) -> new TradeOffer(
+            createVessel(EntityType.PILLAGER),
+            Optional.of(new TradedItem(Items.GOLD_INGOT, 5)),
+            new ItemStack(RequiemItems.ICHOR_VESSEL_PENANCE)
+            , 10, 1, 0.05F
+        ))
     };
+
+    public static TradedItem createVessel(EntityType<?> type) {
+        return new TradedItem(RequiemItems.FILLED_SOUL_VESSEL).withComponents(b -> b.add(SOUL_FRAGMENT_STRING,  EntityType.getId(type).toString()));
+    }
+
+    private static TradedItem createEnchant(ItemStack item, DynamicRegistryManager manager, RegistryKey<Enchantment> enchantment, int level) {
+        Enchantment optional = manager.get(RegistryKeys.ENCHANTMENT).get(enchantment);
+        RegistryEntry<Enchantment> e = manager.get(RegistryKeys.ENCHANTMENT).getEntry(optional);
+        ItemEnchantmentsComponent itemEnchantmentsComponent = item.get(DataComponentTypes.ENCHANTMENTS);
+        ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(itemEnchantmentsComponent);
+        builder.add(e, level);
+        ItemEnchantmentsComponent itemEnchantmentsComponent2 = builder.build();
+        return new TradedItem(Items.BOOK).withComponents(b -> b.add(DataComponentTypes.ENCHANTMENTS, itemEnchantmentsComponent2));
+    }
+
+
     private static final UniformIntProvider ANGER_TIME_RANGE = TimeHelper.betweenSeconds(20, 39);
     public static final TrackedData<Boolean> OBELISK_PROJECTION = DataTracker.registerData(MorticianEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Integer> FADING_TICKS = DataTracker.registerData(MorticianEntity.class, TrackedDataHandlerRegistry.INTEGER);

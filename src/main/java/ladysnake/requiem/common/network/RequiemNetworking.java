@@ -61,12 +61,16 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.netty.buffer.Unpooled.buffer;
 
@@ -160,9 +164,10 @@ public final class RequiemNetworking {
         }
     }
 
-    public static void sendRiftWitnessedMessage(ServerPlayerEntity player, String obeliskName) {
+    public static void sendRiftWitnessedMessage(ServerPlayerEntity player, Text obeliskName) {
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeString(obeliskName);
+        RegistryByteBuf registryByteBuf = new RegistryByteBuf(buf, player.getRegistryManager());
+        TextCodecs.PACKET_CODEC.encode(registryByteBuf, obeliskName);
         ServerPlayNetworking.send(player, new RiftWitnessedS2CPayload(buf));
     }
 }
