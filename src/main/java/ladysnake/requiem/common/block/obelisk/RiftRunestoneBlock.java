@@ -46,6 +46,8 @@ import ladysnake.requiem.common.entity.effect.RequiemStatusEffects;
 import ladysnake.requiem.common.screen.RiftScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.RespawnAnchorBlock;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -138,14 +140,11 @@ public class RiftRunestoneBlock extends InertRunestoneBlock implements ObeliskRu
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        /*TODO
-        if (itemStack.hasCustomName()) {
+        if (itemStack.contains(DataComponentTypes.CUSTOM_NAME)) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof RunestoneBlockEntity runestone) {
                 runestone.setCustomName(itemStack.getName());
             }
         }
-
-         */
     }
 }

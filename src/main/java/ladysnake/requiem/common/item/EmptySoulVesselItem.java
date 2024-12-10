@@ -51,6 +51,7 @@ import ladysnake.requiem.core.record.EntityPositionClerk;
 import net.minecraft.block.Block;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -86,10 +87,6 @@ public class EmptySoulVesselItem extends Item {
 
     public static final ComponentType<Integer> USE_TIME = Requiem.registerData("use_time", (builder) -> {
         return builder.codec(Codec.INT);
-    });
-
-    public static final ComponentType<UUID> ACTIVE_DATA_TAG = Requiem.registerData("soul_capture", (builder) -> {
-        return builder.codec(Uuids.CODEC);
     });
 
     /**
@@ -223,7 +220,7 @@ public class EmptySoulVesselItem extends Item {
             AttritionStatusEffect.apply(remnant, 1, 20 * 60 * 5);
             WandererRemnantState.spawnAttritionParticles(remnant, remnant);
             remnant.incrementStat(Stats.BROKEN.getOrCreateStat(this));
-            //TODO remnant.sendToolBreakStatus(user.getActiveHand());
+            remnant.sendEquipmentBreakStatus(remnant.getMainHandStack().getItem(), EquipmentSlot.MAINHAND);
             result = new ItemStack(RequiemItems.SHATTERED_SOUL_VESSEL);
         }
 
@@ -233,20 +230,21 @@ public class EmptySoulVesselItem extends Item {
     public static GlobalRecord setupRecord(LivingEntity target) {
         return EntityPositionClerk.get(target).getOrCreateRecord();
     }
-/* TODO
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        NbtCompound tag = stack.getSubNbt(ACTIVE_DATA_TAG);
-        return tag == null ? 0 : tag.getInt("use_time");
-    }
 
- */
+    @Override
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+        if (stack.contains(USE_TIME)) {
+            return stack.get(USE_TIME);
+        }
+
+        return 0;
+    }
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (world instanceof ServerWorld serverWorld) {
 
-            var useData = stack.get(ACTIVE_DATA_TAG);
+            var useData = stack.get(TARGET);
             if (useData != null) {
                 Entity target = serverWorld.getEntity(useData);
                 if (target instanceof LivingEntity) {

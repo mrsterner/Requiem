@@ -132,7 +132,10 @@ public class MorticianEntityModel<T extends Entity> extends SinglePartEntityMode
 
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-        super.render(matrices, vertices, light, overlay, color); // TODO  * this.baseAlpha
+        int baseAlpha = (color >> 24) & 0xFF;
+        int newAlpha = (int) (baseAlpha * this.baseAlpha) & 0xFF;
+        int modifiedColor = (newAlpha << 24) | (color & 0x00FFFFFF);
+        super.render(matrices, vertices, light, overlay, modifiedColor);
     }
 
     @Override

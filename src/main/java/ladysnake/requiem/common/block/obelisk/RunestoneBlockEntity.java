@@ -229,8 +229,7 @@ public class RunestoneBlockEntity extends BaseRunestoneBlockEntity {
                             this.getPos(),
                             this.obeliskCoreWidth,
                             this.obeliskCoreHeight,
-                            Optional.of("")
-                            //TODO customName.or(this::generateName)
+                            customName.or(this::generateName)
                         ));
                         record.put(RequiemRecordTypes.RIFT_OBELISK, Unit.INSTANCE);
                         this.recordUuid = record.getUuid();

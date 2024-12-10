@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.common.block.obelisk;
 
+import ladysnake.requiem.mixin.common.access.TextAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -91,7 +92,7 @@ public abstract class BaseRunestoneBlockEntity extends BlockEntity {
         super.readNbt(nbt, wrapperLookup);
 
         if (nbt.contains("custom_name", NbtElement.STRING_TYPE)) {
-            //TODO this.customName = Text.Serializer.fromJson(nbt.getString("custom_name"));
+            this.customName = Text.Serialization.fromJson(nbt.getString("custom_name"), wrapperLookup);
         }
     }
 
@@ -100,7 +101,7 @@ public abstract class BaseRunestoneBlockEntity extends BlockEntity {
         super.writeNbt(nbt, wrapperLookup);
 
         if (this.customName != null) {
-            //TODO nbt.putString("custom_name", Text.Serializer.toJson(this.customName));
+            nbt.putString("custom_name", TextAccessor.getToJson(this.customName, wrapperLookup).getAsString());
         }
     }
 }

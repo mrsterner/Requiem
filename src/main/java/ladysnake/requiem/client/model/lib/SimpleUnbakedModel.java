@@ -48,8 +48,8 @@ public class SimpleUnbakedModel implements UnbakedModel {
 
     @Nullable
     @Override
-    public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer) {
-        return null;//TODO baker.apply(ModelBuilder.prepare(textureGetter));
+    public BakedModel bake(Baker modelBaker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer) {
+        return baker.apply(ModelBuilder.prepare(textureGetter));
     }
 
 }

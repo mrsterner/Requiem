@@ -20,6 +20,8 @@ package ladysnake.requiem.api.v1.block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -29,13 +31,13 @@ import java.util.Optional;
 /**
  * @param pos the position of the structure's origin
  */
-public record ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int width, int height, Optional<String> name) {
+public record ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int width, int height, Optional<Text> name) {
     public static final Codec<ObeliskDescriptor> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         World.CODEC.fieldOf("dimension").forGetter(ObeliskDescriptor::dimension),
         BlockPos.CODEC.fieldOf("pos").forGetter(ObeliskDescriptor::pos),
         Codec.INT.optionalFieldOf("width", 1).forGetter(ObeliskDescriptor::width),
         Codec.INT.optionalFieldOf("height", 1).forGetter(ObeliskDescriptor::height),
-        Codec.STRING.optionalFieldOf("name").forGetter(ObeliskDescriptor::name)
+        TextCodecs.CODEC.optionalFieldOf("name").forGetter(ObeliskDescriptor::name)
     ).apply(instance, ObeliskDescriptor::new));
 
     public ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int width, int height) {
@@ -50,7 +52,7 @@ public record ObeliskDescriptor(RegistryKey<World> dimension, BlockPos pos, int 
         );
     }
 
-    public String resolveName() {
-        return this.name().orElseGet(this.pos::toShortString);
+    public Text resolveName() {
+        return this.name().orElseGet(() -> Text.of(this.pos.toShortString()));
     }
 }

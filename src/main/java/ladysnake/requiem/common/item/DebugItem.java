@@ -44,6 +44,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.ladysnake.blabber.Blabber;
+import org.ladysnake.blabber.impl.client.BlabberClient;
 
 public class DebugItem extends Item {
     private int debugMode;

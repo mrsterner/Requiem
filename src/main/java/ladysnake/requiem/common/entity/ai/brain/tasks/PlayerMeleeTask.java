@@ -36,7 +36,9 @@ package ladysnake.requiem.common.entity.ai.brain.tasks;
 
 import baritone.api.fakeplayer.FakeServerPlayerEntity;
 import com.google.common.collect.ImmutableMap;
+import ladysnake.requiem.common.enchantment.RequiemEnchantments;
 import ladysnake.requiem.core.util.RayHelper;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -101,8 +103,8 @@ public class PlayerMeleeTask extends MultiTickTask<FakeServerPlayerEntity> {
     public static float estimateDamage(PlayerEntity player, Entity target) {
         float baseDamage = (float) player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
         float enchantmentBonus = 0;
-        if (target instanceof LivingEntity) {
-            //TODO enchantmentBonus = EnchantmentHelper.getAttackDamage(player.getMainHandStack(), ((LivingEntity) target).getGroup());
+        if (target instanceof LivingEntity && player.getWorld() instanceof ServerWorld serverWorld) {
+            enchantmentBonus = EnchantmentHelper.getDamage(serverWorld, player.getMainHandStack(), target, player.getDamageSources().playerAttack(player), baseDamage);
         } else {
             //TODO enchantmentBonus = EnchantmentHelper.getAttackDamage(player.getMainHandStack(), EntityGroup.DEFAULT);
         }

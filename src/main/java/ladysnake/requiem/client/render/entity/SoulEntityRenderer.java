@@ -65,7 +65,8 @@ public class SoulEntityRenderer<E extends Entity> extends EntityRenderer<E> {
         matrices.scale(0.5F, -0.5F, 0.5F);
         matrices.translate(0, -1, 0);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(this.model.getLayer(this.getTexture(entity)));
-        this.model.render(matrices, vertexConsumer, 0x00f0_00f0, OverlayTexture.DEFAULT_UV, 1); //TODO , 1.0F, 1.0F, getAlpha(entity)
+        int color = ((int) (getAlpha(entity) * 255) << 24) | (255 << 16) | (255 << 8) | 255;
+        this.model.render(matrices, vertexConsumer, 0x00f0_00f0, OverlayTexture.DEFAULT_UV, color);
         matrices.pop();
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }
