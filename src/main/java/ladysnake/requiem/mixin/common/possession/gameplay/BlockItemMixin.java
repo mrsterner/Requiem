@@ -34,6 +34,7 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
+import ladysnake.requiem.common.possession.item.PossessionItemOverrideWrapper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemUsageContext;
@@ -51,12 +52,11 @@ public abstract class BlockItemMixin {
     private void applyItemOverrides(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         PlayerEntity player = context.getPlayer();
         if (player != null) {
-            /*TODO
+
             PossessionItemOverrideWrapper.tryUseOverride(context.getWorld(), player, context.getStack(), context.getHand())
                 .map(TypedActionResult::getResult)
                 .ifPresent(cir::setReturnValue);
 
-             */
         }
     }
 }

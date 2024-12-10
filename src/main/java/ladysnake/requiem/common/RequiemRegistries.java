@@ -73,6 +73,5 @@ public final class RequiemRegistries {
     public static void init() {
         Registry.register(REMNANT_STATES, Identifier.of(RemnantState.NULL_STATE_ID), RemnantTypes.MORTAL);
         DynamicRegistries.registerSynced(MOB_ITEM_OVERRIDE_KEY,  PossessionItemOverrideWrapper.CODEC_V1.codec(), PossessionItemOverrideWrapper.NETWORK_CODEC.codec());
-        //TODO DynamicMetaRegistry.registerSynced(MOB_ITEM_OVERRIDE_KEY, PossessionItemOverrideWrapper.CODEC, PossessionItemOverrideWrapper.NETWORK_CODEC);
     }
 }

@@ -76,11 +76,8 @@ public class FilledVesselItemDispenserBehavior implements DispenserBehavior {
     public ItemStack dispense(BlockPointer pointer, ItemStack stack) {
         Direction direction = pointer.state().get(DispenserBlock.FACING);
         Vec3d targetPos = Vec3d.ofCenter(pointer.pos().offset(direction));
-        /*TODO
-        @Nullable UUID ownerRecord = Optional.ofNullable(stack.getSubNbt(FilledSoulVesselItem.SOUL_FRAGMENT_NBT))
-            .filter(data -> data.containsUuid("uuid"))
-            .map(data -> data.getUuid("uuid"))
-            .orElse(null);
+
+        @Nullable UUID ownerRecord = stack.get(FilledSoulVesselItem.SOUL_FRAGMENT_UUID);
         ReleasedSoulEntity releasedSoul = new ReleasedSoulEntity(RequiemEntities.RELEASED_SOUL, pointer.world(), ownerRecord);
         releasedSoul.setPosition(targetPos.getX(), targetPos.getY(), targetPos.getZ());
         releasedSoul.setVelocity(new Vec3d(direction.getUnitVector()).multiply(0.15f));
@@ -89,7 +86,6 @@ public class FilledVesselItemDispenserBehavior implements DispenserBehavior {
         pointer.world().spawnEntity(releasedSoul);
 
 
-         */
         ItemStack result = ((FilledSoulVesselItem) stack.getItem()).getEmptiedStack();
 
         return this.tryPutStack(pointer, stack, result);

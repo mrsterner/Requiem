@@ -58,18 +58,19 @@ public class OnRemnantChoiceCriterion extends AbstractCriterion<OnRemnantChoiceC
         return Conditions.CODEC;
     }
 
-    public record Conditions(Optional<LootContextPredicate> player, Optional<RemnantTypePredicate> predicate) implements AbstractCriterion.Conditions {
+    public record Conditions(Optional<LootContextPredicate> player, RemnantTypePredicate predicate) implements AbstractCriterion.Conditions {
 
         public static final Codec<OnRemnantChoiceCriterion.Conditions> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
                     EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(OnRemnantChoiceCriterion.Conditions::player),
-                    RemnantTypePredicate.CODEC.optionalFieldOf("predicate").forGetter(OnRemnantChoiceCriterion.Conditions::predicate)
+                    RemnantTypePredicate.CODEC.optionalFieldOf("remnant_type", RemnantTypePredicate.ANY).forGetter(OnRemnantChoiceCriterion.Conditions::predicate)
                 )
                 .apply(instance, OnRemnantChoiceCriterion.Conditions::new)
         );
 
         public boolean test(RemnantType type) {
-            return this.predicate.isPresent() && this.predicate.get().matches(type);
+            // This ensures the predicate matches any type if it's `ANY`
+            return this.predicate.matches(type);
         }
     }
 }

@@ -84,33 +84,29 @@ public abstract class PlayerManagerMixin {
 
     @ModifyVariable(
         method = "respawnPlayer",
-        slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/TeleportTarget;missingRespawnBlock()Z")),
+        slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/TeleportTarget;missingRespawnBlock()Z", ordinal = 1)),
         at = @At(
             value = "FIELD",
             opcode = Opcodes.GETFIELD,
             target = "Lnet/minecraft/server/network/ServerPlayerEntity;networkHandler:Lnet/minecraft/server/network/ServerPlayNetworkHandler;",
-            ordinal = 0
+            ordinal = 1
         ),
         ordinal = 1
     )
     private ServerPlayerEntity firePrepareRespawnEvent(ServerPlayerEntity clone, ServerPlayerEntity original, boolean returnFromEnd) {
         PrepareRespawnCallback.EVENT.invoker().prepareRespawn(original, clone, returnFromEnd);
-        REQUIEM$RESPAWN_WORLD.set(clone.getServerWorld());
-        // Prevent players from respawning in fairly bad conditions
-        while(!clone.getWorld().isSpaceEmpty(clone) && clone.getY() < 256.0D) {
-            clone.setPosition(clone.getX(), clone.getY() + 1.0D, clone.getZ());
-        }
         return clone;
     }
 
-
+/*
     @ModifyVariable(
         method = "respawnPlayer",
+        slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/TeleportTarget;missingRespawnBlock()Z")),
         at = @At(
             value = "FIELD",
             opcode = Opcodes.GETFIELD,
             target = "Lnet/minecraft/server/network/ServerPlayerEntity;networkHandler:Lnet/minecraft/server/network/ServerPlayNetworkHandler;",
-            ordinal = 2,
+            ordinal = 1,
             shift = AFTER
         ),
         ordinal = 1
@@ -120,6 +116,8 @@ public abstract class PlayerManagerMixin {
         return REQUIEM$RESPAWN_WORLD.get();
     }
 
+ */
+
 
     @Inject(method = "respawnPlayer", at = @At("RETURN"))
     private void firePlayerRespawnEvent(
@@ -127,6 +125,4 @@ public abstract class PlayerManagerMixin {
     ) {
         PlayerRespawnCallback.EVENT.invoker().onPlayerRespawn(cir.getReturnValue());
     }
-
-
 }

@@ -123,7 +123,7 @@ public class ClientMessageHandler {
                 Identifier id = payload.id;
                 SubDataManager<?> manager = Objects.requireNonNull(map.get(id), "Unknown sub data manager " + id);
                 Requiem.LOGGER.info("[Requiem] Received data for {}", manager.getFabricId());
-                //TODO syncSubDataManager(buf, manager, ctx.client());
+                //TODO syncSubDataManager(payload, manager, ctx.client());
             }
         });
 
