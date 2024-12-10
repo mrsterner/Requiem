@@ -61,27 +61,6 @@ public abstract class OpenScreenPayloadMixin<D> implements CustomPayload {
 
     @WrapWithCondition(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/codec/PacketCodec;encode(Ljava/lang/Object;Ljava/lang/Object;)V", ordinal = 1))
     private boolean cinema(PacketCodec instance, Object o, Object oo, @Local RegistryByteBuf buf) {
-        if (data instanceof DialogueScreenHandlerFactory.DialogueOpeningData diaData && false) {
-            System.out.println("0: " + diaData);
-            System.out.println("1: " + diaData.availableChoices());
-            System.out.println("2: " + diaData.interlocutorId());
-            System.out.println("3: " + diaData.dialogue().getCurrentText());
-            System.out.println("4: " + diaData.dialogue().getStartAction());
-            System.out.println("Encoding dialogue data...");
-            if (data == null) {
-                System.err.println("Data is null, cannot encode!");
-                return false;
-            }
-            try {
-                System.out.println("Buffer before encoding: " + buf);
-                innerCodec.encode(buf, data);
-                System.out.println("Encoding successful! Buffer after encoding: " + buf);
-            } catch (Exception e) {
-                System.err.println("Encoding failed at: " + e.getMessage());
-                e.printStackTrace();
-            }
-            return false;
-        }
         return true;
     }
 }

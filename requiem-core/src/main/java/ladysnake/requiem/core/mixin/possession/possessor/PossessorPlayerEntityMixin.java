@@ -261,7 +261,7 @@ public abstract class PossessorPlayerEntityMixin extends PossessorLivingEntityMi
             ci.cancel();
         }
     }
-/*
+/* TODO
     @Inject(method = "getHeightOffset", at = @At("HEAD"), cancellable = true)
     private void requiem$getHeightOffset(CallbackInfoReturnable<Double> cir) {
         MobEntity possessedEntity = PossessionComponent.KEY.get(this).getHost();

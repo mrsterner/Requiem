@@ -47,6 +47,7 @@ import java.util.function.Predicate;
 
 @Mixin(World.class)
 public abstract class WorldMixin {
+
     @ModifyVariable(method = "getOtherEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;)Ljava/util/List;", at = @At(value = "HEAD"), argsOnly = true)
     private @Nullable Predicate<Entity> ignorePossessed(@Nullable Predicate<Entity> predicate, @Nullable Entity ignored) {
         if (ignored != null) {

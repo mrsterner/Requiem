@@ -46,6 +46,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SuppressWarnings("UnnecessaryQualifiedMemberReference")
 @Mixin(targets = "net/minecraft/server/world/ServerWorld$ServerEntityHandler")
 public abstract class ServerEntityHandlerMixin implements EntityHandler<Entity> {
+
     @Inject(method = "Lnet/minecraft/server/world/ServerWorld$ServerEntityHandler;destroy(Lnet/minecraft/entity/Entity;)V", at = @At("RETURN"))
     private void onDestroyed(Entity entity, CallbackInfo ci) {
         EntityPositionClerk.KEY.maybeGet(entity).ifPresent(EntityPositionClerk::destroy);

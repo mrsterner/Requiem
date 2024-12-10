@@ -48,6 +48,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerEntityManager.class)
 public abstract class ServerEntityManagerMixin {
+
     @Inject(method = "addEntity(Lnet/minecraft/world/entity/EntityLike;Z)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityTrackingStatus;shouldTrack()Z"))
     private void possessLoadedEntities(EntityLike entity, boolean existing, CallbackInfoReturnable<Boolean> cir) {
         PlayerEntity possessor = ((ProtoPossessable) entity).getPossessor();

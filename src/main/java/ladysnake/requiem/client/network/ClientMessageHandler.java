@@ -117,6 +117,7 @@ public class ClientMessageHandler {
         ClientPlayNetworking.registerGlobalReceiver(DataSyncS2CPayload.ID,  (payload, ctx) -> {
             // We intentionally do not use the context's task queue directly
             // First, we make each sub data manager process its data, then we apply it synchronously with the task queue
+
             Map<Identifier, SubDataManager<?>> map = SubDataManagerHelper.getClientHelper().streamDataManagers().collect(Collectors.toMap(IdentifiableResourceReloadListener::getFabricId, Function.identity()));
             int nbManagers = payload.nbManagers;
             for (int i = 0; i < nbManagers; i++) {
@@ -171,6 +172,6 @@ public class ClientMessageHandler {
 
     private static <T> void syncSubDataManager(PacketByteBuf buffer, SubDataManager<T> subManager, ThreadExecutor<?> taskQueue) {
         T data = subManager.loadFromPacket(buffer);
-        taskQueue.execute(() -> subManager.apply(data));
+        taskQueue.execute(() -> {subManager.apply(data);});
     }
  }

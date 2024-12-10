@@ -66,7 +66,7 @@ public class UseDirectAbilityC2SPayload implements CustomPayload {
         var player = context.player();
         MobAbilityController abilityController = MobAbilityController.get(player);
         Entity targetedEntity = player.getWorld().getEntityById(entityId);
-
+        System.out.println("Handle");
         // allow a slightly longer reach in case of lag
         if (targetedEntity != null && (abilityController.getRange(type) + 3) > targetedEntity.distanceTo(player)) {
             abilityController.useDirect(type, targetedEntity);

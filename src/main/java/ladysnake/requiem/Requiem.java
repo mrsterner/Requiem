@@ -95,7 +95,6 @@ public final class Requiem implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        RequiemConfig.load();
         ApiInitializer.init();
         RequiemCriteria.init();
         RequiemBlocks.init();

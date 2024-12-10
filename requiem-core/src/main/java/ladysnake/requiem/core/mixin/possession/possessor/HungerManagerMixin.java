@@ -58,7 +58,7 @@ public abstract class HungerManagerMixin {
     @Shadow
     private int foodLevel;
 
-    @Inject(method = "update", at = @At(value = "INVOKE", ordinal = 0))
+    @Inject(method = "update", at = @At(value = "HEAD", ordinal = 0))
     private void updateSoulHunger(PlayerEntity player, CallbackInfo ci) {
         Possessable possessed = (Possessable) PossessionComponent.get(player).getHost();
         if (possessed != null && !possessed.isRegularEater()) {

@@ -139,8 +139,11 @@ public class ImmutableMobAbilityController<T extends LivingEntity> implements Mo
 
     private <E extends Entity> ActionResult use(DirectAbility<? super T, E> ability, Entity target) {
         Class<E> targetType = ability.getTargetType();
+        System.out.println("isClient: " + target.getWorld().isClient);
         if (targetType.isInstance(target)) {
-            return ability.trigger(targetType.cast(target));
+            var v = ability.trigger(targetType.cast(target));
+            System.out.println("V: " +v);
+            return v;
         }
         return ActionResult.FAIL;
     }

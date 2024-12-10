@@ -77,10 +77,8 @@ public final class RequiemTargetHandler implements UpdateTargetedEntityCallback,
         Vec3d rotationVec = entity.getRotationVec(1.0F);
 
         abilityController.clearTargets();
-
         for (int i = 0; i < abilityTypes.length; i++) {
             AbilityType k = abilityTypes[i];
-
             double range = abilityController.getRange(k);
             double effectiveRangeSq = Math.min(range * range, distanceToBlockSq);
 
@@ -129,7 +127,9 @@ public final class RequiemTargetHandler implements UpdateTargetedEntityCallback,
             }
 
             if (f < 1 || abilityController.getTargetedEntity(renderedType) != null) {
-                drawCrosshairIcon(graphics, abilityController.getIconTexture(renderedType), f);
+                var icon = abilityController.getIconTexture(renderedType);
+                //System.out.println(f + " : " + icon);
+                drawCrosshairIcon(graphics, icon, f);
             }
         }
     }

@@ -18,6 +18,8 @@
 package ladysnake.requiem.api.v1.entity.ability;
 
 import ladysnake.requiem.api.v1.internal.DummyMobAbilityController;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -54,7 +56,9 @@ public interface MobAbilityController extends TransientComponent, CommonTickingC
 
     void writeSyncPacket(PacketByteBuf packetByteBuf, ServerPlayerEntity serverPlayerEntity);
 
+    @Environment(EnvType.CLIENT)
     void applySyncPacket(PacketByteBuf buf);
 
+    @Environment(EnvType.CLIENT)
     Identifier getIconTexture(AbilityType type);
 }

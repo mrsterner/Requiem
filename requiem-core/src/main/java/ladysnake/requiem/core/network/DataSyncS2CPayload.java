@@ -49,7 +49,6 @@ public class DataSyncS2CPayload implements CustomPayload {
     public static final PacketCodec<? super PacketByteBuf, DataSyncS2CPayload> STREAM_CODEC = CustomPayload.codecOf(DataSyncS2CPayload::write, DataSyncS2CPayload::new);
     public final int nbManagers;
     public final Identifier id;
-    public final PacketByteBuf buf;
 
     private void write(PacketByteBuf buf) {
         buf.writeVarInt(nbManagers);
@@ -59,7 +58,6 @@ public class DataSyncS2CPayload implements CustomPayload {
     public DataSyncS2CPayload(PacketByteBuf buf) {
         this.nbManagers = buf.readVarInt();
         this.id = buf.readIdentifier();
-        this.buf = buf;
     }
 
     @Override

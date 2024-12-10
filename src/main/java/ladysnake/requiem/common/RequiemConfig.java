@@ -34,14 +34,6 @@
  */
 package ladysnake.requiem.common;
 
-import blue.endless.jankson.Comment;
-import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.AnnotatedSettings;
-import io.github.fablabsmc.fablabs.api.fiber.v1.annotation.SettingNamingConvention;
-import io.github.fablabsmc.fablabs.api.fiber.v1.exception.ValueDeserializationException;
-import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.FiberSerialization;
-import io.github.fablabsmc.fablabs.api.fiber.v1.serialization.JanksonValueSerializer;
-import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch;
-import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree;
 import ladysnake.requiem.Requiem;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -51,45 +43,4 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class RequiemConfig {
-    public static final Graphics graphics = new Graphics();
-
-    public static class Graphics {
-        @Comment("Toggles the fancy shader render for incorporeal players. May impact performance.")
-        public boolean fancyDemonRender = true;
-    }
-
-    private static final AnnotatedSettings settings = AnnotatedSettings.builder()
-        .useNamingConvention(SettingNamingConvention.SNAKE_CASE)
-        .build();
-    private static final ConfigBranch configTree = ConfigTree.builder()
-        .fork("graphics").applyFromPojo(graphics, settings).finishBranch()
-        .fork("more").withSeparateSerialization().finishBranch()
-        .build();
-
-    private static final Path configPath = FabricLoader.getInstance().getConfigDir().resolve("requiem.json5");
-    private static final JanksonValueSerializer serializer = new JanksonValueSerializer(false);
-
-    public static ConfigBranch configTree() {
-        return configTree;
-    }
-
-    public static void load() {
-        if (Files.exists(configPath)) {
-            try (InputStream in = Files.newInputStream(configPath)) {
-                FiberSerialization.deserialize(configTree, in, serializer);
-            } catch (IOException | ValueDeserializationException e) {
-                Requiem.LOGGER.error("[Requiem] Failed to load config", e);
-            }
-        }
-        RequiemConfig.save();
-    }
-
-    public static void save() {
-        try (OutputStream out = Files.newOutputStream(configPath)) {
-            FiberSerialization.serialize(configTree, out, serializer);
-        } catch (IOException e) {
-            Requiem.LOGGER.error("[Requiem] Failed to save config", e);
-        }
-    }
-}
+public final class RequiemConfig {}

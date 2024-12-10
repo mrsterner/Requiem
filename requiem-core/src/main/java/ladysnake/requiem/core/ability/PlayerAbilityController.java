@@ -40,6 +40,8 @@ import ladysnake.requiem.api.v1.entity.ability.MobAbilityConfig;
 import ladysnake.requiem.api.v1.entity.ability.MobAbilityController;
 import ladysnake.requiem.api.v1.internal.DummyMobAbilityController;
 import ladysnake.requiem.core.RequiemCoreNetworking;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -81,31 +83,39 @@ public class PlayerAbilityController implements MobAbilityController, AutoSynced
         this.setDelegate(MobAbilityController.get(possessed));
     }
 
+    @Environment(EnvType.CLIENT)
     public AbilityType[] getSortedAbilities() {
         return sortedAbilities;
     }
 
+    @Environment(EnvType.CLIENT)
     public void tryTarget(AbilityType type, Entity target) {
         if (this.canTarget(type, target)) {
             targets.put(type, new WeakReference<>(target));
         }
     }
 
+    @Environment(EnvType.CLIENT)
     public void clearTargets() {
         this.targets.clear();
     }
 
+    @Environment(EnvType.CLIENT)
     public @Nullable Entity getTargetedEntity(AbilityType type) {
         WeakReference<Entity> ref = targets.get(type);
         return ref == null ? null : ref.get();
     }
 
+    @Environment(EnvType.CLIENT)
     public ActionResult useDirectAbility(AbilityType type) {
         Entity targetedEntity = this.getTargetedEntity(type);
-
+        System.out.println("UseDirectAbility: " + targetedEntity);
         if (targetedEntity != null) {
             ActionResult result = this.useDirect(type, targetedEntity);
+            System.out.println("Side: " + targetedEntity.getWorld().isClient);
+            System.out.println("Result: " + result);
             if (result.isAccepted()) {
+                System.out.println("SendAbility");
                 RequiemCoreNetworking.sendAbilityUseMessage(type, targetedEntity);
             }
             return result;

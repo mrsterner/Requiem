@@ -62,6 +62,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
+import org.ladysnake.cca.internal.entity.SwitchablePlayerEntity;
 import org.ladysnake.impersonate.Impersonator;
 
 import java.util.EnumSet;
@@ -181,7 +182,7 @@ public final class PlayerSplitter {
 
         try {
             keepInventory.set(false, player.getServer());
-//            ((SwitchablePlayerEntity) player).cca$markAsSwitchingCharacter();
+            ((SwitchablePlayerEntity) player).cca$markAsSwitchingCharacter(); //TODO was this removed by me or?? //mrsterner
 
             ServerPlayerEntity clone = player.getWorld().getServer().getPlayerManager().respawnPlayer(player, false, Entity.RemovalReason.DISCARDED);
             clone.setSpawnPoint(dimension, blockPos, angle, spawnPointSet, false);

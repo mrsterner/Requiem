@@ -64,7 +64,8 @@ public final class VagrantInteractionRegistryImpl implements VagrantInteractionR
 
     public @Nullable VagrantInteraction getAction(LivingEntity tested, PlayerEntity player) {
         for (var interaction : interactions) {
-            if (interaction.predicate().test(tested, player)) {
+            var bl = interaction.predicate().test(tested, player);
+            if (bl) {
                 return interaction;
             }
         }

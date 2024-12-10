@@ -192,7 +192,7 @@ public final class RequiemClient {
         registry.register(RequiemParticleTypes.ATTUNED, CureParticle.Factory::new);
         registry.register(RequiemParticleTypes.CURE, CureParticle.Factory::new);
         registry.register(RequiemParticleTypes.GHOST, GhostParticle.Factory::new);
-        //registry.register(RequiemParticleTypes.ENTITY_DUST, new EntityDustParticle.Factory());
+        //TODO registry.register(RequiemParticleTypes.ENTITY_DUST, new EntityDustParticle.Factory());
         registry.register(RequiemParticleTypes.OBELISK_SOUL, SoulParticle.Factory::new);
         //registry.register(RequiemParticleTypes.SOUL_TRAIL, WispTrailParticle.Factory::new);
         //registry.register(RequiemParticleTypes.PENANCE, SpellParticle.EntityFactory::new);
