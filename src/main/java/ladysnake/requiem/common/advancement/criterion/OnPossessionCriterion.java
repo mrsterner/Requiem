@@ -68,7 +68,10 @@ public class OnPossessionCriterion extends AbstractCriterion<OnPossessionCriteri
         );
 
         public boolean test(LootContext ctx) {
-            return this.entity.isPresent() && this.entity.get().test(ctx);
+            if (entity.isPresent()) {
+                return this.entity.get().test(ctx);
+            }
+            return true;
         }
     }
 }

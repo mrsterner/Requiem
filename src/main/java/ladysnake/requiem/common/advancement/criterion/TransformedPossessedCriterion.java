@@ -73,10 +73,18 @@ public class TransformedPossessedCriterion extends AbstractCriterion<Transformed
         );
 
         public boolean test(ServerPlayerEntity player, LivingEntity before, LivingEntity after, boolean cure) {
-            LootContext beforeCtx = EntityPredicate.createAdvancementEntityLootContext(player, before);
-            LootContext afterCtx = EntityPredicate.createAdvancementEntityLootContext(player, after);
-            return this.before.isPresent() &&  this.before.get().test(beforeCtx) && this.after.isPresent() && this.after.get().test(afterCtx) && (this.cure == null || this.cure == cure);
-        }
 
+            boolean beforeTest = this.before
+                .map(b -> b.test(EntityPredicate.createAdvancementEntityLootContext(player, before)))
+                .orElse(true);
+
+            boolean afterTest = this.after
+                .map(a -> a.test(EntityPredicate.createAdvancementEntityLootContext(player, after)))
+                .orElse(true);
+
+            boolean cureTest = this.cure == null || this.cure == cure;
+
+            return beforeTest && afterTest && cureTest;
+        }
     }
 }

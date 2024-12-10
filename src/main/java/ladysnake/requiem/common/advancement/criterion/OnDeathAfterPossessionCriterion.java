@@ -73,20 +73,17 @@ public class OnDeathAfterPossessionCriterion extends AbstractCriterion<OnDeathAf
         );
 
         public boolean test(ServerPlayerEntity player, Entity entity, DamageSource killingBlow) {
-            LootContext lootContext = EntityPredicate.createAdvancementEntityLootContext(player, entity);
-            if (this.killingBlow.isPresent() && !this.killingBlow.get().test(player, killingBlow)) {
-                return false;
-            }
+            boolean killingBlowTest = this.killingBlow
+                .map(kb -> kb.test(player, killingBlow))
+                .orElse(true);
 
-            if (this.player.isPresent() && !this.player.get().test(lootContext)) {
-                return false;
-            }
+            boolean playerTest = this.player
+                .map(p -> p.test(EntityPredicate.createAdvancementEntityLootContext(player, entity)))
+                .orElse(true);
 
-            if (seppukku != null && seppukku != (killingBlow.getAttacker() == entity)) {
-                return false;
-            }
+            boolean seppukkuTest = this.seppukku == null || this.seppukku == (killingBlow.getAttacker() == entity);
 
-            return true;
+            return killingBlowTest && playerTest && seppukkuTest;
         }
     }
 }

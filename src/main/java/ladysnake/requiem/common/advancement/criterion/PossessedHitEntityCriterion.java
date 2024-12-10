@@ -73,11 +73,19 @@ public class PossessedHitEntityCriterion extends AbstractCriterion<PossessedHitE
 
         public boolean test(ServerPlayerEntity player, DamageSource source, float dealt, float taken, boolean blocked, Entity possessed, Entity target) {
             if (this.damage.isPresent() && this.damage.get().test(player, source, dealt, taken, blocked)) {
-                LootContext possessedCtx = EntityPredicate.createAdvancementEntityLootContext(player, possessed);
-                LootContext targetCtx = EntityPredicate.createAdvancementEntityLootContext(player, target);
-                return this.possessed.isPresent() && this.possessed.get().test(possessedCtx) && this.entity.isPresent() && this.entity.get().test(targetCtx);
+                boolean possessedTest = this.possessed
+                    .map(p -> p.test(EntityPredicate.createAdvancementEntityLootContext(player, possessed)))
+                    .orElse(true);
+
+                boolean entityTest = this.entity
+                    .map(e -> e.test(EntityPredicate.createAdvancementEntityLootContext(player, target)))
+                    .orElse(true);
+
+                return possessedTest && entityTest;
             }
-            return false;
+
+            return !this.damage.isPresent() && !this.possessed.isPresent() && !this.entity.isPresent();
         }
+
     }
 }

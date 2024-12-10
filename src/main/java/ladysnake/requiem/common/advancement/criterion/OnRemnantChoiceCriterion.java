@@ -67,7 +67,6 @@ public class OnRemnantChoiceCriterion extends AbstractCriterion<OnRemnantChoiceC
         );
 
         public boolean test(RemnantType type) {
-            // This ensures the predicate matches any type if it's `ANY`
             return this.predicate.matches(type);
         }
     }

@@ -68,7 +68,8 @@ public class OnResurrectCriterion extends AbstractCriterion<Conditions> {
         );
 
         public boolean test(ServerPlayerEntity player, @Nullable Entity body) {
-            return this.entity.isPresent() && this.entity.get().test(player, body);
+            return this.entity.map(entityPredicate -> entityPredicate.test(player, body)).orElse(true);
+
         }
     }
 }

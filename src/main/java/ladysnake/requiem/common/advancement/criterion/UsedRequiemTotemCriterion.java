@@ -67,7 +67,7 @@ public class UsedRequiemTotemCriterion extends AbstractCriterion<UsedRequiemTote
         );
 
         public boolean matches(ItemStack stack) {
-            return this.item.isPresent() && this.item.get().test(stack);
+            return this.item.map(itemPredicate -> itemPredicate.test(stack)).orElse(true);
         }
     }
 }
