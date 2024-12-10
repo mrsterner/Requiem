@@ -257,7 +257,7 @@ public final class VanillaRequiemPlugin implements RequiemPlugin {
             if (original.isDead()) resetIdentity(clone);
             RemnantComponent.get(clone).prepareRespawn(original, returnFromEnd);
         });
-        PlayerRespawnCallback.EVENT.register(((player, returnFromEnd) -> {
+        PlayerRespawnCallback.EVENT.register(((player) -> {
             player.sendAbilitiesUpdate();
             ((MobResurrectable) player).spawnResurrectionEntity();
 

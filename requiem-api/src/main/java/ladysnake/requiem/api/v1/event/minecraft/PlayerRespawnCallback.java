@@ -23,12 +23,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 @FunctionalInterface
 public interface PlayerRespawnCallback {
-    void onPlayerRespawn(ServerPlayerEntity player, boolean returnFromEnd);
+    void onPlayerRespawn(ServerPlayerEntity player);
 
     Event<PlayerRespawnCallback> EVENT = EventFactory.createArrayBacked(PlayerRespawnCallback.class,
-            (listeners) -> (player, returnFromEnd) -> {
+            (listeners) -> (player) -> {
                 for (PlayerRespawnCallback handler : listeners) {
-                    handler.onPlayerRespawn(player, returnFromEnd);
+                    handler.onPlayerRespawn(player);
                 }
             });
 }
