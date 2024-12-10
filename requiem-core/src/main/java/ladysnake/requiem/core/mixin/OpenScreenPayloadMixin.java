@@ -40,13 +40,10 @@ import net.fabricmc.fabric.impl.screenhandler.Networking;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
-import org.ladysnake.blabber.impl.common.DialogueScreenHandlerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Networking.OpenScreenPayload.class)
 public abstract class OpenScreenPayloadMixin<D> implements CustomPayload {

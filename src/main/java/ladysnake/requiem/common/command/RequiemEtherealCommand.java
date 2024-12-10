@@ -37,7 +37,6 @@ package ladysnake.requiem.common.command;
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.exceptions.CommandExceptionType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;

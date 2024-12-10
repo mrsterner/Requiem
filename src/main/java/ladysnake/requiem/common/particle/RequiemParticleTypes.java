@@ -34,10 +34,8 @@
  */
 package ladysnake.requiem.common.particle;
 
-import com.mojang.serialization.Codec;
 import ladysnake.requiem.Requiem;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;

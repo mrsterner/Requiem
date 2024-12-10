@@ -40,7 +40,6 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
 
 public final class RequiemEntityAttributes {
     public static final RegistryEntry<EntityAttribute> SOUL_OFFENSE = register("soul_offense", new ClampedEntityAttribute(

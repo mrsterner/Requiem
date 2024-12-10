@@ -34,8 +34,6 @@
  */
 package ladysnake.requiem.mixin.common.data;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import ladysnake.requiem.api.v1.internal.ProtoPossessable;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import net.minecraft.entity.Entity;
@@ -44,14 +42,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(EntityPredicate.class)
 public abstract class EntityPredicateMixin {

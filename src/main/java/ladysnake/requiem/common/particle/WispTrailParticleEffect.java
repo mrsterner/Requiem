@@ -34,14 +34,6 @@
  */
 package ladysnake.requiem.common.particle;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.registry.Registries;
 /*
 public record WispTrailParticleEffect(float red, float green, float blue, float redEvolution, float greenEvolution,
                                       float blueEvolution) implements ParticleEffect {

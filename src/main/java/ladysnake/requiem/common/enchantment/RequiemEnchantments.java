@@ -37,15 +37,11 @@ package ladysnake.requiem.common.enchantment;
 import ladysnake.requiem.Requiem;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-
-import java.util.Objects;
 
 public class RequiemEnchantments {
     public static final RegistryKey<Enchantment> HUMANITY = keyOf("humanity");

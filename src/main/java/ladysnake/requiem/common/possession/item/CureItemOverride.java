@@ -41,8 +41,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.common.VanillaRequiemPlugin;
 import ladysnake.requiem.core.RequiemCore;
-import ladysnake.requiem.core.data.LazyEntityPredicate;
-import ladysnake.requiem.core.data.LazyItemPredicate;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

@@ -34,26 +34,9 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import ladysnake.requiem.api.v1.possession.PossessionComponent;
-import ladysnake.requiem.common.VanillaRequiemPlugin;
-import ladysnake.requiem.mixin.common.access.ArrowShooter;
-import ladysnake.requiem.mixin.common.access.ProjectileEntityAccessor;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.AbstractSkeletonEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ArrowItem;
 import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(BowItem.class)
 public abstract class BowItemMixin extends RangedWeaponItem {

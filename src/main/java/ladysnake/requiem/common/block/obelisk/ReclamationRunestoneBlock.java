@@ -39,8 +39,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.function.Supplier;
-
 public class ReclamationRunestoneBlock extends RunestoneBlock {
     public ReclamationRunestoneBlock(Settings settings, RegistryEntry<StatusEffect> effect, int maxLevel) {
         super(settings, effect, maxLevel);

@@ -34,24 +34,6 @@
  */
 package ladysnake.requiem.compat;
 
-import ladysnake.requiem.Requiem;
-import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
-import ladysnake.requiem.api.v1.event.requiem.RemnantStateChangeCallback;
-import ladysnake.requiem.api.v1.remnant.RemnantType;
-import ladysnake.requiem.common.RequiemRegistries;
-import ladysnake.requiem.common.gamerule.RequiemSyncedGamerules;
-import ladysnake.requiem.common.gamerule.StartingRemnantType;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-
-import java.util.Collections;
-import java.util.List;
 /*
 public final class OriginsCompat {
     public static final ComponentKey<OriginComponent> ORIGIN_KEY = ModComponents.ORIGIN;

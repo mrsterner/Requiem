@@ -38,13 +38,9 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.common.entity.RequiemEntityAttributes;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.util.Identifier;
-
-import java.util.UUID;
 
 public class CreativeSoulVesselItem extends EmptySoulVesselItem {
     private static final Identifier SOUL_OFFENSE_MODIFIER_ID = Requiem.id("51ace24e-23b8-4571-901a-cc73f822b329");

@@ -34,8 +34,3 @@
  */
 package ladysnake.requiem.compat;
 
-import ladysnake.requiem.api.v1.event.requiem.InitiateFractureCallback;
-import ladysnake.requiem.api.v1.remnant.RemnantComponent;
-import ladysnake.requiem.api.v1.remnant.RemnantType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.network.ServerPlayerEntity;

@@ -45,7 +45,6 @@ import net.minecraft.entity.passive.AxolotlEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class AxolotlPlayingDeadAbility extends IndirectAbilityBase<AxolotlEntity> {
     public static final int COOLDOWN = 20 * 30;

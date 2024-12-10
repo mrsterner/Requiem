@@ -40,7 +40,6 @@ import ladysnake.requiem.api.v1.event.minecraft.SyncServerResourcesCallback;
 import ladysnake.requiem.api.v1.remnant.SoulbindingRegistry;
 import ladysnake.requiem.api.v1.util.SubDataManagerHelper;
 import ladysnake.requiem.common.ApiInitializer;
-import ladysnake.requiem.common.RequiemConfig;
 import ladysnake.requiem.common.RequiemRecordTypes;
 import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.common.VanillaRequiemPlugin;

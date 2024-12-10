@@ -34,10 +34,8 @@
  */
 package ladysnake.requiem.common.entity;
 
-import ladysnake.requiem.Requiem;
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.util.math.Vec3d;

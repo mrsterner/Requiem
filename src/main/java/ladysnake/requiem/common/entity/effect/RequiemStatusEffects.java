@@ -43,7 +43,6 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
 
 public final class RequiemStatusEffects {
     public static final RegistryEntry<StatusEffect> ATTRITION = register("attrition", new AttritionStatusEffect(StatusEffectCategory.HARMFUL, 0xAA3322)

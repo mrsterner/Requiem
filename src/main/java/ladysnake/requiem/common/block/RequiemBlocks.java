@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.common.block;
 
-import com.google.common.base.Suppliers;
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.block.ObeliskRune;
 import ladysnake.requiem.api.v1.block.VagrantTargetableBlock;
@@ -59,7 +58,6 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.intprovider.UniformIntProvider;

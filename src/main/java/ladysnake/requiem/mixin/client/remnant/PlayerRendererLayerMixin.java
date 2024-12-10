@@ -37,7 +37,6 @@ package ladysnake.requiem.mixin.client.remnant;
 import ladysnake.requiem.api.v1.remnant.DeathSuspender;
 import ladysnake.requiem.api.v1.remnant.RemnantComponent;
 import ladysnake.requiem.client.RequiemClient;
-import ladysnake.requiem.common.RequiemConfig;
 import ladysnake.requiem.mixin.client.possession.LivingEntityRendererMixin;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;

@@ -36,9 +36,6 @@ package ladysnake.requiem.compat;
 
 import ladysnake.requiem.api.v1.RequiemPlugin;
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
-import ladysnake.requiem.api.v1.event.requiem.PossessionStartCallback;
-
-import java.util.Optional;
 
 public class MalumCompat implements RequiemPlugin {
 

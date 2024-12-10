@@ -35,26 +35,17 @@
 package ladysnake.requiem.common.loot;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.record.EntityPointer;
 import ladysnake.requiem.common.RequiemRecordTypes;
 import ladysnake.requiem.common.remnant.PlayerBodyTracker;
-import net.minecraft.loot.condition.EntityPropertiesLootCondition;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.condition.LootConditionType;
-import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.provider.number.LootNumberProviderTypes;
-import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.JsonHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;

@@ -35,7 +35,6 @@
 package ladysnake.requiem.common.gamerule;
 
 import ladysnake.requiem.Requiem;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;

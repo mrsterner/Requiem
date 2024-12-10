@@ -35,8 +35,6 @@
 package ladysnake.requiem.common.entity;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradedItem;
 

@@ -52,7 +52,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class RunestoneBlock extends InertRunestoneBlock implements ObeliskEffectRune {
     public static Optional<Block> getByEffect(StatusEffect effect) {

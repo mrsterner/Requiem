@@ -34,12 +34,9 @@
  */
 package ladysnake.requiem.core.data;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.NumberRange;
-import net.minecraft.util.JsonHelper;
 import org.jetbrains.annotations.Nullable;
 
 public record FoodComponentPredicate(

@@ -34,13 +34,4 @@
  */
 package ladysnake.requiem.common;
 
-import ladysnake.requiem.Requiem;
-import net.fabricmc.loader.api.FabricLoader;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 public final class RequiemConfig {}

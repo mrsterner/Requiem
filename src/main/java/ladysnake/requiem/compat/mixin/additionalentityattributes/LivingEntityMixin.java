@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.compat.mixin.additionalentityattributes;
 
-import de.dafuqs.additionalentityattributes.AdditionalEntityAttributes;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -44,8 +43,6 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-
-import java.util.Objects;
 
 @Mixin(value = LivingEntity.class, priority = 999)  // apply before AEA's mixin
 public abstract class LivingEntityMixin extends Entity {

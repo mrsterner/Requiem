@@ -39,8 +39,6 @@ import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.UUID;
-
 public final class RequiemCore {
     public static final String MOD_ID = "requiem";
     public static final Logger LOGGER = LogManager.getLogger("requiem-core");

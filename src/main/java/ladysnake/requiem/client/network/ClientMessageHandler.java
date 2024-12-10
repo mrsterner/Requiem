@@ -35,7 +35,6 @@
 package ladysnake.requiem.client.network;
 
 import ladysnake.requiem.Requiem;
-import ladysnake.requiem.api.v1.possession.Possessable;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
 import ladysnake.requiem.api.v1.util.SubDataManager;
 import ladysnake.requiem.api.v1.util.SubDataManagerHelper;
@@ -43,10 +42,8 @@ import ladysnake.requiem.client.RequiemClient;
 import ladysnake.requiem.client.RequiemFx;
 import ladysnake.requiem.client.gui.RiftWitnessedToast;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlockEntity;
-import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
-import ladysnake.requiem.core.RequiemCoreNetworking;
 import ladysnake.requiem.core.network.AnchorDamageS2CPayload;
 import ladysnake.requiem.core.network.BodyCureS2CPayload;
 import ladysnake.requiem.core.network.ConsumeResurrectionItemS2CPayload;
@@ -59,25 +56,17 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.thread.ThreadExecutor;
-import net.minecraft.world.World;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static ladysnake.requiem.common.network.RequiemNetworking.*;
 
 public class ClientMessageHandler {
     private final MinecraftClient mc = MinecraftClient.getInstance();

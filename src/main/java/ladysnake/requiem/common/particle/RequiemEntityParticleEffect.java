@@ -34,14 +34,6 @@
  */
 package ladysnake.requiem.common.particle;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.registry.Registries;
 /*
 public class RequiemEntityParticleEffect implements ParticleEffect {
     public static final Factory<RequiemEntityParticleEffect> PARAMETERS_FACTORY = new Factory<>() {

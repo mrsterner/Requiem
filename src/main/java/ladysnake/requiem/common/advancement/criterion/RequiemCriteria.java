@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.common.advancement.criterion;
 
-import ladysnake.requiem.Requiem;
 import net.minecraft.advancement.criterion.Criteria;
 
 public class RequiemCriteria {

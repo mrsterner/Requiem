@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.mixin.client.event;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.event.minecraft.ItemTooltipCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -45,7 +44,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 

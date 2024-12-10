@@ -39,7 +39,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.PotionItem;
@@ -50,7 +49,7 @@ import java.util.function.Consumer;
 
 @Mixin(PotionItem.class)
 public abstract class PotionItemMixin {
-   
+
     @WrapWithCondition(method = "finishUsing", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/component/type/PotionContentsComponent;forEachEffect(Ljava/util/function/Consumer;)V"))
     private boolean targetPossessedEntity(PotionContentsComponent instance, Consumer<StatusEffectInstance> effectConsumer, @Local LivingEntity entity, @Local PlayerEntity user) {

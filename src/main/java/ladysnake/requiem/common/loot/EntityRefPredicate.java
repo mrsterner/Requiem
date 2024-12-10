@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.common.loot;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.record.EntityPointer;
@@ -46,7 +43,6 @@ import net.minecraft.predicate.entity.DistancePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LocationPredicate;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 public record EntityRefPredicate(

@@ -37,7 +37,6 @@ package ladysnake.requiem.core.util;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.potion.Potions;
 
 public final class ItemUtil {
     private ItemUtil() { throw new AssertionError();}

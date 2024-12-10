@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.common.dialogue;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.api.v1.remnant.DeathSuspender;
@@ -43,12 +42,8 @@ import ladysnake.requiem.api.v1.remnant.RemnantType;
 import ladysnake.requiem.common.RequiemRegistries;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
-import net.fabricmc.fabric.impl.screenhandler.Networking;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import org.jetbrains.annotations.Nullable;
 import org.ladysnake.blabber.DialogueAction;
-import org.ladysnake.blabber.api.DialogueActionV2;
 
 public record RemnantChoiceDialogueAction(RemnantType chosenType) implements DialogueAction {
 

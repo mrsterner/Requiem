@@ -34,8 +34,6 @@
  */
 package ladysnake.requiem.mixin.common.data;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import ladysnake.requiem.core.data.FoodComponentPredicate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.item.ItemPredicate;
@@ -43,7 +41,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ItemPredicate.class)
 public abstract class ItemPredicateMixin {

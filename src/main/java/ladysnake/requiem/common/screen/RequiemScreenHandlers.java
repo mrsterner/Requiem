@@ -34,23 +34,6 @@
  */
 package ladysnake.requiem.common.screen;
 
-import ladysnake.requiem.Requiem;
-import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 public final class RequiemScreenHandlers {
     /*
     public static final ScreenHandlerType<RiftScreenHandler> RIFT_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(

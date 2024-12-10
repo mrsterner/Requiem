@@ -61,7 +61,6 @@ import net.minecraft.world.GameMode;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
 import org.ladysnake.cca.internal.entity.SwitchablePlayerEntity;
 import org.ladysnake.impersonate.Impersonator;
 

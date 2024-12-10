@@ -61,7 +61,6 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.packet.s2c.play.EntityAttributesS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
@@ -73,7 +72,6 @@ import net.minecraft.util.math.BlockPos;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import java.util.UUID;
-import java.util.random.RandomGenerator;
 
 public final class PossessionComponentImpl implements PossessionComponent {
     private final PlayerEntity player;

@@ -35,7 +35,6 @@
 package ladysnake.requiem.client;
 
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
-import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.core.network.EtherealFractureC2SPayload;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

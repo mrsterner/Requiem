@@ -35,20 +35,11 @@
 package ladysnake.requiem.common.advancement.criterion;
 
 import com.google.common.base.Joiner;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSyntaxException;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
 import ladysnake.requiem.common.RequiemRegistries;
-import ladysnake.requiem.common.remnant.RemnantTypes;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-
-import javax.annotation.Nullable;
 
 
 public abstract class RemnantTypePredicate {

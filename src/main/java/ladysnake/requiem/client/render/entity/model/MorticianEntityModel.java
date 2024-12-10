@@ -58,8 +58,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.util.math.MathHelper;
 
-import java.awt.*;
-
 public class MorticianEntityModel<T extends Entity> extends SinglePartEntityModel<T> implements ModelWithHead {
     public static final EntityModelLayer MODEL_LAYER = new EntityModelLayer(Requiem.id("mortician"), "main");
     public static final String SLEEVES_PART_NAME = "sleeves";

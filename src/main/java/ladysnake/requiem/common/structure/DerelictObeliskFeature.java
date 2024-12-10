@@ -35,7 +35,6 @@
 package ladysnake.requiem.common.structure;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
@@ -65,7 +64,6 @@ import net.minecraft.world.gen.structure.StructureType;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.random.RandomGenerator;
 
 import static net.minecraft.structure.StructureLiquidSettings.APPLY_WATERLOGGING;
 

@@ -73,7 +73,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.function.ToDoubleFunction;
 
 import static ladysnake.requiem.api.v1.entity.MovementConfig.MovementMode.*;

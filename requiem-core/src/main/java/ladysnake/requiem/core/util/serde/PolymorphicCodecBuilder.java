@@ -34,17 +34,10 @@
  */
 package ladysnake.requiem.core.util.serde;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;

@@ -34,7 +34,6 @@
  */
 package ladysnake.requiem.common.advancement.criterion;
 
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.common.advancement.criterion.OnResurrectCriterion.Conditions;

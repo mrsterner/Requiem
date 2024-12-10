@@ -36,7 +36,6 @@ package ladysnake.requiem.common.entity.cure;
 
 import ladysnake.requiem.api.v1.entity.CurableEntityComponent;
 import ladysnake.requiem.core.tag.RequiemCoreEntityTags;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;

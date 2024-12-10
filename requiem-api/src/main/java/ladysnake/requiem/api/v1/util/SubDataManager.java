@@ -19,7 +19,6 @@ package ladysnake.requiem.api.v1.util;
 
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.profiler.Profiler;
 

@@ -34,9 +34,6 @@
  */
 package ladysnake.requiem.client.gui;
 
-import ladysnake.requiem.common.item.DemonSoulVesselItem;
-import net.minecraft.client.gui.screen.ingame.BookScreen;
-import net.minecraft.text.Text;
 /* TODO
 public class WrittenOpusContents extends BookScreen.Contents {
     private final Text magicSentence;

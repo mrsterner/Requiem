@@ -34,22 +34,7 @@
  */
 package ladysnake.requiem.compat;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import ladysnake.requiem.Requiem;
-import ladysnake.requiem.common.RequiemConfig;
-import me.shedaniel.clothconfig2.api.AbstractConfigEntry;
-import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.gui.AbstractConfigScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
-import java.util.Collections;
 
 public final class ModMenuCompat implements ModMenuApi {
 

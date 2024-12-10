@@ -41,8 +41,6 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 public abstract class LazyDataPredicate<T> {
     private final @Nullable JsonElement json;
     private @Nullable T predicate;

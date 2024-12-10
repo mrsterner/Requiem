@@ -19,13 +19,10 @@ package ladysnake.requiem.api.v1.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.text.Text;
 
 import java.util.Locale;
 
