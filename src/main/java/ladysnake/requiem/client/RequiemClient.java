@@ -85,7 +85,10 @@ public final class RequiemClient {
         Requiem.id("textures/gui/crafting_button.png"),
         Requiem.id("textures/gui/crafting_button.png")
     );
-    public static final Identifier SOULBOUND_BACKGROUND = Requiem.id("textures/gui/soulbound_background.png");
+    //public static final Identifier SOULBOUND_BACKGROUND = Requiem.id("textures/gui/soulbound_background.png");
+    public static final Identifier SOULBOUND_BACKGROUND_LARGE = Requiem.id("textures/gui/soulbound_background_large.png");
+    public static final Identifier SOULBOUND_BACKGROUND_SMALL = Requiem.id("textures/gui/soulbound_background_small.png");
+    public static final Identifier SOULBOUND_BACKGROUND_SMALL_AMBIENT = Requiem.id("textures/gui/soulbound_background_small_ambient.png");
 
     private static final RequiemClient INSTANCE = new RequiemClient();
 

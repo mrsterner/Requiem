@@ -114,7 +114,6 @@ public abstract class AbilityBase<E extends LivingEntity> implements MobAbility<
 
     @Override
     public void readFromPacket(PacketByteBuf buf) {
-        int receivedCooldown = buf.readVarInt();
-        this.setCooldown(receivedCooldown);
+        this.setCooldown(buf.readVarInt());
     }
 }

@@ -94,14 +94,4 @@ public class VagrantPossessAbility extends DirectAbilityBase<PlayerEntity, Livin
     public Identifier getIconTexture() {
         return this.interaction != null ? this.interaction.icon() : VagrantInteractionRegistryImpl.POSSESSION_ICON;
     }
-
-    @Override
-    public void writeToPacket(PacketByteBuf buf) {
-        super.writeToPacket(buf);
-    }
-
-    @Override
-    public void readFromPacket(PacketByteBuf buf) {
-        super.readFromPacket(buf);
-    }
 }

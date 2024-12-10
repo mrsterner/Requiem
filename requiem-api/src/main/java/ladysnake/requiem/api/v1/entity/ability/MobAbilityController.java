@@ -21,6 +21,8 @@ import ladysnake.requiem.api.v1.internal.DummyMobAbilityController;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -54,5 +56,4 @@ public interface MobAbilityController extends AutoSyncedComponent, CommonTicking
 
     @Environment(EnvType.CLIENT)
     Identifier getIconTexture(AbilityType type);
-
 }

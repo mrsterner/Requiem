@@ -34,12 +34,14 @@
  */
 package ladysnake.requiem.mixin.client.attrition;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.remnant.SoulbindingRegistry;
 import ladysnake.requiem.client.RequiemClient;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
@@ -59,39 +61,19 @@ public abstract class InGameHudMixin {
     @Shadow
     @Final
     private MinecraftClient client;
-    /*
-    @Unique
-    private boolean boundSpecialBackground;
 
-     */
-    @Unique
-    private StatusEffectInstance renderedEffect;
 
-    // ModifyVariable is only used to capture the local variable more easily
-    @ModifyArg(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
-    private Identifier customizeDrawnBackground(Identifier texture, @Local StatusEffectInstance statusEffectInstance) {
+    @WrapWithCondition(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
+    private boolean customizeDrawnBackground(DrawContext instance, Identifier texture, int x, int y, int width, int height, @Local StatusEffectInstance statusEffectInstance){
         if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType())) {
-            assert this.client != null;
-            //RenderSystem.setShaderTexture(0, RequiemClient.SOULBOUND_BACKGROUND);
-            return RequiemClient.SOULBOUND_BACKGROUND;
-            //boundSpecialBackground = true;
+            assert client != null;
+            if (statusEffectInstance.isAmbient()) {
+                instance.drawTexture(RequiemClient.SOULBOUND_BACKGROUND_SMALL_AMBIENT, x, y, 0, 0, width, height, width, height);
+            } else {
+                instance.drawTexture(RequiemClient.SOULBOUND_BACKGROUND_SMALL, x, y, 0, 0, width, height, width, height);
+            }
+            return false;
         }
-        renderedEffect = statusEffectInstance;
-        return texture;
-    }
-/*
-    @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", shift = At.Shift.AFTER))
-    private void restoreDrawnBackground(CallbackInfo ci) {
-        if (boundSpecialBackground) {
-            RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE);
-            boundSpecialBackground = false;
-        }
-    }
-
- */
-
-    @WrapOperation(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/StatusEffectSpriteManager;getSprite(Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/client/texture/Sprite;"))
-    private Sprite customizeDrawnSprite(StatusEffectSpriteManager instance, RegistryEntry<StatusEffect> effect, Operation<Sprite> original) {
-        return RequiemClient.instance().statusEffectSpriteManager().substituteSprite(original.call(instance, effect), renderedEffect);
+        return true;
     }
 }

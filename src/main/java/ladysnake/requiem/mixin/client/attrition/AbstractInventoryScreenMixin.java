@@ -34,11 +34,13 @@
  */
 package ladysnake.requiem.mixin.client.attrition;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.remnant.SoulbindingRegistry;
 import ladysnake.requiem.client.RequiemClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.texture.Sprite;
@@ -58,63 +60,22 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(AbstractInventoryScreen.class)
 public abstract class AbstractInventoryScreenMixin<T extends ScreenHandler> extends HandledScreen<T> {
-    @Unique
-    private StatusEffectInstance renderedEffect;
-    /*
-    @Unique
-    private boolean boundSpecialBackground;
-
-     */
 
     public AbstractInventoryScreenMixin(T container, PlayerInventory playerInventory, Text name) {
         super(container, playerInventory, name);
     }
 
-    /*Removed in favour of customizeDrawnBackground below
-    // ModifyVariable is only used to capture the local variable more easily
-    // we cannot use INVOKE_ASSIGN and Iterator#next, because there is a hidden cast instruction
-    @ModifyVariable(method = "drawStatusEffectBackgrounds", at = @At(value = "STORE"))
-    private StatusEffectInstance customizeDrawnBackground(StatusEffectInstance effect) {
-        if (SoulbindingRegistry.instance().isSoulbound(effect.getEffectType())) {
-            assert client != null;
-            RenderSystem.setShaderTexture(0, RequiemClient.SOULBOUND_BACKGROUND);
-            boundSpecialBackground = true;
-        }
-        return effect;
-    }
-     */
-
-    @ModifyArg(method = "drawStatusEffectBackgrounds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
-    private Identifier customizeDrawnBackground(Identifier texture, @Local StatusEffectInstance statusEffectInstance){
+    @WrapWithCondition(method = "drawStatusEffectBackgrounds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lnet/minecraft/util/Identifier;IIII)V"))
+    private boolean customizeDrawnBackground(DrawContext instance, Identifier texture, int x, int y, int width, int height, @Local StatusEffectInstance statusEffectInstance, @Local(argsOnly = true) boolean wide){
         if (SoulbindingRegistry.instance().isSoulbound(statusEffectInstance.getEffectType())) {
             assert client != null;
-            //boundSpecialBackground = true;
-            return RequiemClient.SOULBOUND_BACKGROUND;
+            if (wide) {
+                instance.drawTexture(RequiemClient.SOULBOUND_BACKGROUND_LARGE, x, y, 0, 0, width, height, width, height);
+            } else {
+                instance.drawTexture(RequiemClient.SOULBOUND_BACKGROUND_SMALL, x, y, 0, 0, width, height, width, height);
+            }
+            return false;
         }
-        return texture;
+        return true;
     }
-
-    /*Removed in favour of customizeDrawnBackground above
-    @Inject(method = "drawStatusEffectBackgrounds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/AbstractInventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", shift = At.Shift.AFTER))
-    private void restoreDrawnBackground(MatrixStack matrices, int x, int height, Iterable<StatusEffectInstance> statusEffects, boolean bl, CallbackInfo ci) {
-        if (boundSpecialBackground) {
-            assert client != null;
-            RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-            boundSpecialBackground = false;
-        }
-    }
-
-     */
-
-    @ModifyVariable(method = "drawStatusEffectSprites", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;getEffectType()Lnet/minecraft/registry/entry/RegistryEntry;"))
-    private StatusEffectInstance captureCurrentEffect(StatusEffectInstance effect) {
-        this.renderedEffect = effect;
-        return effect;
-    }
-
-    @WrapOperation(method = "drawStatusEffectSprites", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/StatusEffectSpriteManager;getSprite(Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/client/texture/Sprite;"))
-    private Sprite customizeDrawnSprite(StatusEffectSpriteManager instance, RegistryEntry<StatusEffect> effect, Operation<Sprite> original) {
-        return RequiemClient.instance().statusEffectSpriteManager().substituteSprite(original.call(instance, effect), renderedEffect);
-    }
-
 }
