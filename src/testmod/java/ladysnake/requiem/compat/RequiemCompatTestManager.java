@@ -39,13 +39,5 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 
 @CalledThroughReflection
 public class RequiemCompatTestManager implements FabricGameTest {
-    /*
-    @Override
-    public void registerTests(TestRegistrationContext context) {
-        if (QuiltLoader.isModLoaded("origins")) {
-            context.register(OriginsCompatTest.class);
-        }
-    }
 
-     */
 }

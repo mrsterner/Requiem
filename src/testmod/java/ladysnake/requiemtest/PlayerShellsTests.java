@@ -45,12 +45,15 @@ import ladysnake.requiem.common.gamerule.PossessionKeepInventory;
 import ladysnake.requiem.common.gamerule.RequiemGamerules;
 import ladysnake.requiem.common.network.RequiemNetworking;
 import ladysnake.requiem.common.remnant.RemnantTypes;
+import ladysnake.requiem.core.network.AnchorDamageS2CPayload;
 import ladysnake.requiem.core.record.EntityPositionClerk;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.AfterBatch;
@@ -59,6 +62,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
+import org.ladysnake.elmendorf.GameTestUtil;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -77,8 +81,8 @@ public class PlayerShellsTests implements FabricGameTest {
     public void resetPossessionKeepInventory(ServerWorld world) {
         world.getGameRules().get(RequiemGamerules.POSSESSION_KEEP_INVENTORY).set(PossessionKeepInventory.NEVER, world.getServer());
     }
-/*
-    @GameTest(structureName = EMPTY_STRUCTURE)
+
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void mergingWithShellsShouldMergeXp(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
         RemnantComponent.get(player).become(RemnantTypes.REMNANT);
@@ -92,19 +96,19 @@ public class PlayerShellsTests implements FabricGameTest {
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void shellsShouldWarnWhenHurt(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
         RemnantComponent.get(player).become(RemnantTypes.REMNANT);
         PlayerSplitResult result = RemnantComponent.get(player).splitPlayer(true).orElseThrow();
         ctx.getWorld().tickEntity(result.soul());
         result.shell().setHealth(result.shell().getHealth() - 1);
-        ctx.getWorld().tickEntity(result.soul());
-        ctx.verifyConnection(player, c -> c.sent(RequiemNetworking.ANCHOR_DAMAGE, buf -> buf.checkBoolean(false).noMoreData()));
+        ctx.getWorld().tickEntity(result.soul());ctx.verifyConnection(player, c -> c.sent(AnchorDamageS2CPayload.ID, payload -> {}));
+
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void splittingTransfersItems(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
         RemnantComponent.get(player).become(RemnantTypes.REMNANT);
@@ -130,7 +134,7 @@ public class PlayerShellsTests implements FabricGameTest {
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE, batchId = POSSESSION_KEEPS_INVENTORY_BATCH)
+    @GameTest(templateName = EMPTY_STRUCTURE, batchId = POSSESSION_KEEPS_INVENTORY_BATCH)
     public void splittingWithKeepInventoryKeepsItems(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
         RemnantComponent.get(player).become(RemnantTypes.REMNANT);
@@ -158,7 +162,7 @@ public class PlayerShellsTests implements FabricGameTest {
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void resetIdentityEventGetsFired(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
         var listener = new PlayerShellEvents.IdentityReset() {
@@ -182,7 +186,9 @@ public class PlayerShellsTests implements FabricGameTest {
         shell.setDisplayProfile(new GameProfile(UUID.fromString("577a28bd-0fcf-49bb-b406-407f8041872b"), "Pyrofab"));
         RemnantComponent.get(player).merge(shell);
         GameTestUtil.assertTrue("Assuming a new identity should not trigger an identity reset", listener.countResets() == 0);
-        PlayerSplitResult playerSplitResult = RemnantComponent.get(player).splitPlayer(true).orElseThrow();
+        var component = RemnantComponent.get(player);
+        PlayerSplitResult playerSplitResult = component.splitPlayer(true).orElseThrow();
+        System.out.println("Resets: " + listener.countResets());
         GameTestUtil.assertTrue("Splitting should trigger an identity reset", listener.countResets() == 1);
         player = playerSplitResult.soul();
         shell = (PlayerShellEntity) playerSplitResult.shell();
@@ -192,12 +198,12 @@ public class PlayerShellsTests implements FabricGameTest {
         // make sure it's dead, origins makes them invincible
         player.setHealth(0);
         player.kill();
-        player.networkHandler.onClientStatusUpdate(new ClientStatusUpdateC2SPacket(ClientStatusUpdateC2SPacket.Mode.PERFORM_RESPAWN));
+        player.networkHandler.onClientStatus(new ClientStatusC2SPacket(ClientStatusC2SPacket.Mode.PERFORM_RESPAWN));
         GameTestUtil.assertTrue("Dying should trigger an identity reset", listener.countResets() == 1);
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest(templateName = EMPTY_STRUCTURE)
     public void splittingAndMergingTransfersTrackedRecord(TestContext ctx) {
         ServerPlayerEntity player = ctx.spawnServerPlayer(2, 0, 2);
         GlobalRecord record = EntityPositionClerk.get(player).getOrCreateRecord();
@@ -215,5 +221,5 @@ public class PlayerShellsTests implements FabricGameTest {
         ctx.complete();
     }
 
- */
+
 }

@@ -53,7 +53,7 @@ public class PossessionAiTests implements FabricGameTest {
         RequiemTestUtil.startPossession(player, mu);
         ctx.waitAndRun(2, () -> {
             mu.tryAttack(nu);
-            ctx.addTask(() -> {
+            ctx.addInstantFinalTask(() -> {
                 ctx.assertTrue(nu.getTarget() == mu, "Attacked party should target attacker");
                 ctx.assertTrue(xi.getTarget() == mu, "Third party angerables should target attacker");
                 ctx.assertTrue(mu.getTarget() == null, "Attacker should not target itself");

@@ -54,6 +54,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.event.BlockPositionSource;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
+import net.minecraft.world.event.listener.GameEventDispatcher;
 import net.minecraft.world.event.listener.GameEventListener;
 import org.ladysnake.elmendorf.GameTestUtil;
 
@@ -77,7 +78,7 @@ public class VagrantPlayerTests implements FabricGameTest {
         ctx.setBlockState(vagrantPlatePos, Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE);
         ctx.getBlockState(regularPlatePos).onEntityCollision(ctx.getWorld(), ctx.getAbsolutePos(regularPlatePos), regularPlayer);
         ctx.getBlockState(vagrantPlatePos).onEntityCollision(ctx.getWorld(), ctx.getAbsolutePos(vagrantPlatePos), vagrantPlayer);
-        ctx.addTask(() -> {
+        ctx.addInstantFinalTask(() -> {
             ctx.expectBlockProperty(regularPlatePos, WeightedPressurePlateBlock.POWER, 1);
             ctx.expectBlockProperty(vagrantPlatePos, WeightedPressurePlateBlock.POWER, 0);
         });
@@ -99,8 +100,8 @@ public class VagrantPlayerTests implements FabricGameTest {
         var listener = new GameEventListener() {
             private final Map<LivingEntity, Set<GameEvent>> detectedEntities = new WeakHashMap<>();
 
-            public boolean detected(LivingEntity entity, GameEvent event) {
-                return detectedEntities.getOrDefault(entity, Set.of()).contains(event);
+            public boolean detected(LivingEntity entity, RegistryEntry<GameEvent> event) {
+                return detectedEntities.getOrDefault(entity, Set.of()).contains(event.value());
             }
 
             @Override
@@ -123,8 +124,8 @@ public class VagrantPlayerTests implements FabricGameTest {
             }
 
         };
-        /*TODO
-        ctx.getWorld().getChunk(regularPlayer.getBlockPos()).getListenerRegistry(ChunkSectionPos.getSectionCoord(regularPlayer.getY())).register(listener);
+
+        ctx.getWorld().getChunk(regularPlayer.getBlockPos()).getGameEventDispatcher(ChunkSectionPos.getSectionCoord(regularPlayer.getY())).addListener(listener);
         Vec3d movement = new Vec3d(2, -0.5, 0);
         regularPlayer.move(MovementType.SELF, movement);
         vagrantPlayer.move(MovementType.SELF, movement);
@@ -132,7 +133,7 @@ public class VagrantPlayerTests implements FabricGameTest {
         ctx.getWorld().emitGameEvent(regularPlayer, GameEvent.TELEPORT, regularPlayer.getPos());
         ctx.getWorld().emitGameEvent(vagrantPlayer, GameEvent.TELEPORT, regularPlayer.getPos());
         ctx.getWorld().emitGameEvent(possessor, GameEvent.TELEPORT, regularPlayer.getPos());
-        ctx.waitAndRun(1, () -> ctx.addTask(() -> {
+        ctx.waitAndRun(1, () -> ctx.addInstantFinalTask(() -> {
             GameTestUtil.assertTrue("Mortal players should send step game events", listener.detected(regularPlayer, GameEvent.STEP));
             GameTestUtil.assertTrue("Mortal players should send other game events", listener.detected(regularPlayer, GameEvent.TELEPORT));
             GameTestUtil.assertFalse("Vagrant players should not send step game events", listener.detected(vagrantPlayer, GameEvent.STEP));
@@ -144,6 +145,5 @@ public class VagrantPlayerTests implements FabricGameTest {
             ctx.complete();
         }));
 
-         */
     }
 }

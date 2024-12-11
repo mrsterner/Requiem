@@ -52,7 +52,7 @@ public class SoulboundEffectTests implements FabricGameTest {
         ServerPlayerEntity ghost = RequiemTestUtil.spawnGhost(ctx);
         ghost.addStatusEffect(new StatusEffectInstance(RequiemStatusEffects.ATTRITION, 30, 0));
         ghost.clearStatusEffects();
-        ctx.waitAndRun(1, () -> ctx.addTask(() -> GameTestUtil.assertTrue("Player should keep attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
+        ctx.waitAndRun(1, () -> ctx.addInstantFinalTask(() -> GameTestUtil.assertTrue("Player should keep attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
     }
 
     @GameTest(templateName = EMPTY_STRUCTURE)
@@ -60,6 +60,6 @@ public class SoulboundEffectTests implements FabricGameTest {
         ServerPlayerEntity ghost = RequiemTestUtil.spawnGhost(ctx);
         ghost.addStatusEffect(new StatusEffectInstance(RequiemStatusEffects.ATTRITION, 30, 0));
         EffectCommandAccessor.invokeExecuteClear(ghost.getCommandSource(), List.of(ghost));
-        ctx.waitAndRun(1, () -> ctx.addTask(() -> GameTestUtil.assertFalse("Player should lose attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
+        ctx.waitAndRun(1, () -> ctx.addInstantFinalTask(() -> GameTestUtil.assertFalse("Player should lose attrition", ghost.hasStatusEffect(RequiemStatusEffects.ATTRITION))));
     }
 }

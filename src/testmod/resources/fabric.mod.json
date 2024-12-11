@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "requiem-test",
+  "version": "${version}",
+  "name": "Requiem Test Mod",
+  "description": "It's just a test... Or is it?",
+  "authors": [
+    "Pyrofab"
+  ],
+  "contact": {
+    "sources": "https://github.com/Ladysnake/Requiem",
+    "issues": "https://github.com/Ladysnake/Requiem/issues",
+    "discord": "ladysnake.glitch.me"
+  },
+  "license": "LGPL-3.0-or-later",
+  "icon": "assets/requiem-test/textures/skull_logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "ladysnake.requiemtest.RequiemTestSuite",
+      "ladysnake.requiem.common.block.obelisk.ObeliskTests",
+      "ladysnake.requiem.common.effect.SoulboundEffectTests",
+      "ladysnake.requiem.common.entity.MorticianEntityTests",
+      "ladysnake.requiem.common.item.EmptySoulVesselItemTests",
+      "ladysnake.requiem.common.item.FilledSoulVesselItemTests",
+      "ladysnake.requiem.common.item.DemonSoulVesselItemTests",
+      "ladysnake.requiem.common.possession.PossessionStatusEffectsTests",
+      "ladysnake.requiem.common.possession.PossessionAiTests",
+      "ladysnake.requiem.common.remnant.DroppedVesselTrackerTests",
+      "ladysnake.requiem.common.remnant.VagrantPlayerTests",
+      "ladysnake.requiem.compat.RequiemCompatTestManager",
+      "ladysnake.requiemtest.PlayerShellsTests"
+    ]
+  },
+  "mixins": [
+    "mixins.requiem-test.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*"
+  },
+  "custom": {
+    "intermediate_mappings": "net.fabricmc:intermediary"
+  }
+}

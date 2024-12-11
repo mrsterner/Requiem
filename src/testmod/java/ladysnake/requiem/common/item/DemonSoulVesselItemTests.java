@@ -63,7 +63,7 @@ public class DemonSoulVesselItemTests implements FabricGameTest {
                     .checkBoolean(false)
                     .noMoreData()
             );
-            //TODO conn.sent(new OpusUseS2CPayload(PacketByteBufs.create()));
+            conn.sent(OpusUseS2CPayload.ID);
         });
         ctx.complete();
     }

@@ -56,7 +56,7 @@ public class MorticianEntityTests implements FabricGameTest {
     public void oldEtherealMorticiansGetConverted(TestContext ctx) {
         BlockPos controllerPos = new BlockPos(20, 3, 20);
         ctx.setBlockState(controllerPos.up(), RequiemBlocks.RIFT_RUNE);
-        ctx.addTask(() -> {
+        ctx.addInstantFinalTask(() -> {
             RunestoneBlockEntity controller = (RunestoneBlockEntity) ctx.getBlockEntity(controllerPos);
             ctx.assertTrue(controller != null, "Controller should be available");
             assert controller != null : "TestContext#assertTrue is not doing its job";
