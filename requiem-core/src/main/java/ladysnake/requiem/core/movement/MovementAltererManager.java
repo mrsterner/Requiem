@@ -42,12 +42,12 @@ import ladysnake.requiem.api.v1.util.SubDataManager;
 import ladysnake.requiem.core.RequiemCore;
 import ladysnake.requiem.core.util.serde.EntityTypeAdapter;
 import ladysnake.requiem.core.util.serde.TriStateTypeAdapter;
+import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.entity.EntityType;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
@@ -69,34 +69,14 @@ public final class MovementAltererManager implements SubDataManager<Map<EntityTy
     public static final Identifier LOCATION = RequiemCore.id("entity_mobility.json");
     public static final Identifier LISTENER_ID = RequiemCore.id("movement_alterer");
 
-    private final Map<EntityType<?>, SerializableMovementConfig> entityMovementConfigs = new HashMap<>();
+    public static final Map<EntityType<?>, SerializableMovementConfig> entityMovementConfigs = new HashMap<>();
 
     @Override
-    public void apply(Map<EntityType<?>, SerializableMovementConfig> data) {
+    public CompletableFuture<Void> apply(Map<EntityType<?>, SerializableMovementConfig> entityTypeSerializableMovementConfigMap, ResourceManager resourceManager, Profiler profiler, Executor executor) {
         entityMovementConfigs.clear();
-        entityMovementConfigs.putAll(data);
-    }
-
-    @Override
-    public void toPacket(PacketByteBuf buf) {
-        buf.writeVarInt(entityMovementConfigs.size());
-        for (Map.Entry<EntityType<?>, SerializableMovementConfig> entry : entityMovementConfigs.entrySet()) {
-            buf.writeIdentifier(EntityType.getId(entry.getKey()));
-            entry.getValue().toPacket(buf);
-        }
-    }
-
-    @Override
-    public Map<EntityType<?>, SerializableMovementConfig> loadFromPacket(PacketByteBuf buf) {
-        Map<EntityType<?>, SerializableMovementConfig> ret = new HashMap<>();
-        int nbConfigs = buf.readVarInt();
-        for (int i = 0; i < nbConfigs; i++) {
-            Identifier id = buf.readIdentifier();
-            SerializableMovementConfig conf = new SerializableMovementConfig();
-            conf.fromPacket(buf);
-            ret.put(Registries.ENTITY_TYPE.get(id), conf);
-        }
-        return ret;
+        return CompletableFuture.runAsync(() -> {
+            load(resourceManager, profiler, executor);
+        }, executor);
     }
 
     @Override
@@ -122,6 +102,7 @@ public final class MovementAltererManager implements SubDataManager<Map<EntityTy
             } catch (IOException e) {
                 RequiemCore.LOGGER.error("Could not read movement configs", e);
             }
+            entityMovementConfigs.putAll(ret);
             return ret;
         }, executor);
     }

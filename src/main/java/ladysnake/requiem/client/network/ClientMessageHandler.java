@@ -36,8 +36,6 @@ package ladysnake.requiem.client.network;
 
 import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
-import ladysnake.requiem.api.v1.util.SubDataManager;
-import ladysnake.requiem.api.v1.util.SubDataManagerHelper;
 import ladysnake.requiem.client.RequiemClient;
 import ladysnake.requiem.client.RequiemFx;
 import ladysnake.requiem.client.gui.RiftWitnessedToast;
@@ -55,21 +53,14 @@ import ladysnake.requiem.core.network.OpusUseS2CPayload;
 import ladysnake.requiem.core.network.RiftWitnessedS2CPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.thread.ThreadExecutor;
 import net.minecraft.world.World;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ClientMessageHandler {
     private final MinecraftClient mc = MinecraftClient.getInstance();
@@ -117,19 +108,10 @@ public class ClientMessageHandler {
 
         PayloadTypeRegistry.playS2C().register(DataSyncS2CPayload.ID, DataSyncS2CPayload.STREAM_CODEC);
         ClientPlayNetworking.registerGlobalReceiver(DataSyncS2CPayload.ID,  (payload, ctx) -> {
-            // We intentionally do not use the context's task queue directly
-            // First, we make each sub data manager process its data, then we apply it synchronously with the task queue
-
-            Map<Identifier, SubDataManager<?>> map = SubDataManagerHelper.getClientHelper().streamDataManagers().collect(Collectors.toMap(IdentifiableResourceReloadListener::getFabricId, Function.identity()));
-            int nbManagers = payload.nbManagers;
-            for (int i = 0; i < nbManagers; i++) {
-                Identifier id = payload.id;
-                SubDataManager<?> manager = Objects.requireNonNull(map.get(id), "Unknown sub data manager " + id);
-                Requiem.LOGGER.info("[Requiem] Received data for {}", manager.getFabricId());
-                //TODO syncSubDataManager(payload, manager, ctx.client());
-            }
+            ctx.client().execute(() -> {
+                payload.handle(payload, ctx);
+            });
         });
-
 
         PayloadTypeRegistry.playS2C().register(EtherealAnimationS2CPayload.ID, EtherealAnimationS2CPayload.STREAM_CODEC);
         ClientPlayNetworking.registerGlobalReceiver(EtherealAnimationS2CPayload.ID,  (payload, ctx) -> {
@@ -170,10 +152,5 @@ public class ClientMessageHandler {
             ctx.client().execute(() -> ctx.client().getToastManager().add(new RiftWitnessedToast(payload.riftName)));
         });
 
-    }
-
-    private static <T> void syncSubDataManager(PacketByteBuf buffer, SubDataManager<T> subManager, ThreadExecutor<?> taskQueue) {
-        T data = subManager.loadFromPacket(buffer);
-        taskQueue.execute(() -> {subManager.apply(data);});
     }
  }

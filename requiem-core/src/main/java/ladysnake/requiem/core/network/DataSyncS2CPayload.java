@@ -34,31 +34,40 @@
  */
 package ladysnake.requiem.core.network;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ladysnake.requiem.core.RequiemCore;
+import ladysnake.requiem.core.movement.MovementAltererManager;
+import ladysnake.requiem.core.movement.SerializableMovementConfig;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.entity.EntityType;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.Registries;
+import java.util.Map;
 
-public class DataSyncS2CPayload implements CustomPayload {
+public record DataSyncS2CPayload(Map<EntityType<?>, SerializableMovementConfig> configs) implements CustomPayload {
 
     public static Id<DataSyncS2CPayload> ID = new Id<>(RequiemCore.id("data_sync"));
-    public static final PacketCodec<? super PacketByteBuf, DataSyncS2CPayload> STREAM_CODEC = CustomPayload.codecOf(DataSyncS2CPayload::write, DataSyncS2CPayload::new);
-    public final int nbManagers;
-    public final Identifier id;
 
-    private void write(PacketByteBuf buf) {
-        buf.writeVarInt(nbManagers);
-        buf.writeIdentifier(id);
-    }
+    public static final Codec<DataSyncS2CPayload> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        Codec.unboundedMap(Registries.ENTITY_TYPE.getCodec(), SerializableMovementConfig.CODEC).fieldOf("configs").forGetter(payload -> payload.configs)
+    ).apply(instance, DataSyncS2CPayload::new));
 
-    public DataSyncS2CPayload(PacketByteBuf buf) {
-        this.nbManagers = buf.readVarInt();
-        this.id = buf.readIdentifier();
-    }
+    public static final PacketCodec<? super PacketByteBuf, DataSyncS2CPayload> STREAM_CODEC = PacketCodecs.unlimitedCodec(CODEC);
+
 
     @Override
     public Id<? extends CustomPayload> getId() {
         return ID;
+    }
+
+    public void handle(DataSyncS2CPayload payload, ClientPlayNetworking.Context ctx) {
+        ctx.client().execute(() -> {
+            MovementAltererManager.entityMovementConfigs.clear();
+            MovementAltererManager.entityMovementConfigs.putAll(payload.configs);
+        });
     }
 }

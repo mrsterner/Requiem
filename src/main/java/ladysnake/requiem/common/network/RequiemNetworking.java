@@ -34,15 +34,14 @@
  */
 package ladysnake.requiem.common.network;
 
-import ladysnake.requiem.Requiem;
 import ladysnake.requiem.api.v1.block.ObeliskDescriptor;
 import ladysnake.requiem.api.v1.entity.ability.AbilityType;
 import ladysnake.requiem.api.v1.remnant.RemnantType;
-import ladysnake.requiem.api.v1.util.SubDataManager;
 import ladysnake.requiem.api.v1.util.SubDataManagerHelper;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlockEntity;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.core.RequiemCoreNetworking;
+import ladysnake.requiem.core.movement.MovementAltererManager;
 import ladysnake.requiem.core.network.AnchorDamageS2CPayload;
 import ladysnake.requiem.core.network.BodyCureS2CPayload;
 import ladysnake.requiem.core.network.DataSyncS2CPayload;
@@ -69,14 +68,9 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-import java.util.Optional;
-
 import static io.netty.buffer.Unpooled.buffer;
 
 public final class RequiemNetworking {
-    // Server -> Client
-
 
     public static void sendToServer(CustomPayload message) {
         assert MinecraftClient.getInstance().player != null;
@@ -102,18 +96,6 @@ public final class RequiemNetworking {
         buf.writeVarInt(RemnantTypes.getRawId(chosenType));
         buf.writeBoolean(showBook);
         return new OpusUseS2CPayload(buf);
-    }
-
-    public static DataSyncS2CPayload createDataSyncMessage(SubDataManagerHelper helper) {
-        PacketByteBuf buf = createEmptyBuffer();
-        List<SubDataManager<?>> managers = helper.streamDataManagers().toList();
-        buf.writeVarInt(managers.size());
-        for (SubDataManager<?> manager : managers) {
-            Requiem.LOGGER.info("[Requiem] Synchronizing data for {} ({})", manager.getFabricId(), manager);
-            buf.writeIdentifier(manager.getFabricId());
-            manager.toPacket(buf);
-        }
-        return new DataSyncS2CPayload(buf);
     }
 
     @Contract(pure = true)
@@ -169,5 +151,9 @@ public final class RequiemNetworking {
         RegistryByteBuf registryByteBuf = new RegistryByteBuf(buf, player.getRegistryManager());
         TextCodecs.PACKET_CODEC.encode(registryByteBuf, obeliskName);
         ServerPlayNetworking.send(player, new RiftWitnessedS2CPayload(buf));
+    }
+
+    public static CustomPayload createDataSyncMessage(SubDataManagerHelper helper) {
+        return new DataSyncS2CPayload(MovementAltererManager.entityMovementConfigs);
     }
 }
