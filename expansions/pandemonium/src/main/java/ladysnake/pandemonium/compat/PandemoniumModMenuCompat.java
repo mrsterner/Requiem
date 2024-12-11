@@ -41,5 +41,12 @@ import ladysnake.pandemonium.common.PandemoniumConfig;
 import ladysnake.requiem.compat.ModMenuCompat;
 
 public class PandemoniumModMenuCompat implements ModMenuApi {
-
+    @Override
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        try {
+            return new ModMenuCompat.ClothConfigScreenFactory(Pandemonium.MOD_ID, PandemoniumConfig.configTree(), PandemoniumConfig::save);
+        } catch (Throwable t) {
+            return parent -> null;
+        }
+    }
 }

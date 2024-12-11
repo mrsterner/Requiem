@@ -43,6 +43,9 @@ import ladysnake.requiem.common.block.obelisk.InertRunestoneBlock;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlock;
 import ladysnake.requiem.common.entity.RequiemEntityAttributes;
 import ladysnake.requiem.common.entity.effect.AttritionStatusEffect;
+import ladysnake.requiem.common.particle.RequiemEntityParticleData;
+import ladysnake.requiem.common.particle.RequiemEntityParticleType;
+import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.remnant.WandererRemnantState;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
@@ -257,9 +260,8 @@ public class EmptySoulVesselItem extends Item {
     public static void playSoulCaptureEffects(LivingEntity user, Entity target) {
         if (!(user.getWorld() instanceof ServerWorld world)) throw new IllegalStateException("Must be called serverside");
         if (world.getRandom().nextFloat() < 0.75f) {
-            /* TODO
             world.spawnParticles(
-                new RequiemEntityParticleEffect(RequiemParticleTypes.ENTITY_DUST, target.getId(), user.getId()),
+                new RequiemEntityParticleData(target.getId(), user.getId()),
                 target.getX(), target.getBodyY(0.5), target.getZ(),
                 world.random.nextInt(6) + 4,
                 target.getWidth() * 0.2,
@@ -267,9 +269,6 @@ public class EmptySoulVesselItem extends Item {
                 target.getWidth() * 0.2,
                 1.0
             );
-
-
-             */
         }
 
         user.playSound(RequiemSoundEvents.ITEM_EMPTY_VESSEL_USE, 1, 1);

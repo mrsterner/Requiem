@@ -42,6 +42,7 @@ import ladysnake.requiem.client.RequiemClient;
 import ladysnake.requiem.client.RequiemFx;
 import ladysnake.requiem.client.gui.RiftWitnessedToast;
 import ladysnake.requiem.common.block.obelisk.RunestoneBlockEntity;
+import ladysnake.requiem.common.particle.RequiemParticleTypes;
 import ladysnake.requiem.common.remnant.RemnantTypes;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.network.AnchorDamageS2CPayload;
@@ -56,12 +57,14 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.thread.ThreadExecutor;
+import net.minecraft.world.World;
 
 import java.util.Map;
 import java.util.Objects;
@@ -90,8 +93,18 @@ public class ClientMessageHandler {
 
         PayloadTypeRegistry.playS2C().register(BodyCureS2CPayload.ID, BodyCureS2CPayload.STREAM_CODEC);
         ClientPlayNetworking.registerGlobalReceiver(BodyCureS2CPayload.ID, (payload, ctx) -> {
+
             ctx.client().execute(() -> {
-                payload.handle(payload, ctx);
+                World world = ctx.player().getWorld();
+                Entity entity = world.getEntityById(payload.entityId);
+                if (entity != null) {
+                    for(int i = 0; i < 40; ++i) {
+                        double vx = entity.getWorld().random.nextGaussian() * 0.05D;
+                        double vy = entity.getWorld().random.nextGaussian() * 0.05D;
+                        double vz = entity.getWorld().random.nextGaussian() * 0.05D;
+                        entity.getWorld().addParticle(RequiemParticleTypes.CURE, entity.getParticleX(0.5D), entity.getRandomBodyY(), entity.getParticleZ(0.5D), vx, vy, vz);
+                    }
+                }
             });
         });
 

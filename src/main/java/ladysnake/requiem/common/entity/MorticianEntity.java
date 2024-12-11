@@ -90,6 +90,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.particle.EntityEffectParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.potion.Potion;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKey;
@@ -265,8 +267,12 @@ public class MorticianEntity extends MerchantEntity implements Angerable {
             float theta = this.bodyYaw * (float) (Math.PI / 180.0) + MathHelper.cos((float) this.age * 0.6662F) * 0.25F;
             float x = MathHelper.cos(theta);
             float z = MathHelper.sin(theta);
-            this.getWorld().addParticle(RequiemParticleTypes.PENANCE, this.getX() + (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() + (double) z * 0.6, 1, 1, 1);
-            this.getWorld().addParticle(RequiemParticleTypes.PENANCE, this.getX() - (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() - (double) z * 0.6, 1, 1, 1);
+            this.getWorld().addParticle(
+                EntityEffectParticleEffect.create(
+                    RequiemParticleTypes.PENANCE, 1.0F, 1.0F, 1.0F), this.getX() + (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() + (double) z * 0.6, 1, 1, 1);
+            this.getWorld().addParticle(
+                EntityEffectParticleEffect.create(
+                    RequiemParticleTypes.PENANCE, 1.0F, 1.0F, 1.0F), this.getX() - (double) x * 0.6, this.getY() + this.getHeight() * 0.92, this.getZ() - (double) z * 0.6, 1, 1, 1);
         }
     }
 

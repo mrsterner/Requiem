@@ -1,62 +1,41 @@
-/*
- * Requiem
- * Copyright (C) 2017-2024 Ladysnake
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses>.
- *
- * Linking this mod statically or dynamically with other
- * modules is making a combined work based on this mod.
- * Thus, the terms and conditions of the GNU General Public License cover the whole combination.
- *
- * In addition, as a special exception, the copyright holders of
- * this mod give you permission to combine this mod
- * with free software programs or libraries that are released under the GNU LGPL
- * and with code included in the standard release of Minecraft under All Rights Reserved (or
- * modified versions of such code, with unchanged license).
- * You may copy and distribute such a system following the terms of the GNU GPL for this mod
- * and the licenses of the other code concerned.
- *
- * Note that people who make modified versions of this mod are not obligated to grant
- * this special exception for their modified versions; it is their choice whether to do so.
- * The GNU General Public License gives permission to release a modified version without this exception;
- * this exception also makes it possible to release a modified version which carries forward this exception.
- */
-package ladysnake.requiem.client.particle.wisp;
+package ladysnake.requiem.client.particle;
 
-/*TODO
-public final class WispTrailParticle extends SpriteBillboardParticle {
+import ladysnake.requiem.common.particle.WispTrailParticleData;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleFactory;
+import net.minecraft.client.particle.ParticleTextureSheet;
+import net.minecraft.client.particle.SpriteBillboardParticle;
+import net.minecraft.client.particle.SpriteProvider;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+import java.util.Random;
+
+public class WispTrailParticle extends SpriteBillboardParticle {
+
     private final float redEvolution;
     private final float greenEvolution;
     private final float blueEvolution;
 
-    private WispTrailParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, WispTrailParticleEffect wispTrailParticleEffect, SpriteProvider spriteProvider) {
+    private WispTrailParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, WispTrailParticleData wispTrailData, SpriteProvider spriteProvider) {
         super(world, x, y, z, velocityX, velocityY, velocityZ);
-        this.red = wispTrailParticleEffect.red();
-        this.red = wispTrailParticleEffect.green();
-        this.red = wispTrailParticleEffect.blue();
-        this.redEvolution = wispTrailParticleEffect.redEvolution();
-        this.greenEvolution = wispTrailParticleEffect.greenEvolution();
-        this.blueEvolution = wispTrailParticleEffect.blueEvolution();
+        this.red = wispTrailData.red();
+        this.green = wispTrailData.green();
+        this.blue = wispTrailData.blue();
+        this.redEvolution = wispTrailData.redEvolution();
+        this.greenEvolution = wispTrailData.greenEvolution();
+        this.blueEvolution = wispTrailData.blueEvolution();
         this.maxAge = 10 + this.random.nextInt(10);
         this.scale *= 0.25f + new Random().nextFloat() * 0.50f;
         this.setSpriteForAge(spriteProvider);
         this.velocityY = 0.1;
-    }
-
-    @Override
-    public ParticleTextureSheet getType() {
-        return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     @Override
@@ -127,19 +106,26 @@ public final class WispTrailParticle extends SpriteBillboardParticle {
         vertexConsumer.vertex(Vec3fs[2].x(), Vec3fs[2].y(), Vec3fs[2].z()).texture(minU, minV).color(red, green, blue, alpha).light(l);
         vertexConsumer.vertex(Vec3fs[3].x(), Vec3fs[3].y(), Vec3fs[3].z()).texture(minU, maxV).color(red, green, blue, alpha).light(l);
     }
-/*
-    public static class Factory implements ParticleFactory<WispTrailParticleEffect> {
-        private final SpriteProvider spriteProvider;
 
-        public Factory(SpriteProvider spriteProvider) {
-            this.spriteProvider = spriteProvider;
+
+    @Override
+    public ParticleTextureSheet getType() {
+        return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+    }
+
+    public static class Fabctory implements ParticleFactory<WispTrailParticleData> {
+        private final SpriteProvider spriteSet;
+
+        public Fabctory(SpriteProvider spriteSet) {
+            this.spriteSet = spriteSet;
         }
 
+        @Nullable
         @Override
-        public Particle createParticle(WispTrailParticleEffect wispTrailParticleEffect, ClientWorld clientWorld, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-            return new WispTrailParticle(clientWorld, x, y, z, velocityX, velocityY, velocityZ, wispTrailParticleEffect, this.spriteProvider);
+        public Particle createParticle(WispTrailParticleData parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+            Vec3d pos = new Vec3d(x, y, z);
+            return new WispTrailParticle(world, x, y, z, velocityX, velocityY, velocityZ, parameters, this.spriteSet);
         }
     }
 
 }
-*/

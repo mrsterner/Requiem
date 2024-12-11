@@ -39,6 +39,7 @@ import ladysnake.requiem.api.v1.record.EntityPointer;
 import ladysnake.requiem.api.v1.record.GlobalRecord;
 import ladysnake.requiem.api.v1.record.GlobalRecordKeeper;
 import ladysnake.requiem.common.RequiemRecordTypes;
+import ladysnake.requiem.common.particle.WispTrailParticleData;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
@@ -203,7 +204,7 @@ public class ReleasedSoulEntity extends SoulEntity {
             case MERGE_WITH_BODY_STATUS -> {
                 this.playSound(SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, 1, 1);
                 for (int i = 0; i < 25; i++) {
-                    //TODO this.getWorld().addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
+                    this.getWorld().addParticle(new WispTrailParticleData(1.0f, 1.0f, 1.0f, -0.1f, -0.01f, 0.0f), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
                 }
             }
             default -> super.handleStatus(status);

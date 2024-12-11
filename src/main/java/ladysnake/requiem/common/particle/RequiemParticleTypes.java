@@ -34,45 +34,64 @@
  */
 package ladysnake.requiem.common.particle;
 
+import com.mojang.serialization.MapCodec;
 import ladysnake.requiem.Requiem;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.particle.EntityEffectParticleEffect;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+
+import java.util.function.Function;
 
 public final class RequiemParticleTypes {
     public static final SimpleParticleType ATTRITION = FabricParticleTypes.simple(false);
     public static final SimpleParticleType ATTUNED = FabricParticleTypes.simple(false);
     public static final SimpleParticleType CURE = FabricParticleTypes.simple(false);
-    /*
-    public static final ParticleType<RequiemEntityParticleEffect> ENTITY_DUST = new ParticleType<>(false, RequiemEntityParticleEffect.PARAMETERS_FACTORY) {
-        @Override
-        public Codec<RequiemEntityParticleEffect> getCodec() {
-            return RequiemEntityParticleEffect.codec(this);
-        }
-    };
 
-     */
+
+    public static final RequiemEntityParticleType ENTITY_DUST = new RequiemEntityParticleType(false);
+
     public static final SimpleParticleType GHOST = FabricParticleTypes.simple(true);
-    /*
-    public static final ParticleType<WispTrailParticleEffect> SOUL_TRAIL = new ParticleType<>(true, WispTrailParticleEffect.PARAMETERS_FACTORY) {
-        @Override
-        public Codec<WispTrailParticleEffect> getCodec() {
-            return WispTrailParticleEffect.CODEC;
-        }
-    };
 
-     */
+    public static final WispTrailParticleType SOUL_TRAIL = new WispTrailParticleType(true);
+
     public static final SimpleParticleType OBELISK_SOUL = FabricParticleTypes.simple(false);
-    public static final SimpleParticleType PENANCE = FabricParticleTypes.simple(false);
+
+    public static final ParticleType<EntityEffectParticleEffect> PENANCE = register(
+        "penance", false, EntityEffectParticleEffect::createCodec, EntityEffectParticleEffect::createPacketCodec
+    );
+
+    private static <T extends ParticleEffect> ParticleType<T> register(
+        String name,
+        boolean alwaysShow,
+        Function<ParticleType<T>, MapCodec<T>> codecGetter,
+        Function<ParticleType<T>, PacketCodec<? super RegistryByteBuf, T>> packetCodecGetter
+    ) {
+        return Registry.register(Registries.PARTICLE_TYPE, name, new ParticleType<T>(alwaysShow) {
+            @Override
+            public MapCodec<T> getCodec() {
+                return codecGetter.apply(this);
+            }
+
+            @Override
+            public PacketCodec<? super RegistryByteBuf, T> getPacketCodec() {
+                return packetCodecGetter.apply(this);
+            }
+        });
+    }
 
     public static void init() {
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("attrition"), ATTRITION);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("attuned"), ATTUNED);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("cure"), CURE);
-        //Registry.register(Registries.PARTICLE_TYPE, Requiem.id("entity_dust"), ENTITY_DUST);
+        Registry.register(Registries.PARTICLE_TYPE, Requiem.id("entity_dust"), ENTITY_DUST);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("ghost"), GHOST);
-        //Registry.register(Registries.PARTICLE_TYPE, Requiem.id("soul_trail"), SOUL_TRAIL);
+        Registry.register(Registries.PARTICLE_TYPE, Requiem.id("soul_trail"), SOUL_TRAIL);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("obelisk_soul"), OBELISK_SOUL);
         Registry.register(Registries.PARTICLE_TYPE, Requiem.id("penance"), PENANCE);
     }

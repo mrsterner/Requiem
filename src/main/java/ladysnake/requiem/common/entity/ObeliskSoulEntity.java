@@ -35,6 +35,7 @@
 package ladysnake.requiem.common.entity;
 
 import ladysnake.requiem.common.block.obelisk.InertRunestoneBlock;
+import ladysnake.requiem.common.particle.WispTrailParticleData;
 import ladysnake.requiem.common.sound.RequiemSoundEvents;
 import ladysnake.requiem.core.movement.PlayerMovementAlterer;
 import net.minecraft.block.BlockState;
@@ -122,7 +123,7 @@ public class ObeliskSoulEntity extends SoulEntity {
         float redEvolution = -0.05f * (1f - this.getConversionProgress());
         float greenEvolution = -0.06f * this.getConversionProgress();
         float blueEvolution = 0.0f;
-        //TODO this.getWorld().addParticle(new WispTrailParticleEffect(1.0f, 1.0f, 1.0f, redEvolution, greenEvolution, blueEvolution), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
+        this.getWorld().addParticle(new WispTrailParticleData(1.0f, 1.0f, 1.0f, redEvolution, greenEvolution, blueEvolution), this.getX() + random.nextGaussian() / 15, this.getY() + random.nextGaussian() / 15, this.getZ() + random.nextGaussian() / 15, 0, 0.2d, 0);
     }
 
     public float getConversionProgress() {

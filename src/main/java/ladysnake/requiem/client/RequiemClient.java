@@ -40,6 +40,7 @@ import ladysnake.requiem.client.model.lib.SimpleBakedModel;
 import ladysnake.requiem.client.model.lib.SimpleUnbakedModel;
 import ladysnake.requiem.client.network.ClientMessageHandler;
 import ladysnake.requiem.client.particle.CureParticle;
+import ladysnake.requiem.client.particle.EntityDustParticle;
 import ladysnake.requiem.client.particle.GhostParticle;
 import ladysnake.requiem.client.render.block.RunestoneBlockEntityRenderer;
 import ladysnake.requiem.client.render.entity.CuredPiglinEntityRenderer;
@@ -54,6 +55,7 @@ import ladysnake.requiem.common.block.RequiemBlocks;
 import ladysnake.requiem.common.entity.RequiemEntities;
 import ladysnake.requiem.common.entity.effect.RequiemStatusEffects;
 import ladysnake.requiem.common.particle.RequiemParticleTypes;
+import ladysnake.requiem.client.particle.WispTrailParticle;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
@@ -66,11 +68,13 @@ import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.particle.PortalParticle;
 import net.minecraft.client.particle.SoulParticle;
+import net.minecraft.client.particle.SpellParticle;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.entity.EntityType;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -191,10 +195,10 @@ public final class RequiemClient {
         registry.register(RequiemParticleTypes.ATTUNED, CureParticle.Factory::new);
         registry.register(RequiemParticleTypes.CURE, CureParticle.Factory::new);
         registry.register(RequiemParticleTypes.GHOST, GhostParticle.Factory::new);
-        //TODO registry.register(RequiemParticleTypes.ENTITY_DUST, new EntityDustParticle.Factory());
+        registry.register(RequiemParticleTypes.ENTITY_DUST, EntityDustParticle.Factory::new);
         registry.register(RequiemParticleTypes.OBELISK_SOUL, SoulParticle.Factory::new);
-        //registry.register(RequiemParticleTypes.SOUL_TRAIL, WispTrailParticle.Factory::new);
-        //registry.register(RequiemParticleTypes.PENANCE, SpellParticle.EntityFactory::new);
+        registry.register(RequiemParticleTypes.SOUL_TRAIL, WispTrailParticle.Fabctory::new);
+        registry.register(RequiemParticleTypes.PENANCE, SpellParticle.EntityFactory::new);
     }
 
     private void registerModelPredicates() {

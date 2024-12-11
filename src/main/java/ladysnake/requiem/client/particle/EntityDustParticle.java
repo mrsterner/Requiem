@@ -36,11 +36,15 @@ package ladysnake.requiem.client.particle;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import ladysnake.requiem.common.particle.RequiemEntityParticleData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.BillboardParticle;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleTextureSheet;
+import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
@@ -192,20 +196,25 @@ public class EntityDustParticle extends BillboardParticle {
     protected float getMaxV() {
         return this.sampleV * 4.0f / 128.0f;
     }
-/*TODO
+
     @Environment(EnvType.CLIENT)
-    public static class Factory implements ParticleFactory<RequiemEntityParticleEffect> {
+    public static class Factory implements ParticleFactory<RequiemEntityParticleData> {
+
+        private final SpriteProvider spriteSet;
+
+        public Factory(SpriteProvider spriteSet) {
+            this.spriteSet = spriteSet;
+        }
+
         @Override
-        public Particle createParticle(RequiemEntityParticleEffect fx, ClientWorld world, double x, double y, double z, double vx, double vy, double vz) {
-            int srcId = fx.getSourceEntityId();
-            int entityId = fx.getTargetEntityId();
+        public Particle createParticle(RequiemEntityParticleData fx, ClientWorld world, double x, double y, double z, double vx, double vy, double vz) {
+            int srcId = fx.srcId();
+            int entityId = fx.dstId();
             Entity src = world.getEntityById(srcId);
             Entity entity = world.getEntityById(entityId);
             return src != null && entity != null ? new EntityDustParticle(world, x, y, z, vx, vy, vz, src, entity) : null;
         }
     }
-
- */
 
     public record TextureSheet(Identifier texture) implements ParticleTextureSheet {
         private static final Map<Identifier, ParticleTextureSheet> CACHE = new HashMap<>();
