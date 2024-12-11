@@ -32,45 +32,32 @@
  * The GNU General Public License gives permission to release a modified version without this exception;
  * this exception also makes it possible to release a modified version which carries forward this exception.
  */
-package ladysnake.requiem.mixin.common.possession.gameplay;
+package ladysnake.requiem.mixin.common.attrition;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import ladysnake.requiem.api.v1.possession.PossessionComponent;
-import ladysnake.requiem.common.VanillaRequiemPlugin;
-import ladysnake.requiem.common.enchantment.RequiemEnchantments;
-import ladysnake.requiem.common.tag.RequiemEntityTypeTags;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.AbstractSkeletonEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.Leashable;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.world.World;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity {
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
-        super(entityType, world);
-    }
+@Mixin(Entity.class)
+public class EntityMixin {
 
-
-    @ModifyReturnValue(method = "getProjectileType", at = @At(value = "RETURN"))
-    private ItemStack giveSkeletonInfinity(ItemStack item) {
-        PlayerEntity user = PlayerEntity.class.cast(this);
-
-        MobEntity possessed = PossessionComponent.getHost(user);
-        if (possessed instanceof AbstractSkeletonEntity) {
-            var infinity = RequiemEnchantments.getEnchantmentLevel(getWorld(), Enchantments.INFINITY, item) > 0;
-
-            return infinity || getWorld().getRandom().nextFloat() < 0.8f ? new ItemStack(Items.ARROW) : item;
+    @Inject(method = "interact", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Leashable;getLeashHolder()Lnet/minecraft/entity/Entity;"), cancellable = true)
+    private void detachFromPossessedEntity(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir, @Local Leashable leashable) {
+        Entity holdingEntity = leashable.getLeashHolder();
+        // reminder that in most cases the entity is unleashed and the player is not possessing anything
+        if (holdingEntity != null && holdingEntity == PossessionComponent.getHost(player)) {
+            leashable.detachLeash(true, !player.getAbilities().creativeMode);
+            cir.setReturnValue(ActionResult.success(player.getWorld().isClient));
         }
-        return item;
     }
 }

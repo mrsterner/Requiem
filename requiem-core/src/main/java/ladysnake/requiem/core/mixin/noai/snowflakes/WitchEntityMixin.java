@@ -35,14 +35,19 @@
 package ladysnake.requiem.core.mixin.noai.snowflakes;
 
 import ladysnake.requiem.core.entity.EntityAiToggle;
+import ladysnake.requiem.core.util.ItemUtil;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.WitchEntity;
 import net.minecraft.item.Items;
+import net.minecraft.potion.Potion;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WitchEntity.class)
@@ -69,15 +74,15 @@ public abstract class WitchEntityMixin extends HostileEntity {
             cir.setReturnValue(false);
         }
     }
-/*TODO
+
     @Nullable
     @ModifyVariable(method = "tickMovement", ordinal = 0, at = @At("STORE"))
-    private Potion preventPotionOverride(final Potion selectedPotion) {
+    private RegistryEntry<Potion> preventPotionOverride(final RegistryEntry<Potion> selectedPotion) {
         if (EntityAiToggle.isAiDisabled(this) && !ItemUtil.isWaterBottle(this.getMainHandStack())) {
             return null;
         }
         return selectedPotion;
     }
 
- */
+
 }

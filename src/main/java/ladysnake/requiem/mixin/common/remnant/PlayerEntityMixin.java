@@ -60,6 +60,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements RequiemPlayer {
 
+    protected PlayerEntityMixin(EntityType<? extends PlayerEntity> type, World world) {
+        super(type, world);
+    }
+
     /* Implementation of RequiemPlayer */
 
     @Shadow @Final private PlayerAbilities abilities;
@@ -129,9 +133,4 @@ public abstract class PlayerEntityMixin extends LivingEntity implements RequiemP
     }
 
  */
-
-    protected PlayerEntityMixin(EntityType<? extends PlayerEntity> type, World world) {
-        super(type, world);
-    }
-
 }

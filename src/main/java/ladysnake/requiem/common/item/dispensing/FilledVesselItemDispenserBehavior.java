@@ -40,6 +40,7 @@ import ladysnake.requiem.common.item.FilledSoulVesselItem;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
+import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.Direction;
@@ -59,12 +60,12 @@ public class FilledVesselItemDispenserBehavior implements DispenserBehavior {
         if (inputStack.isEmpty()) {
             return outputStack.copy();
         } else {
-            /*TODO
-            if (pointer.<DispenserBlockEntity>getBlockEntity().addToFirstFreeSlot(outputStack.copy()) < 0) {
-                fallbackBehavior.dispense(pointer, outputStack.copy());
-            }
 
-             */
+            ItemStack remainingStack = pointer.blockEntity().addToFirstFreeSlot(outputStack.copy());
+
+            if (!remainingStack.isEmpty()) {
+                fallbackBehavior.dispense(pointer, remainingStack);
+            }
 
             return inputStack;
         }

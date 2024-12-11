@@ -242,15 +242,11 @@ public class RiftScreen extends HandledScreen<RiftScreenHandler> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-/* TODO
-
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        this.selectionIndex = Math.floorMod((int) (this.getSelectionIndex() - amount), this.overlappingSelections);
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        this.selectionIndex = Math.floorMod((int) (this.getSelectionIndex() - verticalAmount), this.overlappingSelections);
         return true;
     }
-
- */
 
     @Override
     protected void init() {

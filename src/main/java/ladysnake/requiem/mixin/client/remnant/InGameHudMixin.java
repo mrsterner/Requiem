@@ -140,17 +140,16 @@ public abstract class InGameHudMixin {
         skippedFood = false;
         return true;
     }
-/*TODO
+
     @ModifyVariable(
         method = "renderStatusBars",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAir()I")
+        at = @At(value = "CONSTANT", args = "stringValue=air"),
+        index = 18
     )
     private int fixAirRender(int mountHeartCount) {
         if (skippedFood) return 0;
         return mountHeartCount;
     }
-
- */
 
     @ModifyArg(
         method = "renderStatusBars",

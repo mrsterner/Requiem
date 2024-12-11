@@ -34,9 +34,24 @@
  */
 package ladysnake.requiem.mixin.common.possession.gameplay;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import ladysnake.requiem.api.v1.possession.PossessionComponent;
+import net.minecraft.entity.CrossbowUser;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Hand;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CrossbowItem.class)
 public abstract class CrossbowItemMixin extends RangedWeaponItem {
@@ -44,10 +59,19 @@ public abstract class CrossbowItemMixin extends RangedWeaponItem {
     public CrossbowItemMixin(Settings settings) {
         super(settings);
     }
-/* TODO
+
+    @Inject(method = "createArrowEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/PersistentProjectileEntity;setSound(Lnet/minecraft/sound/SoundEvent;)V"))
+    private void preventBoltPickup(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical, CallbackInfoReturnable<ProjectileEntity> cir, @Local PersistentProjectileEntity persistentProjectileEntity){
+        MobEntity possessed = PossessionComponent.getHost(shooter);
+        if (possessed instanceof CrossbowUser && (shooter.getRandom().nextFloat() < 0.5f || shooter.getWorld().isClient)) {
+            persistentProjectileEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
+        }
+    }
+/*
     @ModifyVariable(method = "loadProjectiles", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
     private static boolean giveCrossbowInfinity(boolean creative, LivingEntity shooter, ItemStack crossbow) {
         if (!creative) {
+
             MobEntity possessed = PossessionComponent.getHost(shooter);
             // the arrow consumption code is run on both sides for whatever reason. That complicates the random behaviour:
             // - if we tell the client to eat an arrow but the server does not, the server will not update back => desync
@@ -55,18 +79,6 @@ public abstract class CrossbowItemMixin extends RangedWeaponItem {
             // so we default to telling the client that we are never using arrows and letting the server do the work
             if (possessed instanceof CrossbowUser && (shooter.getRandom().nextFloat() < 0.5f || shooter.getWorld().isClient)) {
                 crossbow.set(VanillaRequiemPlugin.INFINITY_SHOT_TAG, true);
-                return true;
-            }
-        }
-        return creative;
-    }
-
-    @ModifyVariable(method = "shoot", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private static boolean preventBoltPickup(boolean creative, World world, LivingEntity shooter, Hand hand, ItemStack crossbow, ItemStack projectile, float soundPitch, boolean creative2, float speed, float divergence, float simulated) {
-        if (!world.isClient && simulated == 0) {
-            NbtCompound tag = crossbow.getNbt();
-            if (tag != null && tag.getBoolean(VanillaRequiemPlugin.INFINITY_SHOT_TAG)) {
-                tag.remove(VanillaRequiemPlugin.INFINITY_SHOT_TAG);
                 return true;
             }
         }

@@ -53,6 +53,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -70,13 +71,13 @@ public abstract class PossessorLivingEntityMixin extends PossessorEntityMixin {
         }
         return upwardsVelocity;
     }
-/* TODO
+
     @ModifyVariable(
         method = "travel",
         slice = @Slice(
             from = @At(
                 value = "INVOKE",
-                target = "Lnet/minecraft/enchantment/EnchantmentHelper;getDepthStrider(Lnet/minecraft/entity/LivingEntity;)I"
+                target = "Lnet/minecraft/entity/LivingEntity;getAttributeValue(Lnet/minecraft/registry/entry/RegistryEntry;)D"
             )
         ),
         at = @At(
@@ -93,7 +94,7 @@ public abstract class PossessorLivingEntityMixin extends PossessorEntityMixin {
         }
         return speedAmount;
     }
-    */
+
     @Inject(method = "isFallFlying", at = @At("RETURN"), cancellable = true)
     protected void requiem$canFly(CallbackInfoReturnable<Boolean> cir) {
         //Overidden

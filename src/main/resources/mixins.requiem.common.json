@@ -16,6 +16,8 @@
     "access.ShulkerEntityAccessor",
     "access.TextAccessor",
     "attrition.EffectCommandMixin",
+    "attrition.EntityMixin",
+    "attrition.LeashableMixin",
     "attrition.LivingEntityMixin",
     "attrition.ServerPlayerEntityMixin",
     "attrition.StatusEffectInstanceMixin",

@@ -146,25 +146,7 @@ public abstract class PossessableMobEntityMixin extends PossessableLivingEntityM
     private <T extends MobEntity> void possessConvertedZombie(EntityType<T> type, boolean bl, CallbackInfoReturnable<T> ci, T converted) {
         MobConversionCallback.EVENT.invoker().onMobConverted((MobEntity) (Object) this, converted);
     }
-/* TODO
-    @Inject(method = "interact", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/MobEntity;getHoldingEntity()Lnet/minecraft/entity/Entity;"), cancellable = true)
-    private void detachFromPossessedEntity(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        Entity holdingEntity = this.getHoldingEntity();
-        // reminder that in most cases the entity is unleashed and the player is not possessing anything
-        if (holdingEntity != null && holdingEntity == PossessionComponent.getHost(player)) {
-            this.detachLeash(true, !player.getAbilities().creativeMode);
-            cir.setReturnValue(ActionResult.success(this.getWorld().isClient));
-        }
-    }
 
-    @ModifyVariable(method = "attachLeash", at = @At("HEAD"), argsOnly = true)
-    private Entity attachToPossessedEntity(Entity original) {
-        MobEntity host = PossessionComponent.getHost(original);
-        if (host != null) {
-            return host;
-        }
-        return original;
-    }
 
- */
+
 }

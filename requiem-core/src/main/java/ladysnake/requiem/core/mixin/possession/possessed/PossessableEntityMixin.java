@@ -64,15 +64,13 @@ public abstract class PossessableEntityMixin implements ProtoPossessable {
             player.velocityModified = true;
         }
     }
-/* TODO
-    @Inject(method = "isServer", at = @At("HEAD"), cancellable = true)
+
+    @Inject(method = "canMoveVoluntarily", at = @At("HEAD"), cancellable = true)
     private void canMoveVoluntarily(CallbackInfoReturnable<Boolean> cir) {
         if (this.isBeingPossessed()) {
             cir.setReturnValue(false);
         }
     }
-
- */
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     private void isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
