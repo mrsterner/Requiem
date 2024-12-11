@@ -51,6 +51,7 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(MilkBucketItem.class)
 public abstract class MilkBucketItemMixin {
+
     @Inject(method = "finishUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;clearStatusEffects()Z", shift = AFTER))
     private void regenSkeletons(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         LivingEntity possessed = PossessionComponent.getHost(user);
