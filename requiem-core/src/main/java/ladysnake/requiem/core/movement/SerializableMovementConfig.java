@@ -35,19 +35,27 @@
 package ladysnake.requiem.core.movement;
 
 import com.google.gson.Gson;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import ladysnake.requiem.api.v1.annotation.CalledThroughReflection;
 import ladysnake.requiem.api.v1.entity.MovementConfig;
 import ladysnake.requiem.api.v1.entity.movement.SwimMode;
 import ladysnake.requiem.api.v1.entity.movement.WalkMode;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import org.apiguardian.api.API;
+
+import static ladysnake.requiem.api.v1.util.MoreCodecs.TRISTATE_CODEC;
+import static net.fabricmc.fabric.api.util.TriState.*;
 
 /**
  * A {@link MovementConfig} that can be easily manipulated by {@link Gson} and equivalent.
  */
 public class SerializableMovementConfig implements MovementConfig {
-    public static final SerializableMovementConfig SOUL = new SerializableMovementConfig(MovementMode.ENABLED, SwimMode.ENABLED, WalkMode.NORMAL, TriState.FALSE, TriState.FALSE, true, 0, 1F, 1F, 1F, 0.1F);
+    public static final SerializableMovementConfig SOUL = new SerializableMovementConfig(MovementMode.ENABLED, SwimMode.ENABLED, WalkMode.NORMAL, TriState.FALSE, TriState.FALSE,false, true, 0, 1F, 1F, 1F, 0.1F);
 
     private MovementMode flightMode;
     private SwimMode swimMode;
@@ -65,16 +73,17 @@ public class SerializableMovementConfig implements MovementConfig {
     @CalledThroughReflection
     @API(status = API.Status.INTERNAL)
     public SerializableMovementConfig() {
-        this(MovementMode.UNSPECIFIED, SwimMode.UNSPECIFIED, WalkMode.UNSPECIFIED, TriState.DEFAULT, TriState.DEFAULT, false, 0, 1f, 1f, 1f, 0);
+        this(MovementMode.UNSPECIFIED, SwimMode.UNSPECIFIED, WalkMode.UNSPECIFIED, TriState.DEFAULT, TriState.DEFAULT, false, false, 0, 1f, 1f, 1f, 0);
     }
 
     @API(status = API.Status.INTERNAL)
-    public SerializableMovementConfig(MovementMode flightMode, SwimMode swimMode, WalkMode walkMode, TriState sinksInWater, TriState flopsOnLand, boolean phasesThroughWalls, float gravity, float fallSpeedModifier, float landedSpeedModifier, float waterSpeedModifier, float inertia) {
+    public SerializableMovementConfig(MovementMode flightMode, SwimMode swimMode, WalkMode walkMode, TriState sinksInWater, TriState flopsOnLand, boolean climbsWalls, boolean phasesThroughWalls, float gravity, float fallSpeedModifier, float landedSpeedModifier, float waterSpeedModifier, float inertia) {
         this.flightMode = flightMode;
         this.swimMode = swimMode;
         this.walkMode = walkMode;
         this.sinksInWater = sinksInWater;
         this.flopsOnLand = flopsOnLand;
+        this.climbsWalls = climbsWalls;
         this.phasesThroughWalls = phasesThroughWalls;
         this.gravity = gravity;
         this.fallSpeedModifier = fallSpeedModifier;
@@ -84,34 +93,29 @@ public class SerializableMovementConfig implements MovementConfig {
     }
 
     public void toPacket(PacketByteBuf buf) {
-        buf.writeEnumConstant(this.flightMode);
-        buf.writeEnumConstant(this.swimMode);
-        buf.writeEnumConstant(this.walkMode);
-        buf.writeEnumConstant(this.sinksInWater);
-        buf.writeEnumConstant(this.flopsOnLand);
-        buf.writeBoolean(this.climbsWalls);
-        buf.writeBoolean(this.phasesThroughWalls);
-        buf.writeFloat(this.gravity);
-        buf.writeFloat(this.fallSpeedModifier);
-        buf.writeFloat(this.landedSpeedModifier);
-        buf.writeFloat(this.waterSpeedModifier);
-        buf.writeFloat(this.inertia);
+        PACKET_CODEC.encode(buf, this);
     }
 
     public void fromPacket(PacketByteBuf buf) {
-        this.flightMode = buf.readEnumConstant(MovementMode.class);
-        this.swimMode = buf.readEnumConstant(SwimMode.class);
-        this.walkMode = buf.readEnumConstant(WalkMode.class);
-        this.sinksInWater = buf.readEnumConstant(TriState.class);
-        this.flopsOnLand = buf.readEnumConstant(TriState.class);
-        this.climbsWalls = buf.readBoolean();
-        this.phasesThroughWalls = buf.readBoolean();
-        this.gravity = buf.readFloat();
-        this.fallSpeedModifier = buf.readFloat();
-        this.landedSpeedModifier = buf.readFloat();
-        this.waterSpeedModifier = buf.readFloat();
-        this.inertia = buf.readFloat();
+        PACKET_CODEC.decode(buf);
     }
+
+    public static final Codec<SerializableMovementConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        MovementMode.CODEC.optionalFieldOf("flight_mode", MovementMode.UNSPECIFIED).forGetter(config -> config.flightMode),
+        SwimMode.CODEC.optionalFieldOf("swim_mode", SwimMode.UNSPECIFIED).forGetter(config -> config.swimMode),
+        WalkMode.CODEC.optionalFieldOf("walk_mode", WalkMode.UNSPECIFIED).forGetter(config -> config.walkMode),
+        TRISTATE_CODEC.optionalFieldOf("sinks_in_water", TriState.DEFAULT).forGetter(config -> config.sinksInWater),
+        TRISTATE_CODEC.optionalFieldOf("flops_on_land", TriState.DEFAULT).forGetter(config -> config.flopsOnLand),
+        Codec.BOOL.optionalFieldOf("climbs_walls", false).forGetter(config -> config.climbsWalls),
+        Codec.BOOL.optionalFieldOf("phases_through_walls", false).forGetter(config -> config.phasesThroughWalls),
+        Codec.FLOAT.optionalFieldOf("gravity", 0f).forGetter(config -> config.gravity),
+        Codec.FLOAT.optionalFieldOf("fall_speed_modifier", 1f).forGetter(config -> config.fallSpeedModifier),
+        Codec.FLOAT.optionalFieldOf("landed_speed_modifier", 1f).forGetter(config -> config.landedSpeedModifier),
+        Codec.FLOAT.optionalFieldOf("water_speed_modifier", 1f).forGetter(config -> config.waterSpeedModifier),
+        Codec.FLOAT.optionalFieldOf("inertia", 0f).forGetter(config -> config.inertia)
+    ).apply(instance, SerializableMovementConfig::new));
+
+    public static final PacketCodec<ByteBuf, SerializableMovementConfig> PACKET_CODEC = PacketCodecs.unlimitedCodec(CODEC);
 
     @Override
     public MovementMode getFlightMode() {

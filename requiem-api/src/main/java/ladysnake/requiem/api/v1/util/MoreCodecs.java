@@ -23,8 +23,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
+import net.fabricmc.fabric.api.util.TriState;
 
 import java.util.Locale;
+
+import static net.fabricmc.fabric.api.util.TriState.*;
 
 public final class MoreCodecs {
     private static final Gson GSON = new Gson();
@@ -41,4 +44,17 @@ public final class MoreCodecs {
     public static <E extends Enum<E>> Codec<E> enumeration(Class<E> enumType) {
         return Codec.STRING.xmap(s -> Enum.valueOf(enumType, s.toUpperCase(Locale.ROOT)), Enum::name);
     }
+
+    private static TriState fromString(String value) {
+        return switch (value.toLowerCase()) {
+            case "true" -> TRUE;
+            case "false" -> FALSE;
+            case "default" -> DEFAULT;
+            default -> throw new IllegalArgumentException("Invalid TriState value: " + value);
+        };
+    }
+
+    public static final Codec<TriState> TRISTATE_CODEC = Codec.STRING.xmap(
+        MoreCodecs::fromString, TriState::toString
+    );
 }

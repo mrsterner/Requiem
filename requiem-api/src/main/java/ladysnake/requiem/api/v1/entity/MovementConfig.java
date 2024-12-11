@@ -17,6 +17,7 @@
  */
 package ladysnake.requiem.api.v1.entity;
 
+import com.mojang.serialization.Codec;
 import ladysnake.requiem.api.v1.entity.movement.SwimMode;
 import ladysnake.requiem.api.v1.entity.movement.WalkMode;
 import net.fabricmc.fabric.api.util.TriState;
@@ -115,6 +116,10 @@ public interface MovementConfig {
          * No information, the {@link MovementAlterer} should use heuristics to determine which of the
          * other modes to use
          */
-        UNSPECIFIED
+        UNSPECIFIED;
+
+        public static final Codec<MovementMode> CODEC = Codec.STRING.xmap(
+            MovementMode::valueOf, MovementMode::name
+        );
     }
 }

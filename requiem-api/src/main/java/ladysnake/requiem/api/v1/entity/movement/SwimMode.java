@@ -17,6 +17,7 @@
  */
 package ladysnake.requiem.api.v1.entity.movement;
 
+import com.mojang.serialization.Codec;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 import net.fabricmc.fabric.api.util.TriState;
 
@@ -56,4 +57,8 @@ public enum SwimMode {
     public TriState sprintSwims() {
         return sprintSwim;
     }
+
+    public static final Codec<SwimMode> CODEC = Codec.STRING.xmap(
+        SwimMode::valueOf, SwimMode::name
+    );
 }

@@ -17,6 +17,7 @@
  */
 package ladysnake.requiem.api.v1.entity.movement;
 
+import com.mojang.serialization.Codec;
 import ladysnake.requiem.api.v1.entity.MovementAlterer;
 
 public enum WalkMode {
@@ -32,5 +33,9 @@ public enum WalkMode {
      * No information, the {@link MovementAlterer} should use heuristics to determine which of the
      * other modes to use
      */
-    UNSPECIFIED
+    UNSPECIFIED;
+
+    public static final Codec<WalkMode> CODEC = Codec.STRING.xmap(
+        WalkMode::valueOf, WalkMode::name
+    );
 }
