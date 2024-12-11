@@ -77,13 +77,10 @@ public final class PlayerSplitter {
      */
     public static PlayerSplitResult doSplit(ServerPlayerEntity whole) {
         PlayerShellEntity shell = createShell(whole);
-        System.out.println("1: " + shell);
         Entity mount = whole.getVehicle();
-        System.out.println("2: " + mount);
         int experience = whole.totalExperience;
         EntityPositionClerk.transferRecord(whole, shell);
         ServerPlayerEntity soul = performRespawn(whole);
-        System.out.println("3: " + soul);
         // Respawning in some conditions can place us away from the shell
         soul.setSneaking(whole.isSneaking());
         soul.networkHandler.requestTeleport(shell.getX(), shell.getY(), shell.getZ(), shell.getYaw(), shell.getPitch());
@@ -93,7 +90,6 @@ public final class PlayerSplitter {
         if (mount != null) shell.startRiding(mount);
         PlayerBodyTracker.get(soul).setAnchor(EntityPositionClerk.get(shell).getOrCreateRecord());
         PlayerShellEvents.PLAYER_SPLIT.invoker().onPlayerSplit(whole, soul, shell);
-        System.out.println("AD: " +soul + " : " + shell);
         return new PlayerSplitResult(soul, shell);
     }
 
@@ -149,9 +145,7 @@ public final class PlayerSplitter {
 
         GameProfile shellProfile = shell.getDisplayProfile();
         if (shellProfile != null && !Objects.equals(shellProfile.getId(), soul.getUuid())) {
-            System.out.println("ShelP " + shellProfile);
             Impersonator.get(soul).impersonate(BODY_IMPERSONATION, shellProfile);
-            System.out.println("BODY: " + BODY_IMPERSONATION);
         }
 
         Objects.requireNonNull(soul.getServer()).getPlayerManager().sendPlayerStatus(soul);

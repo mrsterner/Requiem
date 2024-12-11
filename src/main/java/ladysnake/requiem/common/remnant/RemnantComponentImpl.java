@@ -172,18 +172,16 @@ public final class RemnantComponentImpl implements RemnantComponent {
 
     @Override
     public boolean canSplitPlayer(boolean ignoreGameConditions) {
-        var r =  !this.player.isRemoved();
-        var t =  this.state.canSplit(ignoreGameConditions);
-        var d = !this.isVagrant();
-        var w = (ignoreGameConditions || PlayerShellEvents.PRE_SPLIT.invoker().canSplit(this.player));
-        System.out.println(r + " : " + t + " : " + d + " : " + w);
-        return r && t && d && w;
+        var notRemoved = !this.player.isRemoved();
+        var canSplit = this.state.canSplit(ignoreGameConditions);
+        var notVagrant = !this.isVagrant();
+        var test = (ignoreGameConditions || PlayerShellEvents.PRE_SPLIT.invoker().canSplit(this.player));
+        return notRemoved && canSplit && notVagrant && test;
     }
 
     @Override
     public Optional<PlayerSplitResult> splitPlayer(boolean ignoreGameConditions) {
         if (this.player instanceof ServerPlayerEntity sp && this.canSplitPlayer(ignoreGameConditions)) {
-            System.out.println("Splitting " + this.player);
             try {
                 this.splitting = true;
                 return Optional.of(PlayerSplitter.doSplit(sp));
@@ -191,7 +189,6 @@ public final class RemnantComponentImpl implements RemnantComponent {
                 this.splitting = false;
             }
         }
-        System.out.println("Sadge");
         return Optional.empty();
     }
 

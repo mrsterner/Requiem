@@ -188,7 +188,6 @@ public class PlayerShellsTests implements FabricGameTest {
         GameTestUtil.assertTrue("Assuming a new identity should not trigger an identity reset", listener.countResets() == 0);
         var component = RemnantComponent.get(player);
         PlayerSplitResult playerSplitResult = component.splitPlayer(true).orElseThrow();
-        System.out.println("Resets: " + listener.countResets());
         GameTestUtil.assertTrue("Splitting should trigger an identity reset", listener.countResets() == 1);
         player = playerSplitResult.soul();
         shell = (PlayerShellEntity) playerSplitResult.shell();
